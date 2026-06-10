@@ -1,4 +1,6 @@
 ---
+parent: "蜂群模式"
+grand_parent: "Agent 构建"
 title: "Sub 模式结合瀑布和敏捷的优势"
 node_id: 019e2506-5a53-7340-8367-fcc54e5137a9
 path: "product/Agent构建/蜂群模式/Sub 模式结合瀑布和敏捷的优势.md"

@@ -1,4 +1,6 @@
 ---
+parent: "蜂群模式"
+grand_parent: "Agent 构建"
 title: "Heicode 蜂群能力评价标准"
 node_id: 019e79af-7a39-720a-ac20-a5818e80c70c
 path: "product/Agent构建/蜂群模式/Heicode 蜂群能力评价标准.md"

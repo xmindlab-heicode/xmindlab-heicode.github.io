@@ -1,4 +1,6 @@
 ---
+parent: "蜂群模式"
+grand_parent: "Agent 构建"
 title: "Heicode Agnet 蜂群"
 node_id: 019e2ae6-243a-7322-98b1-956f9993f740
 path: "product/Agent构建/蜂群模式/Heicode Agnet 蜂群.md"

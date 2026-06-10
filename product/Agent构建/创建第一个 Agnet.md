@@ -1,4 +1,5 @@
 ---
+parent: "Agent 构建"
 title: "创建第一个 Agnet"
 node_id: 019e24ff-4a02-7aad-a2dc-0b0539588ad6
 path: "product/Agent构建/创建第一个 Agnet.md"

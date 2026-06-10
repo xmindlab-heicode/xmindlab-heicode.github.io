@@ -1,4 +1,6 @@
 ---
+parent: "蜂群模式"
+grand_parent: "Agent 构建"
 title: "Agent 三种协作模式：蜂群、Sub、链式"
 node_id: 019e2506-5482-7b42-9468-057b65d916bb
 path: "product/Agent构建/蜂群模式/Agent 三种协作模式：蜂群、Sub、链式.md"

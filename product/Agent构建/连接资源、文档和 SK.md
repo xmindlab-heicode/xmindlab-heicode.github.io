@@ -1,4 +1,5 @@
 ---
+parent: "Agent 构建"
 title: "连接资源、文档和 SK"
 node_id: 019e24ff-5872-7326-bfc0-c0803f637b91
 path: "product/Agent构建/连接资源、文档和 SK.md"

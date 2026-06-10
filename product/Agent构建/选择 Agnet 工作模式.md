@@ -1,4 +1,5 @@
 ---
+parent: "Agent 构建"
 title: "选择 Agnet 工作模式"
 node_id: 019e24ff-6d43-7aa9-93f8-c47c0761a959
 path: "product/Agent构建/选择 Agnet 工作模式.md"

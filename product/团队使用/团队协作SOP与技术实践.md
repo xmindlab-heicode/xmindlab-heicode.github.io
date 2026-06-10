@@ -1,4 +1,5 @@
 ---
+parent: "团队使用"
 title: "团队协作 SOP 与技术实践"
 description: "面向大型团队和复杂项目的 Heicode 团队协作规范、AI Code 使用方式、AIE 审核机制与实践建议。"
 updated: 2026-06-11

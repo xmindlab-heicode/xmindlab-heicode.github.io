@@ -1,0 +1,8 @@
+{
+  "name": "Heicode Documentation",
+  "short_name": "Heicode Docs",
+  "description": "Official documentation for Heicode products and services.",
+  "start_url": "/",
+  "display": "standalone",
+  "lang": "en"
+}

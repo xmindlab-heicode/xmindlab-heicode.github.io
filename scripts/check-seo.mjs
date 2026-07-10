@@ -1,7 +1,9 @@
 import fs from 'node:fs';
 
 const required = [
-  'public/robots.txt'
+  'public/robots.txt',
+  'public/.well-known/security.txt',
+  'public/site.webmanifest'
 ];
 
 const missing = required.filter((file) => !fs.existsSync(file));

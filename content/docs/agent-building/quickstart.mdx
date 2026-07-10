@@ -32,7 +32,7 @@ title: "快速开始"
 
 
 ## 第三步：部署Sub  Agent
-在页面左侧点击部署Sub  Agent，可以选择单Agent以及开发者团队，部署好了之后在页面下方同步显示部署的Agent（目前版本最多安装5个Agent）。![8e97aca64a191270b2569c4e3584d388.png](https://doc.xinghanlab.com/static-file/9cd9f9b5-05b3-459e-a016-91b442a2c4ec/02f406e6-129c-42cf-93ff-2204322eeb83.png)![4cbf20e9f399e8e0a1b2502d9c3da294.png](https://doc.xinghanlab.com/static-file/ef3f664c-cbf3-40e6-9242-7feab4b0721f/8bb57126-c2e2-4a11-9fa1-0fc0538aed57.png)更换Agent以及删除已经部署好的Agent都在这个位置。![595d9d915c1e665d3fe3ad82e0f46ba5.png](https://doc.xinghanlab.com/static-file/30058170-1606-4b93-b29b-b6415c202c90/fa4747c9-dbf8-407b-ab60-61ee443b6ff4.png)
+在页面左侧点击部署Sub  Agent，可以选择单Agent以及开发者团队，部署好了之后在页面下方同步显示部署的Agent（默认最多安装 5 个 Agent，具体数量以套餐为准）。![8e97aca64a191270b2569c4e3584d388.png](https://doc.xinghanlab.com/static-file/9cd9f9b5-05b3-459e-a016-91b442a2c4ec/02f406e6-129c-42cf-93ff-2204322eeb83.png)![4cbf20e9f399e8e0a1b2502d9c3da294.png](https://doc.xinghanlab.com/static-file/ef3f664c-cbf3-40e6-9242-7feab4b0721f/8bb57126-c2e2-4a11-9fa1-0fc0538aed57.png)更换Agent以及删除已经部署好的Agent都在这个位置。![595d9d915c1e665d3fe3ad82e0f46ba5.png](https://doc.xinghanlab.com/static-file/30058170-1606-4b93-b29b-b6415c202c90/fa4747c9-dbf8-407b-ab60-61ee443b6ff4.png)
 ## 第四步：下载安装Heicode客户端
 在页面左侧点击Heicode桌面客户端，下载对应系统客户端并打开。![87ca1f402d1c30dc21b096fccfa3a4dc.png](https://doc.xinghanlab.com/static-file/40a5993a-44aa-4f50-926c-5481e49ee522/78c3f2e4-e868-4de6-a926-452ced275a22.png)
 
@@ -97,17 +97,22 @@ Heicode 会生成一个你能看懂的摘要。
 
 任务启动后，你会看到任务视图。
 
-常见状态：
+任务只有四种真实状态：
 
 | 状态 | 你应该做什么 |
 |---|---|
-| 准备中 | 等待平台整理资源和上下文 |
-| 运行中 | 等待 Agent 执行 |
-| 需要输入 | 打开任务，回答问题或补充信息 |
-| 等待审批 | 查看风险后批准或拒绝 |
-| 已完成 | 查看交付物和审计 |
-| 失败 | 查看失败原因并重试或调整资源 |
-| 已停止 | 任务被你或平台停止 |
+| pending（准备中） | 等待平台整理资源和上下文 |
+| running（运行中） | 等待 Agent 执行，可查看进度 |
+| stopped（已停止） | 任务被你或平台停止 |
+| failed（失败） | 查看失败原因并重试或调整资源 |
+
+除了这四种状态，任务视图里出现的“需要输入”“等待审批”“可验收”，其实都是任务处于 running 时的具体情况，不是单独的顶层状态：
+
+- 需要输入：Agent 触发了 `task.blocked` 事件，缺少信息、资源或权限，需要你打开任务补充。
+- 等待审批：出现了一条待处理的审批请求（审批请求本身有自己的状态机：pending / approved / rejected / expired），需要你查看风险后批准或拒绝。
+- 可验收：任务仍在 running，但已经产出可检查的交付物，你可以提前查看结果。
+
+任务顺利跑完后，状态会变为 stopped（正常结束），同时会附带一条 `task.completed` 事件和交付物，界面上通常展示为“已完成”，与你主动中止的 stopped 加以区分。
 
 ## 第九步：处理需要你介入的事项
 

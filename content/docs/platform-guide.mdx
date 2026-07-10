@@ -34,6 +34,8 @@ After login, the platform reads:
 
 This information is used for identity, CodeGW quota, and usage mapping.
 
+![Heicode login page](/screenshots/login.jpg)
+
 ## Step 2: Download the Client
 
 1. In the Heicode console, go to `Client Download`.
@@ -47,6 +49,8 @@ macOS notes:
 
 - Official release builds are already signed with an Apple Developer ID, notarized, and stapled — a normal install shouldn't trigger any system warning.
 - If you do see a security prompt, it usually means the installer came from the wrong place (e.g. an unofficial download source) or it's a local dev build (unsigned). Confirm you downloaded from the official channel and try again.
+
+![Heicode desktop client download page](/screenshots/desktop-client-download.jpg)
 
 ## Step 3: Describe Your Idea in the Client
 
@@ -90,6 +94,12 @@ Connect Git
 
 You never need to paste credentials into a doc. Real credentials are written by Heicode into the credential vault — Heicode only stores the `secret_ref`.
 
+![Connected resources list](/screenshots/resource-binding-list.jpg)
+
+Clicking "New Binding" shows every resource type you can connect:
+
+![Resource type picker — GitHub, Gitea, GitLab, MySQL, PostgreSQL, Object Storage](/screenshots/resource-binding-dropdown.jpg)
+
 ## Step 5: Confirm the System Recommendation
 
 When assembling a team, you can pick from Heicode's role catalog — you just need to confirm the final combination makes sense.
@@ -103,7 +113,13 @@ Role catalog:
 - Reviewer Agent.
 - Ops Agent.
 
-Not every task needs all 6 roles, and you don't need a full set — a simple task might only need 1-2. Besides freely combining roles yourself, the Heicode console also offers two one-click team templates: "Agile" (Product + Dev + Review, 3 people) and "Waterfall" (Analysis + Architecture + Dev + QA + Review, 5 people).
+Not every task needs all 6 roles, and you don't need a full set — a simple task might only need 1-2.
+
+![Deploying a single Agent — the role catalog to pick from](/screenshots/deploy-agent-single.jpg)
+
+Besides freely combining roles yourself, the Heicode console also offers two one-click team templates: "Agile" (Product + Dev + Review, 3 people) and "Waterfall" (Analysis + Architecture + Dev + QA + Review, 5 people).
+
+![Deploying a dev-mode team — the Agile and Waterfall templates](/screenshots/deploy-agent-team.jpg)
 
 After confirming the team composition, you'll also see:
 
@@ -172,6 +188,10 @@ In Heicode you can view:
 - Resource access records.
 - High-risk approval records.
 - Deployment results.
+
+![Manager overview dashboard — Agent count, running status, balance, and quick actions](/screenshots/dashboard-overview.jpg)
+
+![Run status page — Agent totals, running/starting counts, and the Agent list](/screenshots/run-status.jpg)
 
 ## Step 10: Maintain and Upgrade
 

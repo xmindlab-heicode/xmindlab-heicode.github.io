@@ -1,9 +1,11 @@
 ---
 parent: "Agent 构建"
 title: "选择 Agent 工作模式"
+description: 说明单 Agent、Sub 模式、蜂群模式及交付模式的适用场景与选择原则。
 node_id: 019e24ff-6d43-7aa9-93f8-c47c0761a959
 path: "product/Agent构建/选择 Agent 工作模式.md"
 synced_at: 2026-06-23T07:13:23Z
+updated: 2026-07-10
 ---
 
 # 选择 Agent 工作模式

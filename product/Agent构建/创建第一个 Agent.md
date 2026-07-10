@@ -1,9 +1,11 @@
 ---
 parent: "Agent 构建"
 title: "创建第一个 Agent"
+description: 说明第一次创建 Agent 任务时如何准备目标、资源、权限和验收标准。
 node_id: 019e24ff-4a02-7aad-a2dc-0b0539588ad6
 path: "product/Agent构建/创建第一个 Agent.md"
 synced_at: 2026-06-23T07:13:23Z
+updated: 2026-07-10
 ---
 
 # 创建第一个 Agent

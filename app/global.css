@@ -2,6 +2,23 @@
 @import 'fumadocs-ui/css/neutral.css';
 @import 'fumadocs-ui/css/preset.css';
 
+/* Heicode brand — matches heicode-mananger web theme.css */
+:root {
+  --color-fd-primary: oklch(0.58 0.17 278);
+  --color-fd-primary-foreground: oklch(0.985 0.003 270);
+  --color-fd-ring: oklch(0.58 0.17 278);
+  --brand-from: #b888e5;
+  --brand: #7b6be3;
+  --brand-to: #6b7ce0;
+  --gradient-brand: linear-gradient(135deg, #b888e5 0%, #7b6be3 50%, #6b7ce0 100%);
+}
+
+.dark {
+  --color-fd-primary: oklch(0.66 0.17 280);
+  --color-fd-primary-foreground: oklch(0.16 0.03 278);
+  --color-fd-ring: oklch(0.66 0.17 280);
+}
+
 html {
   scrollbar-gutter: stable;
 }

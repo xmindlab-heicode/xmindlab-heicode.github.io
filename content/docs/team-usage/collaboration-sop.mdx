@@ -1,196 +1,196 @@
 ---
-title: "团队协作 SOP 与技术实践"
-description: "面向大型团队和复杂项目的 Heicode 团队协作规范、AI Code 使用方式、AIE 审核机制与实践建议。"
+title: "Team Collaboration SOP and Technical Practices"
+description: "Heicode team collaboration norms, AI Code usage, the AIE review mechanism, and practical recommendations for large teams and complex projects."
 ---
 
-# 团队协作 SOP 与技术实践
+# Team Collaboration SOP and Technical Practices
 
-本页说明团队在使用 Heicode 进行真实项目开发时，如何组织 AI Code 协作、如何准备项目规范、如何控制代码一致性，以及如何通过 AIE 审核机制降低大型团队中的协作风险。
+This page explains how a team, when using Heicode for real project development, can organize AI Code collaboration, prepare project standards, control code consistency, and reduce collaboration risk in large teams through the AIE review mechanism.
 
-Heicode 并不要求所有团队都采用同一种开发流程。不同团队的规模、技术栈、项目阶段和管理方式都不一样，因此团队可以继续保留自己的工单方式、代码提交方式和审核习惯。本文提供的是一套推荐实践，重点解决大型团队在引入 AI Code 后容易出现的上下文不一致、标准分裂、Code Review 滞后和 E2E 对齐困难等问题。
+Heicode does not require every team to adopt the same development workflow. Teams differ in size, tech stack, project phase, and management style, so a team can continue to keep its own ticketing conventions, code submission conventions, and review habits. What this document provides is a set of recommended practices, focused on solving the problems that large teams commonly run into after introducing AI Code — inconsistent context, fragmented standards, lagging code review, and difficulty aligning at the E2E stage.
 
-## 适用场景
+## Applicable scenarios
 
-当一个项目只有少数开发者参与时，AI Code 带来的主要收益通常是提高个人开发效率。但当项目进入多人协作、多个模块并行、多个仓库共同交付的阶段后，问题就不再只是“AI 能不能写代码”，而是“所有 AI 和所有开发者是否在按照同一套项目认知工作”。
+When only a few developers are involved in a project, the main benefit AI Code brings is usually improved individual productivity. But once a project enters a stage of multi-person collaboration, multiple modules running in parallel, and multiple repositories delivering together, the question is no longer just "can AI write code," but "are all the AIs and all the developers working from the same shared understanding of the project."
 
-因此，本文更适合已经开始在团队中使用 AI Code 或 Agent 的项目，尤其是存在前后端协作、多个服务协作、接口联调、权限控制、部署发布、E2E 测试等要求的团队。对于小型团队，可以只采用其中一部分机制，例如分层 CLAUDE.md、基于 Git 的任务追踪和 PR 审查；对于大型或超大型团队，则建议逐步建立完整的团队规范、知识库、AIE 审核和双审机制。
+For this reason, this document is more relevant to projects that have already started using AI Code or Agents within a team, especially teams with requirements such as frontend/backend collaboration, collaboration across multiple services, interface integration, permission control, deployment and release, and E2E testing. Small teams can adopt only part of these mechanisms, such as a layered CLAUDE.md, Git-based task tracking, and PR review; large or very large teams are advised to gradually build out a complete set of team standards, a knowledge base, and an AIE review plus dual-review mechanism.
 
-## 大型团队中 AI Code 协作的常见问题
+## Common problems with AI Code collaboration in large teams
 
-AI Code 可以显著提升开发速度，但在大型团队里，如果缺少统一规范和统一审查机制，开发速度越快，协作风险也会越快暴露。每个开发者可能使用不同的 AI Code 产品，每个 AI Code 读取到的项目资料、代码上下文和任务背景也不完全一样。一个模块可能按照自己的理解定义接口，另一个模块可能按照另一个标准处理字段、状态码、错误格式或权限逻辑。等到 E2E 阶段才发现这些问题时，往往已经产生了大量返工。
+AI Code can significantly increase development speed, but in a large team, if there is no unified standard and no unified review mechanism, the faster development goes, the faster collaboration risk surfaces. Different developers may use different AI Code products, and each AI Code instance may read a slightly different set of project materials, code context, and task background. One module might define its interfaces according to its own understanding, while another module might handle fields, status codes, error formats, or permission logic according to a different standard. By the time these problems are discovered at the E2E stage, a large amount of rework has often already occurred.
 
-传统 Code Review 依赖人工经验，但 AI Code 提升代码产出速度后，人工 Review 很容易跟不上。一个 PR 还没有完成审核，代码可能已经迭代了多轮；一个评审意见还没有被回复，新的提交又改变了原来的判断基础。久而久之，工单会积压，PR 状态会变得混乱，团队成员和不同 AI Agent 之间会形成各自的理解，最终出现“各定义各的标准”的情况。
+Traditional code review relies on human experience, but once AI Code accelerates code output, manual review can easily fall behind. A PR may go through several more iterations before review is even finished; a review comment may not yet have been addressed before a new commit changes the basis of that judgment. Over time, tickets pile up, PR status becomes chaotic, and team members and different AI Agents each form their own understanding — eventually resulting in a situation where "everyone defines their own standard."
 
-这些问题的核心不是 AI 不会写代码，而是团队没有把项目全貌、统一规范、代码变更、评审意见和工单状态放在同一条协作主线上。Heicode 推荐团队以 Git 为主线组织 AI 开发流程，并通过团队规范、分层 CLAUDE.md、工单、PR、CI 和 AIE 审核建立一致性控制。
+The core of these problems is not that AI cannot write code, but that the team has not put the overall project picture, unified standards, code changes, review comments, and ticket status on the same collaboration timeline. Heicode recommends that teams organize their AI development workflow around Git as the main line, and establish consistency control through team standards, a layered CLAUDE.md, tickets, PRs, CI, and AIE review.
 
-## 基于 Git 的协作主线
+## A Git-based collaboration timeline
 
-团队协作中的 AI 开发流程应基于 Git 进行控制。Heicode 不替代 Git，而是在 Git 既有流程上增加 AI 协作能力。工单用于定义任务目标，分支用于隔离代码修改，Commit 用于记录每次变更，PR 用于组织审核，CI 用于自动检查，Review 用于沉淀意见，Merge 和 Release 用于进入交付阶段。
+The AI development workflow in team collaboration should be controlled based on Git. Heicode does not replace Git; instead, it adds AI collaboration capability on top of Git's existing workflow. Tickets define the task goal, branches isolate code changes, commits record each change, PRs organize review, CI performs automated checks, review captures feedback, and merge/release move things into delivery.
 
-推荐主线如下：
+The recommended main line is as follows:
 
 ```
-Issue / 工单
+Issue / Ticket
   ↓
-Branch / 分支
+Branch
   ↓
-Commit / 提交
+Commit
   ↓
-Pull Request / 合并请求
+Pull Request
   ↓
-CI / 自动检查
+CI / Automated checks
   ↓
-Review / 审核意见
+Review / Review comments
   ↓
-Merge / 合并
+Merge
   ↓
-Release / 发布
+Release
 ```
 
-Heicode 在这个流程中的作用，是帮助团队读取项目规范和任务上下文，启动 AI Code 或 Agent 执行任务，记录任务过程中的关键决策，将代码变更与工单、PR、CI 关联，并在评审阶段进入 AIE 角色进行一致性审核。团队应尽量避免脱离 Git 的临时协作方式，因为没有工单、没有分支、没有 PR、没有评论记录的 AI 修改，很难被后续审查、复盘和追踪。
+Heicode's role in this flow is to help the team read project standards and task context, launch AI Code or an Agent to execute the task, record key decisions made during the task, link code changes to tickets, PRs, and CI, and enter the AIE role during the review stage to perform a consistency review. Teams should try to avoid ad hoc collaboration that bypasses Git, because AI changes without a ticket, a branch, a PR, or a comment trail are very difficult to review, retrospect on, or trace afterward.
 
-## Teams Claude.md 与分层规范机制
+## Teams Claude.md and the layered standards mechanism
 
-Teams Claude.md 是团队级 AI 开发规范文件。它不是单一提示词入口，也不是替代所有项目文档的总文档。它主要用于定义 Heicode 在任务启动时需要读取哪些文件、文件夹和项目资料，以及团队统一的最高级约束。
+Teams Claude.md is a team-level AI development standards file. It is not a single prompt entry point, nor is it a master document that replaces all project documentation. Its main purpose is to define which files, folders, and project materials Heicode needs to read when a task starts, as well as the team's unified top-level constraints.
 
-在一个大型项目中，Teams Claude.md 不应该承载所有细节。它更像一份团队级的最高规范，告诉 Heicode 和 AI Code：启动任务前必须读取哪些资料，哪些规范不能被突破，哪些目录需要谨慎处理，哪些操作需要人工审批。更细的规则应该跟随项目目录、模块目录或服务目录放置。这样既能避免一个大文件无限膨胀，也能让 AI 在处理具体任务时读取更准确的局部上下文。
+In a large project, Teams Claude.md should not carry every detail. It is more like a team-level top-level standard, telling Heicode and AI Code: which materials must be read before starting a task, which standards must not be broken, which directories require caution, and which operations require human approval. More granular rules should be placed alongside the relevant project directory, module directory, or service directory. This avoids letting a single large file balloon out of control, and lets the AI read more accurate, localized context when handling a specific task.
 
-推荐分层如下：
+The recommended layering is as follows:
 
 ```
 Teams Claude.md
   ↓
-团队级最高规范：定义必须读取的资料范围、统一约束、禁止事项、协作边界。
+Team-level top standard: defines the scope of materials that must be read, unified constraints, prohibited actions, and collaboration boundaries.
 
-项目目录 / 模块目录中的规范文件
+Standards files in project directories / module directories
   ↓
-定义某个项目、模块、服务或目录下的具体规则。
+Define the specific rules for a given project, module, service, or directory.
 
-开发者自己的 CLAUDE.md
+A developer's own CLAUDE.md
   ↓
-根据当前任务和个人工作流细化执行方式，但不能突破 Teams Claude.md 的约束。
+Refines the execution approach based on the current task and personal workflow, but cannot override the constraints in Teams Claude.md.
 
-Issue / 工单 / PR
+Issue / Ticket / PR
   ↓
-描述当前任务目标、期望返回结果、修改边界和验收方式。
+Describes the current task goal, the expected result, the modification boundary, and the acceptance method.
 ```
 
-每个开发者可以根据自己的任务和工作方式制定自己的 CLAUDE.md，但这个文件只能细化执行方式，不能突破 Teams Claude.md 的约束。例如，开发者可以补充当前模块的开发命令、本地测试方式、负责目录说明和临时注意事项，但不能绕过团队审批规则，不能自行改变统一接口定义，也不能要求 AI 忽略 Teams Claude.md 中规定必须读取的文件。当 Teams Claude.md、项目目录规范和开发者 CLAUDE.md 出现冲突时，应以 Teams Claude.md 和项目级规范为准。
+Each developer can write their own CLAUDE.md according to their own tasks and working style, but this file can only refine the execution approach — it cannot override the constraints in Teams Claude.md. For example, a developer can add development commands for the current module, local testing methods, notes on directories they are responsible for, and temporary reminders, but they cannot bypass the team's approval rules, cannot unilaterally change unified interface definitions, and cannot ask the AI to ignore files that Teams Claude.md requires to be read. When Teams Claude.md, project-directory standards, and a developer's CLAUDE.md conflict, Teams Claude.md and the project-level standards take precedence.
 
-## 项目资料与知识库准备
+## Preparing project materials and a knowledge base
 
-大型项目不能依赖一次性把所有文档直接交给 AI。项目资料通常很多，AI 的上下文可能无法完整读取；文档也会持续变化，静态投喂容易过期；多个开发节点并行时，不同 AI Code 读取到的资料版本也可能不一致。因此，团队需要根据项目规模准备资料访问机制。
+A large project cannot rely on handing all documentation to the AI at once. Project materials are usually numerous, and the AI's context may not be able to read them all; documentation also keeps changing, so a static one-time feed easily becomes outdated; and when multiple development streams run in parallel, different AI Code instances may end up reading inconsistent versions of the materials. Because of this, teams need to prepare a materials-access mechanism appropriate to the project's scale.
 
-如果项目资料不多，可以直接放在 Git 仓库中，由 Heicode 在任务启动前读取。如果项目资料较多，建议准备团队 MCP、项目文档库、向量数据库、接口文档、数据库设计文档、权限和安全规则、部署说明，以及工单、PR、CI 的实时记录。向量数据库可以有多个，用于存放不同类型的项目资料，例如产品说明、接口文档、技术设计、历史问题、FAQ 和部署手册等。
+If a project does not have many materials, they can be placed directly in the Git repository for Heicode to read before a task starts. If a project has a lot of material, it is recommended to prepare a team MCP, a project documentation library, a vector database, interface documentation, database design documentation, permission and security rules, deployment instructions, and real-time records of tickets, PRs, and CI. There can be multiple vector databases, used to store different types of project material, such as product descriptions, interface documentation, technical design, historical issues, FAQs, and deployment manuals.
 
-在这个机制下，AI 不再依赖一次性读取全部资料，而是通过统一入口获取与当前任务相关的上下文。Heicode 可以在任务执行和审核时帮助 AI 检索相关信息，从而降低不同开发节点之间的信息差。
+Under this mechanism, the AI no longer depends on reading all materials at once, but instead retrieves context relevant to the current task through a unified entry point. Heicode can help the AI retrieve relevant information during task execution and review, reducing the information gap between different development streams.
 
-## 工单不是填表，而是定义 AI 的输出
+## A ticket is not a form to fill out — it defines the AI's output
 
-Heicode 不要求用户使用固定工单模板。不同团队、不同项目、不同场景可以有不同的工单格式。工单的核心不是字段多，而是让 AI 明确知道最终应该返回什么。
+Heicode does not require users to use a fixed ticket template. Different teams, projects, and scenarios can use different ticket formats. The core of a ticket is not how many fields it has, but making it clear to the AI exactly what it should ultimately return.
 
-一个有效工单至少应让 AI 明白四件事：我要你做什么，你最后应该交付什么，哪些内容不要做，以及完成后我如何判断你做对了。工单越模糊，AI 越容易自由发挥；工单越能描述返回结果，团队越容易执行、评审和验收。
+An effective ticket should at minimum make the AI understand four things: what you want it to do, what it should ultimately deliver, what it should not do, and how you will judge afterward whether it did the job correctly. The more ambiguous a ticket is, the more freely the AI will improvise; the more clearly a ticket describes the expected result, the easier it is for the team to execute, review, and accept it.
 
-例如，下面这样的工单不够清楚：
-
-```
-帮我优化一下这个模块。
-```
-
-更好的写法是：
+For example, the following ticket is not clear enough:
 
 ```
-请检查用户登录模块，并返回：
-
-1. 当前登录流程的问题列表；
-2. 建议修改的文件；
-3. 修改后的代码或 PR；
-4. 测试方法；
-5. 不要改动注册、权限和账务模块。
+Help me optimize this module.
 ```
 
-这个示例并不是要求所有用户都必须按固定模板写工单，而是说明工单应该尽量定义 AI 的输出。对 Heicode 来说，工单不是为了填表，而是为了让 AI 的执行结果可以被追踪、被审核、被验收。
-
-## AIE：AI-Assisted Integrity Engineer
-
-AIE 是一种推荐的协作方式（让 Heicode 切换到审核者视角做二次检查），不是一个独立的产品功能或系统组件。
-
-AIE 是 AI-Assisted Integrity Engineer，可以理解为 AI 辅助一致性工程师。它不是普通开发者，也不是单纯的 Code Review Bot。AIE 的核心职责，是帮助团队检查 AI Code 生成的代码是否与项目目标、团队规范、工单要求和整体架构保持一致。
-
-在传统开发流程中，Code Review 主要由人完成。但当 AI Code 大幅提升开发速度后，人工 Review 的质量和效率都会受到挑战。团队不能简单地再启动一个 AI Code 去审核，因为这样可能只是引入另一个“脑袋”。如果这个审核 AI 没有基于统一的项目资料、团队规范、工单和 PR，它可能形成自己的理解，引入新的标准，甚至偏离原始目标。
-
-AIE 的价值在于，它不是自由发挥的 Reviewer，而是在统一上下文下进行一致性审核。它需要基于 Teams Claude.md、项目目录规范、工单内容、PR 内容、CI 结果、项目资料和团队评论来判断代码变更是否合理。它关注的不只是代码能不能运行，还包括是否超出任务边界、是否重复定义已有标准、是否影响其他模块、是否缺少测试、是否存在权限或安全风险，以及是否可以进入 E2E 阶段。
-
-## 双审制度：对接人审核 + AIE 审核
-
-在重要任务、跨模块任务、生产相关任务和大型团队协作中，建议采用“对接人审核 + AIE 审核”的双审制度。对接人审核主要负责业务目标，确认工单目标是否正确、用户需求是否被满足、返回结果是否符合预期、是否可以进入下一阶段。AIE 审核主要负责工程一致性，确认代码是否符合团队规范、项目规范、CI 要求、安全要求和跨模块协作要求。
-
-只有人工审核，容易漏掉技术细节和跨模块一致性问题；只有 AIE 审核，又容易缺少业务判断和需求判断。双审制度的目的不是增加流程负担，而是让业务目标和工程一致性分别被检查，避免一个角色承担所有判断。
-
-当 Heicode 进入 AIE 角色后，应根据团队规范自动读取相关项目文件、项目资料、工单信息、PR 内容和 CI 结果，并围绕代码变更进行评审。AIE 的审核意见应尽量落在可执行问题上，例如哪个文件不符合规范，哪个接口可能与已有定义冲突，哪个测试缺失，哪个修改超出了工单范围，哪个 CI 失败需要修复，哪个问题需要人工对接人确认。AIE 不应只输出“代码质量一般”“建议优化”“需要加强测试”这类笼统意见。
-
-推荐流程如下：
+A better version is:
 
 ```
-开发者提交 PR
-  ↓
-CI 自动运行
-  ↓
-Heicode 进入 AIE 角色
-  ↓
-AIE 读取 Teams Claude.md、项目规范、工单、PR 和 CI 结果
-  ↓
-AIE 输出审核意见
-  ↓
-开发者在 PR 或工单中回复、修复或解释
-  ↓
-对接人进行业务审核
-  ↓
-满足条件后合并或进入 E2E
+Please review the user login module and return:
+
+1. A list of issues with the current login flow;
+2. The files you recommend changing;
+3. The modified code or a PR;
+4. The testing method;
+5. Do not modify the registration, permission, or billing modules.
 ```
 
-## PR、评论和工单状态同步
+This example is not meant to require every user to write tickets in a fixed template — it illustrates that a ticket should, as much as possible, define the AI's output. For Heicode, a ticket is not there to be filled out as a form, but to make the AI's execution results traceable, reviewable, and acceptable.
 
-AI Code 参与开发后，团队更需要及时维护工单和 PR 状态。因为 AI 的判断依赖上下文，如果工单状态、PR 评论和 CI 结果没有及时更新，AIE 和其他开发者可能会基于过期信息继续判断，导致重复审核、重复修改或错误合并。
+## AIE: AI-Assisted Integrity Engineer
 
-开发者应在工单中说明当前进度，在 PR 中回复审核意见，对 AIE 提出的明确问题进行修复或解释，并及时标记已经解决的问题。已经完成的工单应及时关闭，不再推进的工单应说明原因并暂停或锁定。大型团队中，沟通延迟会直接影响 AI 协作质量。Code Review 还没有完成，代码已经迭代多轮，是 AI 协作中非常常见的风险。
+AIE is a recommended collaboration approach (having Heicode switch to a reviewer's perspective for a second check), not a standalone product feature or system component.
 
-因此，团队应把 PR 评论、工单状态和 CI 结果视为实时协作记录，而不是事后补充材料。Heicode 需要基于这些记录理解当前任务状态，AIE 也需要基于这些记录判断代码是否仍然符合目标。
+AIE stands for AI-Assisted Integrity Engineer, which can be understood as an AI-assisted consistency engineer. It is not an ordinary developer, nor simply a code review bot. AIE's core responsibility is to help the team check whether the code generated by AI Code stays consistent with the project goals, team standards, ticket requirements, and overall architecture.
 
-## E2E 前的一致性检查
+In a traditional development workflow, code review is mainly done by humans. But once AI Code substantially increases development speed, the quality and efficiency of manual review are both challenged. A team cannot simply spin up another AI Code instance to do the reviewing, because that may just be introducing another "mind." If this reviewing AI is not grounded in the same unified project materials, team standards, tickets, and PRs, it may form its own understanding, introduce new standards, or even drift from the original goal.
 
-E2E 阶段不应该是第一次发现标准不一致的地方。如果等到 E2E 才发现前后端字段不一致、状态码不一致、权限逻辑不一致、接口约定不一致或部署环境不一致，修复成本通常会很高。大型团队中，越晚发现一致性问题，牵涉的工单、分支、PR 和人员就越多。
+The value of AIE lies in the fact that it is not a freely improvising reviewer, but performs a consistency review grounded in a unified context. It needs to judge whether a code change is reasonable based on Teams Claude.md, project-directory standards, ticket content, PR content, CI results, project materials, and team comments. It cares not only about whether the code runs, but also about whether it exceeds the task boundary, whether it redefines an existing standard, whether it affects other modules, whether tests are missing, whether there are permission or security risks, and whether it is ready to enter the E2E stage.
 
-因此，在进入 E2E 前，团队应通过 AIE 和人工对接人提前检查模块之间的接口、字段、状态码、错误格式、权限、审计、账务、测试环境、部署环境和未解决评论。如果发现问题，应优先回到工单、PR 和规范文件中修正，而不是只在测试阶段临时补丁。
+## Dual review: point-of-contact review + AIE review
 
-AIE 在这里的作用，是帮助团队提前发现跨模块冲突和标准分裂问题。它不是替代 E2E 测试，而是让很多本该在 PR 阶段解决的问题不要拖到 E2E 阶段。
+For important tasks, cross-module tasks, production-related tasks, and large-team collaboration, it is recommended to adopt a dual-review system of "point-of-contact review + AIE review." Point-of-contact review is mainly responsible for the business goal — confirming whether the ticket's goal is correct, whether the user's requirement is satisfied, whether the returned result matches expectations, and whether it can proceed to the next stage. AIE review is mainly responsible for engineering consistency — confirming whether the code complies with team standards, project standards, CI requirements, security requirements, and cross-module collaboration requirements.
 
-## 技术实践建议
+Relying on human review alone easily misses technical details and cross-module consistency issues; relying on AIE review alone easily lacks business judgment and requirement judgment. The purpose of the dual-review system is not to add process overhead, but to let the business goal and engineering consistency each be checked separately, instead of putting all the judgment on one role.
 
-在多人同时使用 AI Code 前，团队应先准备 Teams Claude.md、项目目录规范和基础资料入口。没有统一规范时，AI Code 越高效，越容易产生更多不一致实现。重要规范不应只存在于聊天记录或个人经验中，而应写入 Git 或可追踪的文档库，让 Heicode、AIE 和团队成员都可以读取同一份资料。
+When Heicode enters the AIE role, it should automatically read the relevant project files, project materials, ticket information, PR content, and CI results according to team standards, and conduct a review around the code change. AIE's review comments should focus as much as possible on actionable issues — for example, which file does not comply with the standard, which interface may conflict with an existing definition, which test is missing, which change exceeds the scope of the ticket, which CI failure needs to be fixed, and which issue needs confirmation from a human point of contact. AIE should not only output vague comments like "code quality is average," "consider optimizing," or "needs more tests."
 
-团队也不应把所有规则都写进一个文件。Teams Claude.md 应保持团队级最高规范，具体项目和模块规则应放在对应目录中。这样可以减少大文件失控，也能让 AI 在处理具体任务时读取更准确的局部上下文。
+The recommended flow is as follows:
 
-复杂任务不建议一次性交给 AI 完成。团队可以按阶段拆分为需求确认、技术方案、代码实现、测试修复、预发验证和生产发布；也可以按模块拆分为用户模块、权限模块、账务模块、通知模块和审计模块；还可以按风险拆分为低风险代码修改、测试环境部署、预发验证和生产审批。拆分后的任务更容易被 AI 理解，也更容易被 AIE 和对接人审核。
+```
+Developer submits a PR
+  ↓
+CI runs automatically
+  ↓
+Heicode enters the AIE role
+  ↓
+AIE reads Teams Claude.md, project standards, the ticket, the PR, and CI results
+  ↓
+AIE outputs review comments
+  ↓
+Developer responds, fixes, or explains in the PR or ticket
+  ↓
+Point of contact performs the business review
+  ↓
+Merge or proceed to E2E once conditions are met
+```
 
-## 推荐最小流程
+## Keeping PRs, comments, and ticket status in sync
 
-对于刚开始使用 Heicode 的团队，可以先采用一套最小流程。团队先准备 Teams Claude.md，并在项目目录中放置必要的局部规范。每个任务通过工单说明期望返回结果，然后使用 Heicode 启动 AI Code 或 Agent。代码变更通过 PR 提交，CI 自动检查后，由 AIE 进行一致性审核，再由对接人进行业务审核，最后合并或进入 E2E。
+Once AI Code participates in development, the team needs to maintain ticket and PR status even more promptly. Because the AI's judgment depends on context, if ticket status, PR comments, and CI results are not updated in time, AIE and other developers may continue to make judgments based on outdated information, leading to duplicate reviews, duplicate changes, or incorrect merges.
 
-这套流程不要求团队一次性建立完整体系，但可以先保证三个关键点：规范可读取，结果可追踪，审核可对齐。
+Developers should state their current progress in the ticket, respond to review comments in the PR, fix or explain the specific issues AIE raises, and promptly mark resolved issues as resolved. Completed tickets should be closed promptly, and tickets that are no longer being pursued should state the reason and be paused or locked. In a large team, communication delay directly affects the quality of AI collaboration. It is a very common risk in AI collaboration for code to go through several more iterations before a code review is even finished.
 
-## 常见反例
+Therefore, the team should treat PR comments, ticket status, and CI results as real-time collaboration records, not supplementary material added after the fact. Heicode needs to understand the current task status based on these records, and AIE also needs to judge whether the code still meets the goal based on these records.
 
-一种常见反例是只有任务，没有返回结果。例如“帮我把这个系统优化一下”。这种工单看似表达了方向，但 AI 不知道最终应该交付什么，对接人也不知道如何验收，AIE 更难判断 PR 是否完成了目标。更好的方式是让工单明确返回问题列表、修改方案、PR、测试方法和不允许修改的范围。
+## Consistency checks before E2E
 
-另一种常见反例是每个开发者各写各的规则。如果不同 CLAUDE.md 之间互相冲突，AI 就可能按照局部规则突破团队规范，最终在 E2E 阶段出现接口、权限和部署不一致。正确做法是使用 Teams Claude.md 定义团队最高规范，项目和模块规则放在对应目录，开发者 CLAUDE.md 只能细化，不能突破团队规范。
+The E2E stage should not be the first place where inconsistent standards are discovered. If it is not until E2E that inconsistencies in frontend/backend fields, status codes, permission logic, interface contracts, or deployment environments are discovered, the cost of fixing them is usually high. In a large team, the later a consistency problem is discovered, the more tickets, branches, PRs, and people end up involved.
 
-还有一种反例是 PR 审核只看代码 diff。代码能运行并不代表它符合工单目标，也不代表它没有破坏跨模块约定。PR 审核应同时参考工单、Teams Claude.md、项目规范和 CI 结果。对于重要任务，应使用对接人审核和 AIE 审核共同完成判断。
+Therefore, before entering E2E, the team should use AIE and human points of contact to check in advance the interfaces, fields, status codes, error formats, permissions, audit, billing, test environment, deployment environment, and unresolved comments across modules. If a problem is found, it should be prioritized for correction in the ticket, PR, and standards files, rather than only being patched temporarily at the testing stage.
 
-最后一种反例是 E2E 阶段才开始统一标准。这个时候各模块往往已经形成不同实现，修复成本高，责任边界也不清楚。团队应尽量在 PR 阶段通过 AIE 提前检查一致性，并在进入 E2E 前完成接口、权限、测试和部署检查。
+AIE's role here is to help the team discover cross-module conflicts and fragmented standards in advance. It does not replace E2E testing — it prevents many problems that should have been resolved at the PR stage from dragging on into the E2E stage.
 
-## 总结
+## Technical practice recommendations
 
-AI Code 提升的是开发速度，但大型团队真正需要控制的是一致性。Heicode 推荐团队围绕 Git 建立协作主线，通过 Teams Claude.md 定义团队最高规范，通过项目目录规范承接局部细节，通过工单定义 AI 的期望输出，通过 PR 和 CI 记录代码变化，通过 AIE 和对接人双审机制保证代码、目标和项目整体一致。
+Before multiple people start using AI Code at the same time, the team should first prepare Teams Claude.md, project-directory standards, and a basic materials entry point. Without unified standards, the more efficient AI Code becomes, the more likely it is to produce more inconsistent implementations. Important standards should not exist only in chat history or personal experience — they should be written into Git or a traceable documentation library, so that Heicode, AIE, and team members can all read the same material.
 
-最终目标不是让团队填写更多流程，而是让 AI 开发过程具备三个能力：规范可读取，过程可追踪，结果可审查。
+Teams also should not write every rule into a single file. Teams Claude.md should remain the team-level top standard, while specific project and module rules should be placed in their corresponding directories. This reduces the risk of a large file spiraling out of control, and lets the AI read more accurate, localized context when handling a specific task.
+
+Complex tasks are not recommended to be handed to the AI all at once. A team can split them by phase into requirement confirmation, technical solution, code implementation, test fixes, staging verification, and production release; or split them by module into user module, permission module, billing module, notification module, and audit module; or split them by risk into low-risk code changes, test environment deployment, staging verification, and production approval. Split tasks are easier for the AI to understand, and easier for AIE and points of contact to review.
+
+## A recommended minimal process
+
+For a team just starting to use Heicode, a minimal process can be adopted first. The team first prepares Teams Claude.md, and places the necessary local standards in the project directories. Each task states the expected result through a ticket, and then uses Heicode to launch AI Code or an Agent. Code changes are submitted through a PR; after CI runs automatically, AIE performs a consistency review, followed by a business review from the point of contact, and finally the change is merged or proceeds to E2E.
+
+This process does not require the team to build out a complete system all at once, but it can secure three key points from the start: standards can be read, results can be traced, and reviews can be aligned.
+
+## Common anti-patterns
+
+One common anti-pattern is having only a task with no defined result — for example, "help me optimize this system." A ticket like this seems to express a direction, but the AI does not know what it should ultimately deliver, the point of contact does not know how to accept it, and it is even harder for AIE to judge whether the PR has achieved the goal. A better approach is to make the ticket explicitly define a list of issues, a fix plan, a PR, a testing method, and the scope that must not be modified.
+
+Another common anti-pattern is each developer writing their own rules independently. If different CLAUDE.md files conflict with each other, the AI may follow local rules that override the team standard, eventually resulting in inconsistent interfaces, permissions, and deployment at the E2E stage. The correct approach is to use Teams Claude.md to define the team's top-level standard, place project and module rules in their corresponding directories, and let a developer's CLAUDE.md only refine — never override — the team standard.
+
+Another anti-pattern is a PR review that only looks at the code diff. Code that runs does not mean it meets the ticket's goal, nor does it mean it hasn't broken a cross-module convention. A PR review should reference the ticket, Teams Claude.md, project standards, and CI results together. For important tasks, point-of-contact review and AIE review should be used together to reach a judgment.
+
+A final anti-pattern is only unifying standards at the E2E stage. By that point, different modules have often already formed different implementations, the cost of fixing them is high, and the boundaries of responsibility are unclear. Teams should try to use AIE to check consistency in advance at the PR stage, and complete interface, permission, testing, and deployment checks before entering E2E.
+
+## Summary
+
+What AI Code improves is development speed, but what a large team truly needs to control is consistency. Heicode recommends that teams build their collaboration timeline around Git, define the team's top-level standard through Teams Claude.md, carry local details through project-directory standards, define the AI's expected output through tickets, record code changes through PRs and CI, and ensure that code, goals, and the overall project stay consistent through the AIE-plus-point-of-contact dual-review mechanism.
+
+The ultimate goal is not to have the team fill out more process steps, but to give the AI development process three capabilities: standards that can be read, a process that can be traced, and results that can be reviewed.

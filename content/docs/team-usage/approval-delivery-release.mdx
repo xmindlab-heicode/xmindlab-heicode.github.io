@@ -1,112 +1,112 @@
 ---
-title: "审批、交付和发布"
+title: "Approval, Delivery, and Release"
 ---
 
-# 审批、交付和发布
+# Approval, Delivery, and Release
 
-<Callout type="warn" title="当前状态说明">
-  团队级的成员、角色和审批规则配置界面仍在规划/后端阶段，尚未开放独立的团队管理界面。本页描述的审批请求、短期凭证派生和审计记录是已经在单任务/单 Agent 场景下真实运行的机制。
+<Callout type="warn" title="Current Status Notice">
+  The interface for configuring team-level members, roles, and approval rules is still in the planning/backend stage, and a dedicated team management interface has not yet been made available. The approval requests, short-lived credential derivation, and audit records described on this page are mechanisms that already run in real, single-task/single-Agent scenarios.
 </Callout>
 
-团队使用 Heicode 时，高危操作不能由 Agent 默认自动完成。审批是团队控制生产风险的核心机制。
+When a team uses Heicode, high-risk operations cannot be completed automatically by an Agent by default. Approval is the core mechanism by which a team controls production risk.
 
-## 必须审批的操作
+## Operations that must be approved
 
-- 生产部署。
-- 生产数据库读写。
-- 生产密钥访问。
-- 云资源创建、删除、扩缩容。
-- 合并到主分支。
-- 外部发送敏感数据。
-- 大额模型预算消耗。
-- 批量删除文件。
+- Production deployment.
+- Production database read/write.
+- Production secret access.
+- Cloud resource creation, deletion, scaling.
+- Merging to the main branch.
+- Sending sensitive data externally.
+- Large-scale model budget consumption.
+- Bulk file deletion.
 
-## 审批人机制
+## Approver mechanism
 
-每个高危操作可以指定一个目标审批角色（`TargetRole`），由该角色的成员批准。具体哪个操作配哪个审批角色，目前由任务发起时的实际设置决定，不是平台预置的固定规则表，也没有"生产部署需要 A+B 角色批准"这样的审批矩阵。团队可以按自身分工习惯为不同操作指定合适的 `TargetRole`，例如生产部署、生产数据库写入、生产密钥访问优先指定给熟悉运维和安全的成员，大额预算优先指定给 Owner。
+Each high-risk operation can specify a target approval role (`TargetRole`), approved by a member holding that role. Which approval role is assigned to which operation is currently determined by the actual settings at task launch time, not a fixed rule table preset by the platform, nor an approval matrix such as "production deployment requires approval from roles A+B." Teams can assign the appropriate `TargetRole` to different operations based on their own division of labor — for example, prioritizing members familiar with operations and security for production deployment, production database writes, and production secret access, and prioritizing the Owner for large budgets.
 
-## 审批前必须检查
+## Must be checked before approval
 
-- 操作目标。
-- 目标资源。
-- 目标环境。
-- 影响范围。
-- 风险等级。
-- 预算影响。
-- 是否可回滚。
-- 凭证 TTL。
-- diff 或部署计划。
+- Operation target.
+- Target resource.
+- Target environment.
+- Scope of impact.
+- Risk level.
+- Budget impact.
+- Whether it is reversible.
+- Credential TTL.
+- The diff or deployment plan.
 
-## 审批结果
+## Approval outcomes
 
-批准：
+Approved:
 
-- 只批准本次操作。
-- 只在当前 TTL 内有效。
-- 平台派生短期凭证。
-- 写入审计记录。
+- Only this specific operation is approved.
+- Only valid within the current TTL.
+- The platform derives short-lived credentials.
+- An audit record is written.
 
-拒绝：
+Rejected:
 
-- 高危操作不会执行。
-- 任务进入 blocked 或替代方案。
-- Agent 应说明后续选择。
+- The high-risk operation will not be executed.
+- The task enters a blocked state or an alternative approach.
+- The Agent should explain the subsequent options.
 
-## 代码审查
+## Code review
 
-代码审查应检查：
+Code review should check:
 
-- 是否符合需求。
-- 是否只修改授权范围。
-- 是否有无关改动。
-- 是否有测试。
-- 是否有错误处理。
-- 是否有明文密钥。
-- 是否影响生产数据。
+- Whether it meets the requirements.
+- Whether it only modifies the authorized scope.
+- Whether there are unrelated changes.
+- Whether there are tests.
+- Whether there is error handling.
+- Whether there are plaintext secrets.
+- Whether it affects production data.
 
-Reviewer Agent 可以辅助审查，但最终判断应由团队负责人完成。
+A Reviewer Agent can assist with the review, but the final judgment should be made by the team owner.
 
-## 功能验收
+## Feature acceptance
 
-验收时检查：
+At acceptance, check:
 
-- 是否满足验收标准。
-- 核心流程是否可用。
-- 边界条件是否处理。
-- UI 或接口是否符合要求。
-- 测试是否通过。
-- 文档是否更新。
+- Whether acceptance criteria are met.
+- Whether the core flow works.
+- Whether edge cases are handled.
+- Whether the UI or interface meets requirements.
+- Whether tests pass.
+- Whether documentation has been updated.
 
-## 发布前检查
+## Pre-release checklist
 
-- 功能已验收。
-- 测试已通过。
-- 代码已审查。
-- 无明文密钥。
-- 部署计划已确认。
-- 回滚方案已确认。
-- 生产审批已完成。
-- 监控和日志可用。
-- 审计记录完整。
+- The feature has been accepted.
+- Tests have passed.
+- The code has been reviewed.
+- No plaintext secrets.
+- The deployment plan has been confirmed.
+- The rollback plan has been confirmed.
+- Production approval has been completed.
+- Monitoring and logging are available.
+- Audit records are complete.
 
-## 发布后检查
+## Post-release checklist
 
-- 服务是否可访问。
-- 核心功能是否正常。
-- 错误率是否异常。
-- 日志是否正常。
-- 资源消耗是否异常。
-- 用户反馈是否正常。
+- Whether the service is accessible.
+- Whether core functionality is normal.
+- Whether the error rate is abnormal.
+- Whether logs are normal.
+- Whether resource consumption is abnormal.
+- Whether user feedback is normal.
 
-## 回滚
+## Rollback
 
-需要回滚时：
+When a rollback is needed:
 
-1. 停止继续部署。
-2. 确认上一稳定版本。
-3. 执行回滚。
-4. 检查服务。
-5. 记录原因。
-6. 创建修复任务。
+1. Stop further deployment.
+2. Confirm the last stable version.
+3. Execute the rollback.
+4. Check the service.
+5. Record the reason.
+6. Create a fix task.
 
-回滚同样应记录审计。
+Rollbacks should also be recorded in the audit trail.

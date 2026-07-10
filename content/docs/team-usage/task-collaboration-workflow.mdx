@@ -1,141 +1,141 @@
 ---
-title: "团队任务协作流程"
+title: "Team Task Collaboration Workflow"
 ---
 
-# 团队任务协作流程
+# Team Task Collaboration Workflow
 
-团队使用 Heicode 的核心工作流是：客户端输入目标，Manager 准备资源，Agent 执行，团队在需要时输入、审批和验收。
+The core workflow for a team using Heicode is: the client inputs the goal, the Manager prepares resources, the Agent executes, and the team provides input, approval, and acceptance as needed.
 
-## 任务从哪里开始
+## Where a task starts
 
-任务主要从 Heicode 客户端开始。
+Tasks primarily start from the Heicode client.
 
-Manager 不作为网页编码入口，它负责：
+The Manager does not serve as a web-based coding entry point; it is responsible for:
 
-- 准备清单。
-- 资源连接。
-- Agent 启动。
-- 状态查看。
-- 用量和审计。
+- Preparing the readiness checklist.
+- Resource connections.
+- Agent launch.
+- Status viewing.
+- Usage and audit.
 
-## 任务描述模板
+## Task description template
 
 ```text
-任务名称：
-业务背景：
-目标用户：
-要完成的功能：
-已有代码或文档：
-目标环境：
-不能做什么：
-必须审批的操作：
-验收标准：
-截止时间：
+Task name:
+Business background:
+Target users:
+Feature to be completed:
+Existing code or documentation:
+Target environment:
+What must not be done:
+Operations requiring approval:
+Acceptance criteria:
+Deadline:
 ```
 
-## 团队分工
+## Team division of labor
 
-Heicode 组织当前的真实角色只有 Owner、Admin、Member、Auditor 四种，平台不提供更细的岗位角色。下表是团队内部可以参考的职责分工建议，按任务阶段划分，而不是平台强制的角色系统：
+Currently there are only four real roles in a Heicode organization: Owner, Admin, Member, and Auditor; the platform does not provide more granular job roles. The table below is a suggested division of responsibilities that a team can reference internally, organized by task phase, rather than a role system enforced by the platform:
 
-| 阶段 | 建议负责人 |
+| Phase | Suggested owner |
 |---|---|
-| 需求输入 | 熟悉业务需求的成员 |
-| 技术边界 | 熟悉技术方案的成员 |
-| 仓库和分支 | 负责代码的成员 |
-| 文档和 SK | 熟悉产品或技术文档的成员 |
-| 云资源 | 熟悉运维的成员 |
-| 密钥和审批 | Admin 或指定的审批角色（`TargetRole`） |
-| 预算 | Owner |
-| 验收 | 需求负责人 / 技术负责人 |
+| Requirement input | Members familiar with business requirements |
+| Technical boundaries | Members familiar with the technical solution |
+| Repository and branches | Members responsible for the code |
+| Documentation and SK | Members familiar with product or technical documentation |
+| Cloud resources | Members familiar with operations |
+| Secrets and approval | Admin or a designated approval role (`TargetRole`) |
+| Budget | Owner |
+| Acceptance | Requirement owner / technical owner |
 
-## 准备清单
+## Readiness checklist
 
-准备清单会显示：
+The readiness checklist shows:
 
-- Git 是否连接。
-- 文档是否连接。
-- SK 是否连接。
-- 云账号是否连接。
-- 云资源是否选择。
-- 预算是否设置。
-- 审批规则是否设置。
-- Agent 角色是否确认。
+- Whether Git is connected.
+- Whether documentation is connected.
+- Whether SK is connected.
+- Whether the cloud account is connected.
+- Whether cloud resources are selected.
+- Whether a budget is set.
+- Whether approval rules are set.
+- Whether the Agent role is confirmed.
 
-团队应先补齐准备清单，再启动 Agent。
+The team should complete the readiness checklist before launching the Agent.
 
-## 启动前会议
+## Pre-launch meeting
 
-重要任务建议启动前短会确认：
+For important tasks, it is recommended to hold a short pre-launch meeting to confirm:
 
-- 目标是否清楚。
-- 验收标准是否明确。
-- 资源范围是否安全。
-- 是否涉及生产。
-- 审批人是否在线。
-- 预算是否足够。
-- 是否需要拆分任务。
+- Whether the goal is clear.
+- Whether acceptance criteria are explicit.
+- Whether the resource scope is safe.
+- Whether production is involved.
+- Whether the approver is online.
+- Whether the budget is sufficient.
+- Whether the task needs to be split.
 
-## 任务执行中
+## During task execution
 
-任务执行中，团队只需要处理三类事项：
+While a task is executing, the team only needs to handle three types of matters:
 
-- 需要输入：回答 Agent 的问题。
-- 等待审批：确认风险后批准或拒绝。
-- 可验收：检查交付结果。
+- Input needed: answer the Agent's questions.
+- Waiting for approval: confirm the risk before approving or rejecting.
+- Ready for acceptance: check the delivered result.
 
-不要让所有成员都同时修改任务方向。建议由任务负责人统一回复。
+Do not let all members change the task direction at the same time. It is recommended that the task owner respond in a unified way.
 
-## 任务拆分
+## Splitting tasks
 
-任务过大时应拆分。
+When a task is too large, it should be split.
 
-按阶段拆：
-
-```text
-需求确认
--> 架构方案
--> 前端实现
--> 后端实现
--> 测试修复
--> 部署上线
-```
-
-按模块拆：
+Split by phase:
 
 ```text
-用户系统
--> 项目系统
--> 任务系统
--> 评论系统
--> 通知系统
+Requirement confirmation
+-> Architecture solution
+-> Frontend implementation
+-> Backend implementation
+-> Test fixes
+-> Deployment and release
 ```
 
-按风险拆：
+Split by module:
 
 ```text
-低风险代码修改
--> 测试环境部署
--> 预发验证
--> 生产审批
+User system
+-> Project system
+-> Task system
+-> Comment system
+-> Notification system
 ```
 
-## 任务沟通规范
-
-好的回复：
+Split by risk:
 
 ```text
-只实现登录和项目列表。
-不要做通知模块。
-只改 api/projects 和 app/projects。
-完成后运行测试，不要部署。
+Low-risk code changes
+-> Test environment deployment
+-> Staging verification
+-> Production approval
 ```
 
-不好的回复：
+## Task communication norms
+
+Good replies:
 
 ```text
-继续。
-都做一下。
-你自己判断。
+Only implement login and the project list.
+Do not build the notification module.
+Only modify api/projects and app/projects.
+Run tests after completion, do not deploy.
 ```
 
-越具体，Agent 越容易交付正确结果。
+Bad replies:
+
+```text
+Keep going.
+Just do everything.
+Use your own judgment.
+```
+
+The more specific the instruction, the easier it is for the Agent to deliver the correct result.

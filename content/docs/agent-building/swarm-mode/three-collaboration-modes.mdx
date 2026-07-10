@@ -1,222 +1,222 @@
 ---
-title: "Agent 协作模式：蜂群、Sub，及链式概念参考"
+title: "Agent Collaboration Modes: Swarm, Sub, and Chain as a Conceptual Reference"
 ---
 
-# Agent 协作模式：蜂群、Sub，及链式概念参考
+# Agent Collaboration Modes: Swarm, Sub, and Chain as a Conceptual Reference
 
-Heicode 当前可以选择的 Agent 协作模式只有两种：
+Heicode currently offers only two selectable Agent collaboration modes:
 
-- 蜂群模式：一台租户级虚拟机上，lead（主管）Agent 拆解任务并派发，多个 worker（工作）Agent 领取并执行，worker 数量最多 8 个、默认 3 个（随套餐可调整）。
-- Sub 模式：主 Agent 拆分任务，多个子 Agent 分工执行。
+- Swarm mode: on a tenant-level virtual machine, a lead Agent breaks down and dispatches tasks, and multiple worker Agents claim and execute them — up to 8 workers, 3 by default (adjustable by plan).
+- Sub mode: a main Agent splits the task, and multiple sub-agents execute it by division of labor.
 
-本文也会介绍"链式模式"这个概念，它来自 [Agent 蜂群模式（Swarm）解析](https://juejin.cn/post/7603575399255949352) 一文，用来帮助理解多 Agent 协作的不同形态。**需要明确：链式模式目前不是 Heicode 产品中可以选择的模式，代码中也没有对应实现，这里只作为概念参考，不代表 Heicode 提供第三种可选协作模式。**
+This article also introduces the concept of "Chain mode," drawn from the article [Analyzing the Agent Swarm Pattern](https://juejin.cn/post/7603575399255949352), to help understand different forms of multi-Agent collaboration. **To be clear: Chain mode is not currently a selectable mode in the Heicode product, and there's no corresponding implementation in the code — it's included here purely as a conceptual reference, and does not mean Heicode offers a third selectable collaboration mode.**
 
-这些模式解决的是"多个 Agent 如何协作"的问题。它们不是计费套餐，也不是模型等级。
+These modes address the question of "how multiple Agents collaborate." They are not billing tiers, and not model tiers.
 
-## 一句话理解
+## Understanding it in one line
 
-| 模式 | 是否可选 | 一句话 |
+| Mode | Selectable | One-liner |
 |---|---|---|
-| 蜂群模式 | 可选 | lead Agent 拆解任务并派发，多个 worker Agent 并行执行，lead 聚合结果。 |
-| Sub 模式 | 可选 | 有主 Agent 负责拆分、分配、汇总，子 Agent 按职责完成局部任务。 |
-| 链式模式 | 不可选，仅概念参考 | 任务按固定步骤从上一个 Agent 交给下一个 Agent，像流水线一样执行。 |
+| Swarm mode | Selectable | The lead Agent breaks down and dispatches tasks, multiple worker Agents execute in parallel, and the lead aggregates results. |
+| Sub mode | Selectable | A main Agent handles splitting, assignment, and aggregation; sub-agents complete local tasks by responsibility. |
+| Chain mode | Not selectable, conceptual reference only | Tasks pass from one Agent to the next in fixed steps, executing like a pipeline. |
 
-## 一、蜂群模式
+## I. Swarm mode
 
-文章中的 Swarm 思想强调"没有强中心调度、个体自组织"，但 Heicode 实际落地的蜂群模式并不是这样。它是 lead 加 worker 的主从架构：一台租户级 Azure 虚拟机上以 docker-compose 运行一个 api 容器、一个 lead 容器和若干 worker 容器，lead 负责接收目标、拆解任务并派发，worker 负责领取并执行，worker 数量最多 8 个、默认 3 个（随套餐可调整）。
+The article's Swarm concept emphasizes "no strong central scheduling, self-organizing individuals," but the Swarm mode Heicode has actually implemented isn't like that. It's a lead-plus-worker architecture: on a tenant-level Azure virtual machine, an api container, a lead container, and several worker containers run via docker-compose — the lead is responsible for receiving the goal, breaking down the task, and dispatching it, while workers are responsible for claiming and executing it, up to 8 workers, 3 by default (adjustable by plan).
 
-在 Heicode 中，可以理解为：
+In Heicode, this can be understood as:
 
 ```text
-用户目标
--> lead Agent 拆解任务
--> lead 把子任务派发给 worker
--> worker 领取、执行、上报心跳
--> 高危操作进入审批
--> lead 聚合 worker 结果
--> 输出结果
+User goal
+-> The lead Agent breaks down the task
+-> The lead dispatches subtasks to workers
+-> Workers claim, execute, and report heartbeat
+-> High-risk operations go through approval
+-> The lead aggregates worker results
+-> Output the result
 ```
 
-### 蜂群模式的关键特征
+### Key characteristics of Swarm mode
 
-| 特征 | 说明 |
+| Characteristic | Description |
 |---|---|
-| 主从架构 | lead 负责拆解和调度，worker 负责领取和执行，不是无中心的自组织。 |
-| 显式派发 | 子任务由 lead 拆解后派发给 worker，不是 worker 自行竞争任务。 |
-| 心跳上报 | worker 领取任务后持续上报心跳，便于 lead 判断进度和异常。 |
-| Handoff | 某个 Agent 可以把任务、上下文或控制权交给另一个 Agent。 |
-| 结果聚合 | lead 汇总多个 worker 的结果，判断是否达到验收标准。 |
-| 鲁棒性 | 单个 worker 失败时，lead 可以重新派发给其他 worker。 |
+| Lead-worker architecture | The lead handles decomposition and scheduling, workers handle claiming and execution — not centerless self-organization. |
+| Explicit dispatch | Subtasks are broken down by the lead and then dispatched to workers — workers don't compete for tasks on their own. |
+| Heartbeat reporting | Workers continuously report a heartbeat after claiming a task, so the lead can judge progress and anomalies. |
+| Handoff | One Agent can hand off a task, context, or control to another Agent. |
+| Result aggregation | The lead aggregates results from multiple workers and judges whether acceptance criteria are met. |
+| Robustness | If a worker fails, the lead can redispatch the task to another worker. |
 
-### 蜂群模式适合什么任务
+### What tasks Swarm mode is good for
 
-适合：
+Good fit:
 
-- 多源资料研究。
-- 大规模代码审查。
-- 复杂故障排查。
-- 多方案探索。
-- 安全、性能、测试多维度并行检查。
-- 子任务会动态生成、互相影响的复杂任务。
+- Research across multiple sources.
+- Large-scale code review.
+- Complex troubleshooting.
+- Exploring multiple approaches.
+- Parallel checks across security, performance, and testing dimensions.
+- Complex tasks whose subtasks are generated dynamically and affect each other.
 
-不适合：
+Not a good fit:
 
-- 很小的单步任务。
-- 预算非常紧的任务。
-- 必须严格线性执行的任务。
-- 强一致性事务。
-- 没有明确停止条件的任务。
-- 涉及生产高危操作但没有审批边界的任务。
+- Very small, single-step tasks.
+- Tasks with a very tight budget.
+- Tasks that must execute strictly linearly.
+- Strongly consistent transactions.
+- Tasks with no clear stopping condition.
+- Tasks involving high-risk production operations without an approval boundary.
 
-### Heicode 中蜂群模式需要额外控制什么
+### What Swarm mode in Heicode needs extra control over
 
-蜂群模式能力强，但也更容易失控。因此在 Heicode 中，蜂群模式必须保留平台约束：
+Swarm mode is powerful, but also more prone to going out of control. That's why, in Heicode, Swarm mode must retain platform constraints:
 
-- worker 数量上限（最多 8 个，默认 3 个，随套餐可调整）。
-- 最大预算和最长运行时间。
-- 高危操作审批。
-- 人工停止和接管。
-- 审计记录。
+- A worker count cap (up to 8, 3 by default, adjustable by plan).
+- A maximum budget and maximum runtime.
+- Approval for high-risk operations.
+- Manual stop and takeover.
+- Audit records.
 
-## 二、Sub 模式
+## II. Sub mode
 
-Sub 模式是 Heicode 中另一种更可控的多 Agent 协作方式。它和蜂群模式是两种独立的协作方式，不是蜂群模式的基础能力或子集。
+Sub mode is another, more controllable multi-Agent collaboration style in Heicode. It's a separate collaboration style from Swarm mode — not a base capability or subset of it.
 
-Sub 模式的核心是“主 Agent 可控拆分”。主 Agent 负责理解目标、拆分任务、分配给子 Agent、接收结果并统一汇总。
+The core of Sub mode is "controlled decomposition by a main Agent." The main Agent is responsible for understanding the goal, splitting it into tasks, assigning them to sub-agents, receiving results, and aggregating them.
 
 ```text
-用户目标
--> 主 Agent 理解目标
--> 主 Agent 拆分子任务
--> 子 Agent 分工执行
--> 子 Agent 交付结果
--> 主 Agent 聚合和验证
--> 输出最终结果
+User goal
+-> The main Agent understands the goal
+-> The main Agent splits it into subtasks
+-> Sub-agents execute by division of labor
+-> Sub-agents deliver results
+-> The main Agent aggregates and verifies
+-> Output the final result
 ```
 
-### Sub 模式和文章中的 Supervisor 模式关系
+### The relationship between Sub mode and the article's Supervisor pattern
 
-文章中对比了 Swarm、Supervisor、Chain。Heicode 的 Sub 模式更接近“Supervisor + 子 Agent 分工”的形态：
+The article compares Swarm, Supervisor, and Chain. Heicode's Sub mode is closer to the "Supervisor + sub-agent division of labor" form:
 
-- 有一个主 Agent 负责协调。
-- 子 Agent 的职责由主 Agent 或用户明确指定。
-- 子任务边界相对清楚。
-- 结果由主 Agent 汇总。
-- 风险、权限和预算更容易控制。
+- There's a main Agent responsible for coordination.
+- Sub-agent responsibilities are explicitly assigned by the main Agent or the user.
+- Subtask boundaries are relatively clear.
+- Results are aggregated by the main Agent.
+- Risk, permissions, and budget are easier to control.
 
-但 Heicode 的 Sub 模式不只是简单 Supervisor。它还会结合任务视图、权限边界、审批、用量和审计，让子 Agent 协作可以用于真实交付。
+But Heicode's Sub mode is more than a simple Supervisor. It also combines the task view, permission boundaries, approval, usage, and audit, so that sub-agent collaboration can be used for real delivery.
 
-### Sub 模式适合什么任务
+### What tasks Sub mode is good for
 
-适合：
+Good fit:
 
-- 多模块开发。
-- 复杂 bug 修复。
-- 文档、前端、后端、测试需要分工的任务。
-- 需要 Reviewer 独立审查的任务。
-- 任务可以提前拆成几个明确部分的场景。
+- Multi-module development.
+- Complex bug fixes.
+- Tasks that need documentation, frontend, backend, and testing split up.
+- Tasks that need an independent Reviewer to review.
+- Scenarios where the task can be split into a few clear parts up front.
 
-不适合：
+Not a good fit:
 
-- 子任务会不断动态生成的任务。
-- 需要大量 Agent 自主竞争或补全的任务。
-- 没有主线目标的开放探索。
-- 更适合固定流水线的简单任务。
+- Tasks whose subtasks keep being generated dynamically.
+- Tasks that need a large number of Agents competing for or filling in for each other autonomously.
+- Open-ended exploration with no main-line goal.
+- Simple tasks better suited to a fixed pipeline.
 
-### Sub 模式的价值
+### The value of Sub mode
 
-- 比单 Agent 更能处理复杂任务。
-- 比蜂群模式更容易控制风险。
-- 可以给不同子 Agent 设置不同权限。
-- 可以让执行、审查、部署分离。
-- 可以按子任务查看进度、失败原因和模型用量。
+- Handles complex tasks better than a single Agent.
+- Easier to control risk than Swarm mode.
+- Different sub-agents can be given different permissions.
+- Execution, review, and deployment can be kept separate.
+- Progress, failure reasons, and model usage can be viewed per subtask.
 
-## 三、链式模式（概念参考，非 Heicode 现有模式）
+## III. Chain mode (conceptual reference, not an existing Heicode mode)
 
-> 以下内容来自参考文章中的 Chain 概念，用来帮助理解协作光谱中的另一端。**Heicode 目前不提供可选择的链式模式，产品中没有对应功能。**
+> The following content comes from the Chain concept in the reference article, used to help understand the other end of the collaboration spectrum. **Heicode currently offers no selectable Chain mode, and there's no corresponding feature in the product.**
 
-链式模式对应文章中的 Chain。它的核心是“固定顺序流水线”。
+Chain mode corresponds to the Chain concept in the article. Its core is a "fixed-sequence pipeline."
 
-任务会按预设步骤依次传递：
+Tasks pass through preset steps in sequence:
 
 ```text
 Agent A
 -> Agent B
 -> Agent C
 -> Agent D
--> 输出结果
+-> Output the result
 ```
 
-链式模式中，每个 Agent 只处理上游传来的内容，然后把结果交给下游。
+In Chain mode, each Agent only processes what's passed down from upstream, then hands the result off downstream.
 
-### 链式模式适合什么任务
+### What tasks Chain mode is good for
 
-适合：
+Good fit:
 
-- 流程固定的任务。
-- 数据清洗、分析、报告生成。
-- 文档格式化。
-- 固定发布检查。
-- 固定审核流程。
-- 不需要动态调整路径的任务。
+- Tasks with a fixed process.
+- Data cleaning, analysis, report generation.
+- Document formatting.
+- Fixed release checks.
+- Fixed review processes.
+- Tasks that don't need the path adjusted dynamically.
 
-不适合：
+Not a good fit:
 
-- 复杂探索。
-- 多方案竞争。
-- 任务路径不确定。
-- 需要多个 Agent 并行补全。
-- 上游结果不稳定且需要反复回退的任务。
+- Complex exploration.
+- Competing between multiple approaches.
+- Tasks whose path is uncertain.
+- Tasks needing multiple Agents to fill in for each other in parallel.
+- Tasks where upstream results are unstable and need repeated rollback.
 
-### 链式模式的价值
+### The value of Chain mode
 
-- 最容易理解。
-- 最容易复现。
-- 最容易审计。
-- 成本可预测。
-- 每一步输出都清楚。
+- Easiest to understand.
+- Easiest to reproduce.
+- Easiest to audit.
+- Predictable cost.
+- Every step's output is clear.
 
-### 链式模式的风险
+### The risk of Chain mode
 
-- 灵活性低。
-- 上游失败会影响下游。
-- 某一步设计错误，整个流程都会偏。
-- 不适合动态任务。
+- Low flexibility.
+- An upstream failure affects everything downstream.
+- A design error at any single step throws off the whole flow.
+- Not suited to dynamic tasks.
 
-## 模式对比（含链式概念参考）
+## Mode comparison (including the Chain conceptual reference)
 
-| 维度 | 蜂群模式（可选） | Sub 模式（可选） | 链式模式（概念参考，不可选） |
+| Dimension | Swarm mode (selectable) | Sub mode (selectable) | Chain mode (conceptual reference, not selectable) |
 |---|---|---|---|
-| 协调方式 | lead 拆解并派发，worker 执行 | 主 Agent 拆分和协调 | 固定顺序传递 |
-| 任务结构 | lead 派发给最多 8 个 worker（默认 3 个） | 明确子任务 | 固定流水线 |
-| 灵活性 | 中到高 | 中 | 低 |
-| 可控性 | 中，依赖预算和 worker 上限 | 高 | 高 |
-| 容错性 | 中到高，lead 可重新派发 | 中 | 低 |
-| 成本可预测性 | 低到中 | 中到高 | 高 |
-| 适合任务 | 需要多 worker 并行处理的探索性任务 | 多角色分工、可控交付 | 固定流程、标准化处理（仅概念） |
-| 主要风险 | worker 数量或成本失控 | 主 Agent 拆分不准、子任务重复 | 链条断裂、流程僵化（仅概念） |
+| Coordination | The lead breaks down and dispatches, workers execute | The main Agent splits and coordinates | Fixed-sequence handoff |
+| Task structure | The lead dispatches to up to 8 workers (3 by default) | Clearly defined subtasks | Fixed pipeline |
+| Flexibility | Medium to high | Medium | Low |
+| Controllability | Medium, depends on budget and worker cap | High | High |
+| Fault tolerance | Medium to high, the lead can redispatch | Medium | Low |
+| Cost predictability | Low to medium | Medium to high | High |
+| Good fit | Exploratory tasks needing parallel processing across multiple workers | Multi-role division of labor, controlled delivery | Fixed processes, standardized handling (concept only) |
+| Main risk | Runaway worker count or cost | Inaccurate splitting by the main Agent, duplicate subtasks | Broken chain, rigid process (concept only) |
 
-## 如何选择
+## How to choose
 
-Heicode 当前只能在蜂群模式和 Sub 模式之间选择：
+Heicode currently only lets you choose between Swarm mode and Sub mode:
 
-| 任务特征 | 推荐模式 |
+| Task characteristics | Recommended mode |
 |---|---|
-| 任务需要多个 worker 并行探索 | 蜂群模式 |
-| 子任务边界清楚，需要多个子 Agent 分工 | Sub 模式 |
-| 大规模代码审查，需要多个 worker 分别检查 | 蜂群模式 |
-| 修复复杂 bug，问题可以拆成前端、后端、验证 | Sub 模式 |
-| 文档从采集、整理到审查 | Sub 模式 |
-| 产品功能开发 | Sub 模式 |
+| Task needs multiple workers exploring in parallel | Swarm mode |
+| Subtask boundaries are clear, needs multiple sub-agents dividing the work | Sub mode |
+| Large-scale code review, needs multiple workers checking separately | Swarm mode |
+| Fixing a complex bug that splits into frontend, backend, and verification | Sub mode |
+| Documentation from collection, organization, through review | Sub mode |
+| Product feature development | Sub mode |
 
-链式模式作为概念参考，只用于说明"如果流程完全固定、不需要动态调整，可以设想成一条流水线"，但这不是 Heicode 当前提供的实现方式。
+Chain mode, as a conceptual reference, is only meant to illustrate "if the process is completely fixed and doesn't need dynamic adjustment, you can think of it as a pipeline" — but this isn't an implementation Heicode currently offers.
 
-## 总结
+## Summary
 
-- Sub 模式适合边界清楚的可控分工。
-- 蜂群模式适合需要多个 worker 并行处理的探索性任务，采用 lead 派发、worker 执行的主从架构。
-- 链式模式仅作为理解协作光谱的概念参考，Heicode 目前没有对应的可选模式或实现。
+- Sub mode is a good fit for controlled division of labor with clear boundaries.
+- Swarm mode is a good fit for exploratory tasks that need multiple workers processing in parallel, using a lead-dispatches, worker-executes architecture.
+- Chain mode serves only as a conceptual reference for understanding the collaboration spectrum — Heicode currently has no corresponding selectable mode or implementation.
 
-## 参考
+## Reference
 
-- [Agent 蜂群模式（Swarm）解析](https://juejin.cn/post/7603575399255949352)（本文链式模式部分的概念来源，非 Heicode 产品文档）
+- [Analyzing the Agent Swarm Pattern](https://juejin.cn/post/7603575399255949352) (the source of the Chain mode concept discussed in this article; not Heicode product documentation)

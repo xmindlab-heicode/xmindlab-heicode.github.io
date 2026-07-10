@@ -1,0 +1,14 @@
+{
+  "title": "Agent 构建",
+  "pages": [
+    "quickstart",
+    "create-first-agent",
+    "task-view-and-status",
+    "permissions-approval-secrets",
+    "connect-resources-docs-sk",
+    "choose-agent-mode",
+    "monitor-deliver-iterate",
+    "swarm-mode",
+    "faq-troubleshooting"
+  ]
+}

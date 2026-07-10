@@ -1,103 +1,103 @@
 ---
-title: "团队管理和安全治理"
+title: "Team Management and Security Governance"
 ---
 
-# 团队管理和安全治理
+# Team Management and Security Governance
 
-<Callout type="warn" title="当前状态说明">
-  组织、成员邀请、角色分配、团队治理看板目前仍在规划/后端阶段，尚无独立的团队管理界面；管理员职责中涉及成员和角色管理的部分暂时无法通过界面直接操作。密钥托管、审批和审计机制是已经在单任务/单 Agent 场景下真实运行的能力。
+<Callout type="warn" title="Current Status Notice">
+  Organizations, member invitations, role assignment, and the team governance dashboard are still in the planning/backend stage, and there is no dedicated team management interface yet; the parts of administrator responsibilities involving member and role management currently cannot be operated directly through an interface. Secret custody, approval, and auditing mechanisms are capabilities that already run in real, single-task/single-Agent scenarios.
 </Callout>
 
-团队长期使用 Heicode 后，需要定期治理成员、权限、资源、密钥、审批和审计。
+After a team uses Heicode long-term, it needs to periodically govern members, permissions, resources, secrets, approvals, and audits.
 
-## 管理员职责
+## Administrator responsibilities
 
-管理员负责：
+Administrators are responsible for:
 
-- 邀请和移除成员。
-- 设置角色。
-- 连接资源。
-- 配置审批规则。
-- 管理预算。
-- 查看审计。
-- 处理安全事件。
-- 配合账务和套餐管理。
+- Inviting and removing members.
+- Setting roles.
+- Connecting resources.
+- Configuring approval rules.
+- Managing budgets.
+- Viewing audits.
+- Handling security incidents.
+- Coordinating billing and plan/subscription management.
 
-## 成员治理
+## Member governance
 
-每月检查：
+Check monthly:
 
-- 是否有离职成员。
-- 是否有长期不活跃成员。
-- 是否有共享账号。
-- 是否有权限过大的成员。
-- 审批人是否仍然有效。
+- Whether there are departed members.
+- Whether there are long-term inactive members.
+- Whether there are shared accounts.
+- Whether there are members with excessive permissions.
+- Whether approvers are still valid.
 
-成员离开团队时：
+When a member leaves the team:
 
-- 撤销账号权限。
-- 撤销会话。
-- 轮换必要密钥。
-- 转移任务。
-- 保留审计。
+- Revoke account permissions.
+- Revoke sessions.
+- Rotate necessary secrets.
+- Transfer tasks.
+- Retain audit records.
 
-## 资源治理
+## Resource governance
 
-每月检查：
+Check monthly:
 
-- 连接了哪些 Git 仓库。
-- 连接了哪些云账号。
-- 哪些任务使用生产资源。
-- 哪些资源长期未使用。
-- 哪些资源权限过大。
-- 哪些资源需要撤销。
+- Which Git repositories are connected.
+- Which cloud accounts are connected.
+- Which tasks use production resources.
+- Which resources have been unused for a long time.
+- Which resources have excessive permissions.
+- Which resources need to be revoked.
 
-## 密钥治理
+## Secret governance
 
-要求：
+Requirements:
 
-- 长期密钥进入密钥保管器。
-- 数据库只保存 `secret_ref`。
-- 子 Agent 不保存长期凭证。
-- 短期凭证有 TTL。
-- 密钥轮换有记录。
-- 密钥疑似泄漏时立即撤销和轮换。
+- Long-lived secrets go into the secret vault.
+- The database only stores `secret_ref`.
+- Sub-agents do not store long-lived credentials.
+- Short-lived credentials have a TTL.
+- Secret rotation is recorded.
+- Immediately revoke and rotate when a secret is suspected of being leaked.
 
-## 闲置账号
+## Idle accounts
 
-账号连续 180 天无登录、无付费使用、无运行中任务、无组织活动或无有效订阅活动时，Heicode 可将其视为闲置账号（该策略以产品条款为准，具体自动化执行时间点可能调整）。
+When an account has had no login, no paid usage, no running tasks, no organization activity, or no active subscription activity for 180 consecutive days, Heicode may treat it as an idle account (this policy is subject to the product terms, and the specific automated execution timing may be adjusted).
 
-通知后仍未恢复使用的账号，可能被限制登录、停止新 Agent 任务、禁用模型调用、断开资源访问，并进入密钥保管库清理流程。
+Accounts that remain unused after notification may have their login restricted, new Agent tasks stopped, model invocation disabled, resource access disconnected, and be entered into the secret vault cleanup process.
 
-## 服务暂停或终止
+## Service suspension or termination
 
-如存在违法行为、违反模型服务商政策、未授权安全测试、数据外传、恶意软件、凭证窃取、欺诈、滥用、支付失败、拒付、转售或共享账号/凭证、绕过审批或安全控制、资源所有者或管理员要求、法律命令、即时安全风险，或通知后的长期闲置，Heicode 可暂停、限制或终止服务。
+In the presence of illegal activity, violation of a model provider's policies, unauthorized security testing, data exfiltration, malware, credential theft, fraud, abuse, payment failure, chargeback, resale or sharing of accounts/credentials, bypassing approval or security controls, a request from the resource owner or administrator, a legal order, an immediate security risk, or long-term idleness after notification, Heicode may suspend, restrict, or terminate service.
 
-## 安全事件处理
+## Handling security incidents
 
-发现安全事件时：
+When a security incident is discovered:
 
-1. 停止相关任务。
-2. 撤销相关凭证。
-3. 轮换密钥。
-4. 检查日志和审计。
-5. 通知相关负责人。
-6. 评估影响范围。
-7. 修复问题。
-8. 复盘并更新规则。
+1. Stop the related task.
+2. Revoke related credentials.
+3. Rotate secrets.
+4. Check logs and audit records.
+5. Notify the relevant owner.
+6. Assess the scope of impact.
+7. Fix the issue.
+8. Hold a retrospective and update the rules.
 
-## 治理指标
+## Governance metrics
 
-建议团队自行关注以下指标（目前需要从审计记录里人工整理，平台暂无自动生成的治理看板）：
+It is recommended that teams track the following metrics themselves (currently these need to be compiled manually from audit records; the platform does not yet have an automatically generated governance dashboard):
 
-- 成员数量。
-- 活跃成员。
-- 闲置账号。
-- 资源授权数量。
-- 生产审批数量。
-- 审批平均耗时。
-- 任务成功率。
-- 失败重试次数。
-- 模型消耗。
-- 安全事件数。
-- 密钥轮换次数。
+- Number of members.
+- Active members.
+- Idle accounts.
+- Number of resource authorizations.
+- Number of production approvals.
+- Average approval turnaround time.
+- Task success rate.
+- Number of failed retries.
+- Model consumption.
+- Number of security incidents.
+- Number of secret rotations.

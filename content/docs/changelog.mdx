@@ -1,735 +1,735 @@
 ---
-title: "版本更新"
+title: "Changelog"
 ---
 
-# Heicode 更新日志
+# Heicode Changelog
 
 ## 2026.05.13 · v0.1.5
 
-### ✨ 新增功能
+### ✨ New Features
 
-- 新增历史会话时间筛选功能
-- 支持：
+- Added time-range filtering for session history
+- Supports:
 - 1 Day
 - 3 Days
 - 7 Days
 - All
-- 可通过 Tune 按钮快速切换
-- 点击头像 / 邮箱可直接跳转至 Heicode Manager
-- 增加 2 小时定时复查更新机制
+- Quickly switch via the Tune button
+- Clicking the avatar / email now jumps directly to Heicode Manager
+- Added a 2-hour scheduled recheck-for-updates mechanism
 
-### 🔧 功能调整
+### 🔧 Adjustments
 
-- IM 接入入口默认隐藏（当前不属于产品主范围）
+- The IM integration entry point is now hidden by default (not currently part of the core product scope)
 
-### 🐞 修复与优化
+### 🐞 Fixes & Improvements
 
-- 修复 Wallet 相关问题
-- 优化 StreamingIndicator 显示逻辑
-- 调整审批弹窗高度
-- 支持任务手动 ✓ 闭合
-- 支持多选操作
-- 删除社交栏相关入口
-- 多项 UI 与交互细节优化
+- Fixed Wallet-related issues
+- Improved StreamingIndicator display logic
+- Adjusted approval dialog height
+- Support manually closing tasks with a checkmark
+- Support multi-select actions
+- Removed the social bar entry point
+- Various UI and interaction refinements
 
 ## 2026.05.14 · v0.1.9
 
-### ✨ 新增功能
+### ✨ New Features
 
-- 新增余额进度条显示
-- Manager 下载页自动同步最新版本
-- 更新全新应用图标
+- Added a balance progress bar display
+- The Manager download page now auto-syncs the latest version
+- Updated to a brand-new app icon
 
-### 🐞 问题修复
+### 🐞 Bug Fixes
 
-- 修复跨会话流式输出异常问题
-- 修复, AskUserQuestion, 渲染顺序错误
-- 移除 SWA URL 依赖，彻底解决死链报错问题
+- Fixed abnormal streaming output when switching across sessions
+- Fixed incorrect render order for "AskUserQuestion"
+- Removed the SWA URL dependency, fully resolving dead-link errors
 
-### ⚙️ 工程优化
+### ⚙️ Engineering Improvements
 
-- 构建流程新增, –bundles nsis
-- 接入, sccache, ，优化构建缓存与编译速度
+- Added "–bundles nsis" to the build pipeline
+- Integrated "sccache" to improve build caching and compile speed
 
 ## 2026.05.16 · v0.2.0
 
-### 📌 版本概览 本次更新主要聚焦于 UI 一致性 与 核心稳定性提升 ，进一步完善 跨平台兼容性 。
+### 📌 Release Overview This update mainly focuses on UI consistency and core stability improvements, further refining cross-platform compatibility.
 
-### 🐞 问题修复
+### 🐞 Bug Fixes
 
-#### 修复中文字体渲染不一致问题
+#### Fixed inconsistent Chinese font rendering
 
-- 全局字体栈覆盖范围扩展至标题、正文、标签、代码等文本场景
-- 新增以下 CJK 回退字体：
+- Expanded the global font stack to cover headings, body text, labels, code, and other text contexts
+- Added the following CJK fallback fonts:
 - PingFang SC
 - Microsoft YaHei
 - Noto Sans CJK SC
-- 确保 macOS、Windows、Linux 下中文文字渲染风格更加统一
-- 消除不同组件间字体跳变导致的视觉割裂感
+- Ensured more consistent Chinese text rendering across macOS, Windows, and Linux
+- Eliminated the visual disjointedness caused by font jumps between different components
 
-#### 修复 macOS 下 ripgrep 不可用问题（cc-haha#433）
+#### Fixed ripgrep unavailability on macOS (cc-haha#433)
 
-- 修复 Finder / Dock 启动 Tauri 应用时, PATH, 环境变量缺失导致无法找到, rg, 的问题
-- 新增 well-known 安装路径探测机制作为兜底回退
-- 当前支持探测路径：
+- Fixed an issue where launching the Tauri app from Finder / Dock lacked the `PATH` environment variable, preventing `rg` from being found
+- Added well-known install-path probing as a fallback
+- Currently supported probe paths:
 - /opt/homebrew/bin/rg
 - /usr/local/bin/rg
 - ~/.cargo/bin/rg
 
-#### 修复 Bun sidecar bundled mode 检测失败问题（cc-haha#208）
+#### Fixed Bun sidecar bundled-mode detection failure (cc-haha#208)
 
-- isInBundledMode(), 原先仅检查, Bun.embeddedFiles
-- 修复 Tauri sidecar 场景下误判为非 bundled 模式的问题
-- 新增基于, process.execPath, 的启发式检测逻辑
-- 兼容, bun build –compile, 编译产物
+- "isInBundledMode()" previously only checked "Bun.embeddedFiles"
+- Fixed a false negative for bundled mode in the Tauri sidecar scenario
+- Added heuristic detection logic based on "process.execPath"
+- Compatible with "bun build –compile" output
 
-### 🚀 优化改进
+### 🚀 Improvements
 
-- 统一中文字体回退策略，提升跨平台 UI 一致性
-- 增强 macOS 外部命令发现能力，提高 Finder / Dock 启动稳定性
-- 优化 bundled mode 检测逻辑，提升 Bun + Tauri sidecar 场景兼容性
+- Unified the Chinese font fallback strategy, improving cross-platform UI consistency
+- Strengthened macOS external command discovery, improving Finder / Dock launch stability
+- Improved bundled-mode detection logic, improving compatibility for Bun + Tauri sidecar scenarios
 
 ## 2026.05.17 · v0.2.1
 
-### 📌 版本概览 本次更新主要修复 Windows 平台显示相关问题，进一步提升整体使用体验。
+### 📌 Release Overview This update mainly fixes display-related issues on Windows, further improving the overall experience.
 
-### 🐞 问题修复
+### 🐞 Bug Fixes
 
-- 修复 Windows 系统下文件路径显示异常问题
-- 现已正确显示文件名，而非完整路径
-- 涉及工具调用、权限确认、文件搜索等多个场景
-- 修复状态栏项目名称解析错误问题
-- 修复项目过滤器在 Windows 路径下无法正确提取项目名的问题
-- 修复文件搜索面包屑导航在 Windows 下不分段显示的问题
-- 修复目录选择器浏览路径在 Windows 下无法正确展开层级的问题
+- Fixed abnormal file path display on Windows
+- Now correctly shows the file name instead of the full path
+- Affects tool calls, permission confirmations, file search, and other scenarios
+- Fixed incorrect project name parsing in the status bar
+- Fixed the project filter failing to correctly extract the project name from Windows paths
+- Fixed the file search breadcrumb not showing segments correctly on Windows
+- Fixed the directory picker failing to correctly expand levels for Windows paths
 
-### 🚀 优化改进
+### 🚀 Improvements
 
-- 本次修复共影响 10 个前端组件
-- 覆盖聊天界面、侧边栏、权限对话框、文件搜索、路径展示与项目识别等相关模块
+- This fix affects 10 frontend components in total
+- Covers the chat interface, sidebar, permission dialogs, file search, path display, and project detection modules
 
 ## 2026.05.18 · v0.2.2
 
-### 📌 版本概览 本次更新主要修复客户端流式任务与工具调用等待相关问题，提升长任务执行稳定性，并优化异常中断后的错误反馈体验。
+### 📌 Release Overview This update mainly fixes issues with client streaming tasks and tool-call waiting, improving stability for long-running tasks and improving error feedback after abnormal interruptions.
 
-### 🐞 问题修复
+### 🐞 Bug Fixes
 
-- 修复客户端流式任务等待时间过短问题
-- 工具调用等待时间延长至, 10 分钟
-- 解决此前因, 2 分钟超时, 导致任务提前中止的问题
-- 修复流解析器 per-chunk 超时问题
-- 两个 stream parser 均新增, 5 分钟无数据超时机制
-- 上游服务长时间无响应时可抛出明确错误，而非无限等待
-- 修复, fetch, 被静默中断后 UI 无错误反馈问题
-- 修复后中断请求可正确结束状态并反馈错误
-- 避免界面长期停留在, “Editing file…”, 状态
+- Fixed the client streaming task wait time being too short
+- Tool call wait time extended to 10 minutes
+- Resolves tasks being prematurely aborted due to the previous 2-minute timeout
+- Fixed a per-chunk timeout issue in the stream parser
+- Both stream parsers now have a 5-minute no-data timeout mechanism
+- A clear error is now thrown when the upstream service is unresponsive for a long time, instead of waiting indefinitely
+- Fixed the UI showing no error feedback when a `fetch` was silently aborted
+- After an abort, the request now correctly ends its state and surfaces an error
+- Avoids the UI staying stuck on "Editing file…" indefinitely
 
-### 🚀 优化改进
+### 🚀 Improvements
 
-- 提升长时间工具调用与流式响应场景稳定性
-- 增强网络中断、无数据返回等异常场景错误可见性
-- 优化文件编辑过程中的 UI 状态恢复逻辑
+- Improved stability for long-running tool calls and streaming response scenarios
+- Improved error visibility for network interruptions, no-data-returned, and other abnormal scenarios
+- Improved UI state recovery logic during file editing
 
 ## 2026.05.19 · v0.2.4
 
-### 📌 版本概览 本次更新主要修复自动更新模块中的并发与状态竞争问题，提升更新流程稳定性与交互一致性。
+### 📌 Release Overview This update mainly fixes concurrency and state-race issues in the auto-update module, improving the stability and interaction consistency of the update flow.
 
-### 🐞 问题修复
+### 🐞 Bug Fixes
 
-#### 修复下载进度条来回跳动问题
+#### Fixed the download progress bar jumping back and forth
 
-- 原因：
-- 缺少并发保护
-- 多次点击会同时启动多个下载任务
-- 多个进度回调交替写入 state 导致进度条回退
-- 修复内容：
-- 新增, isDownloading, 状态标志，防止重复触发下载
-- 新增, peakPercent, 单调递增追踪机制，确保进度条永不倒退
+- Cause:
+- Missing concurrency protection
+- Multiple clicks would start multiple download tasks simultaneously
+- Multiple progress callbacks writing to state interleaved, causing the progress bar to regress
+- Fix:
+- Added an "isDownloading" state flag to prevent duplicate download triggers
+- Added a "peakPercent" monotonically increasing tracking mechanism to ensure the progress bar never regresses
 
-#### 修复更新弹窗需要点击两次才显示的问题
+#### Fixed the update dialog requiring two clicks to appear
 
-- 原因：
-- 自动检查更新与手动检查发生状态竞争
-- available → checking → available, 状态反复切换导致弹窗消失
-- 修复内容：
-- 新增, checkInProgress, Promise 去重机制
-- 重复调用, checkForUpdates, 时直接跳过
-- 启动自动检查延迟由, 5 秒, 缩短为, 1 秒
+- Cause:
+- A state race between automatic update checks and manual checks
+- The state cycling through available → checking → available caused the dialog to disappear
+- Fix:
+- Added a "checkInProgress" promise de-duplication mechanism
+- Repeated calls to "checkForUpdates" are now skipped directly
+- Reduced the auto-check startup delay from 5 seconds to 1 second
 
-### 🚀 优化改进
+### 🚀 Improvements
 
-- 提升自动更新流程状态一致性与并发安全性
-- 优化下载进度反馈逻辑，减少视觉抖动
-- 改善更新弹窗触发时机与交互体验
+- Improved state consistency and concurrency safety in the auto-update flow
+- Improved download progress feedback logic, reducing visual jitter
+- Improved the timing and interaction of the update dialog
 
 ## 2026.05.20 · v0.2.5
 
-### 📌 版本概览 本次更新主要完成 Heicode macOS 版本 Apple 公证流程。
+### 📌 Release Overview This update mainly completes the Apple notarization process for the Heicode macOS build.
 
-### 🚀 优化改进
+### 🚀 Improvements
 
-- Heicode macOS 客户端已完成 Apple Notarization 公证
-- 提升 macOS 系统安装与运行可信度
-- 降低首次运行安全告警出现概率
+- The Heicode macOS client has completed Apple Notarization
+- Improved installation and runtime trust on macOS
+- Reduced the likelihood of security warnings appearing on first run
 
 ## 2026.05.21 · v0.3.5
 
-### 🔐 安全全面升级
+### 🔐 Comprehensive Security Upgrade
 
-- 对话数据全程加密传输，进一步加强隐私保护
-- 账号绑定本机设备登录，提升账号使用安全性
-- 新增多设备登录管理功能
-- 网页端可查看所有登录设备
-- 支持异常设备一键下线撤销
+- Conversation data is now encrypted end-to-end in transit, further strengthening privacy protection
+- Accounts are now bound to the device they log in from, improving account security
+- Added multi-device login management
+- View all logged-in devices from the web
+- Support one-click revocation of suspicious devices
 
-### ✨ 功能与体验优化
+### ✨ Feature & Experience Improvements
 
-- 优化账户余额、资源用量展示与数据解密功能
-- 模型列表支持自动实时同步
-- 支持 Claude、GPT、Gemini、通义千问、DeepSeek 等主流模型
-- 提升整体登录状态识别稳定性
+- Improved display of account balance and resource usage, plus data decryption
+- The model list now supports automatic real-time syncing
+- Supports mainstream models including Claude, GPT, Gemini, Qwen, and DeepSeek
+- Improved overall stability of login-state detection
 
-### 🐞 问题修复
+### 🐞 Bug Fixes
 
-- 修复, @, 选择文件夹时无法访问目录的问题
-- 支持正常访问 C 盘、D 盘等任意路径项目
-- 修复模型列表展示不全与模型调用异常问题
-- 修复登录后偶发显示未登录的卡顿问题
-- 清理旧版本升级遗留问题
-- 无需手动删除文件即可完成升级
-- 修复任务执行中断、停滞不运行等异常问题
+- Fixed being unable to access a directory when using "@" to select a folder
+- Now correctly supports accessing projects at any path, including drive C:, D:, etc.
+- Fixed incomplete model list display and abnormal model call issues
+- Fixed an occasional stall where the app showed "not logged in" right after logging in
+- Cleaned up leftover issues from old-version upgrades
+- Upgrades now complete without needing to manually delete files
+- Fixed issues with task execution being interrupted or stalling
 
 ## 2026.05.22 · v0.3.6
 
-### 📌 版本概览 本次更新主要修复客户端稳定性、权限切换异常与鉴权兼容相关问题，同时统一 Windows 与 macOS 端运行行为。
+### 📌 Release Overview This update mainly fixes client stability, permission-mode switching, and authentication-compatibility issues, while also unifying runtime behavior between the Windows and macOS clients.
 
-### 🐞 问题修复
+### 🐞 Bug Fixes
 
-#### 修复用量信息框消失问题（Windows）
+#### Fixed the usage info box disappearing (Windows)
 
-- 修复升级 v0.3.5 后聊天框下方余额 / 用量信息不显示的问题
-- 优化余额接口兼容逻辑，支持多路自动探测
-- 即使接口不可用，也会保留信息框并提示“余额不可用”
+- Fixed the balance / usage info below the chat box not showing after upgrading to v0.3.5
+- Improved balance-API compatibility logic with multi-path auto-detection
+- The info box is now retained with a "balance unavailable" notice even when the API is unavailable
 
-#### 修复切换权限模式后运行报错问题
+#### Fixed a runtime error after switching permission mode
 
-- 修复聊天过程中切换权限模式后出现：
+- Fixed the following error appearing after switching permission mode mid-chat:
 - CLI exited during startup with code 1
-- 原因：
-- 旧 CLI 进程尚未完全退出
-- 新 CLI 进程提前启动导致冲突
-- 修复内容：
-- 新进程将等待旧进程完全退出后再启动
-- 超时情况下自动强制结束旧进程
+- Cause:
+- The old CLI process hadn't fully exited yet
+- The new CLI process started too early, causing a conflict
+- Fix:
+- The new process now waits for the old process to fully exit before starting
+- The old process is force-terminated automatically on timeout
 
-#### 移除“响应等待时间过长”自动停止机制（macOS）
+#### Removed the "response took too long" auto-stop mechanism (macOS)
 
-- 修复聊天过程中偶发：
-- Error: 响应等待时间过长，本轮已自动停止
-- 移除前后端回合超时 watchdog
-- 与 Windows 端行为保持一致
-- 优化长时间会话与流式响应稳定性
+- Fixed the occasional error during chat:
+- Error: response took too long, this turn has been automatically stopped
+- Removed the frontend/backend round-trip timeout watchdog
+- Now consistent with Windows client behavior
+- Improved stability for long sessions and streaming responses
 
-#### 移除旧版密钥兼容逻辑
+#### Removed legacy key-compatibility logic
 
-- 服务端模型调用统一切换为设备签名机制
-- 不再回退使用旧版, Authorization Bearer
-- 提升整体安全性与鉴权一致性
+- Server-side model calls now uniformly use device-signature authentication
+- No longer falls back to the legacy `Authorization: Bearer`
+- Improved overall security and authentication consistency
 
-### 🚀 优化改进
+### 🚀 Improvements
 
-- 统一 Windows 与 macOS 端运行行为
-- 提升 CLI 生命周期管理稳定性
-- 增强长时间任务与流式响应稳定性
-- 优化余额与用量信息展示兼容性
-- 提升客户端整体错误恢复能力
+- Unified runtime behavior between the Windows and macOS clients
+- Improved CLI lifecycle-management stability
+- Strengthened stability for long-running tasks and streaming responses
+- Improved compatibility of balance and usage info display
+- Improved the client's overall error-recovery ability
 
 ## 2026.05.25 · v0.3.7 - v0.4.7
 
-### 📌 版本概览 本阶段更新主要完成 V2 设备签名鉴权体系切换，并持续强化错误诊断、模型管理与客户端稳定性体验。
+### 📌 Release Overview This phase mainly completes the switch to the V2 device-signature authentication system, and continues to strengthen error diagnostics, model management, and client stability.
 
-### 🔐 安全升级
+### 🔐 Security Upgrade
 
-#### 全面切换 V2 设备签名鉴权
+#### Fully switched to V2 device-signature authentication
 
-- 服务端模型调用全面切换至 V2 设备签名鉴权
-- 使用 Ed25519 私钥对每次请求进行签名
-- 密钥存储于系统密钥环
+- Server-side model calls have fully switched to V2 device-signature authentication
+- Each request is signed with an Ed25519 private key
+- The key is stored in the system keyring
 
-#### 移除旧版 Bearer Token 兼容逻辑
+#### Removed legacy Bearer Token compatibility logic
 
-- 删除旧版：
+- Removed the legacy:
 - Authorization: Bearer
-- 30 天 legacy 兼容窗口正式结束
+- The 30-day legacy compatibility window has officially ended
 
-### 🚀 优化改进
+### 🚀 Improvements
 
-- 长期 Token 不再随请求往返传输
-- 实现设备级鉴权隔离
-- 提升整体账户与请求安全性
+- Long-lived tokens are no longer transmitted back and forth with requests
+- Implemented device-level authentication isolation
+- Improved overall account and request security
 
-### 🐞 问题修复
+### 🐞 Bug Fixes
 
-#### 修复余额显示错误问题
+#### Fixed incorrect balance display
 
-- 修复余额显示异常：
-- $0.0003, 错误显示为, $155.36
-- 原因：
-- 服务端已返回 USD 浮点值
-- 客户端重复进行 quota 单位换算
+- Fixed abnormal balance display:
+- $0.0003 incorrectly displayed as $155.36
+- Cause:
+- The server already returned a USD float value
+- The client was applying the quota unit conversion a second time
 
-### 🚀 优化改进
+### 🚀 Improvements
 
-- 优化余额与额度展示逻辑
-- 提升账户数据准确性
+- Improved balance and quota display logic
+- Improved accuracy of account data
 
-### ✨ 更新弹窗与公告系统优化
+### ✨ Update Dialog & Announcement System Improvements
 
-#### 更新提示弹窗全面改版
+#### Complete redesign of the update-notice dialog
 
-- 弹窗宽度由, 24rem, 扩展至, 28rem
-- Notes 区域由, 10rem, 扩展至, 22rem
+- Dialog width expanded from 24rem to 28rem
+- Notes area expanded from 10rem to 22rem
 
-#### 公告系统优化
+#### Announcement system improvements
 
-- workflow 改为读取, RELEASE_NOTES.md
-- 统一作为公告内容来源
+- The workflow now reads from `RELEASE_NOTES.md`
+- Unified as the single source of announcement content
 
-#### UI 与排版增强
+#### UI & typography enhancements
 
-- 优化标题、按钮与 Markdown 排版效果
-- 提升长更新日志可读性
+- Improved heading, button, and Markdown typography
+- Improved readability of long changelogs
 
-### 🧠 模型管理与 CLI 稳定性修复
+### 🧠 Model Management & CLI Stability Fixes
 
-#### 修复模型选择器显示不可用模型问题
+#### Fixed the model picker showing unavailable models
 
-- 模型选择器不再显示本地, providers.json, 中不可调用的“内置”模型
-- 避免触发, 401 / 404
+- The model picker no longer shows "built-in" models that aren't actually callable from the local `providers.json`
+- Avoids triggering 401 / 404 errors
 
-#### 修复服务端模型兜底逻辑问题
+#### Fixed server-side model fallback logic
 
-- 服务端, /api/models, 移除, DEFAULT_MODELS, 硬编码兜底
+- Removed the hardcoded `DEFAULT_MODELS` fallback from the server-side `/api/models`
 
-#### 修复 provider / model 切换导致 CLI 启动失败问题
+#### Fixed CLI startup failure when switching provider / model
 
-- 切换 provider / model 时自动执行, drainPendingPermissions
-- 避免 transcript 残留未解决, tool_use
-- 修复 CLI 启动失败问题
+- Switching provider / model now automatically runs `drainPendingPermissions`
+- Avoids leftover unresolved `tool_use` entries in the transcript
+- Fixed the resulting CLI startup failure
 
-#### 优化模型状态显示
+#### Improved model status display
 
-- 无可用模型时改为显示“模型配置”
-- 不再错误显示历史模型名称
+- Now shows "Model Configuration" when no model is available
+- No longer incorrectly displays a stale historical model name
 
-### ⚠️ 错误诊断与提示系统升级
+### ⚠️ Error Diagnostics & Messaging Upgrade
 
-#### 启动失败错误分类增强
+#### Enhanced startup-failure error classification
 
-- 可识别：
+- Now recognizes:
 - device-not-paired
 - 401
-- 未登录
-- 网络异常
-- 加密失败
-- 服务端拒绝等问题
+- not logged in
+- network error
+- encryption failure
+- server rejection, and other issues
 
-#### 优化运行时 CLI 异常提示
+#### Improved runtime CLI error messaging
 
-- 运行时 CLI 退出新增友好分类提示
-- 不再仅限启动阶段
+- Runtime CLI exits now include friendly categorized messages
+- No longer limited to the startup phase only
 
-#### 修复正常退出误报问题
+#### Fixed a false-positive on normal exit
 
-- code 0, 正常退出不再显示红色错误 banner
+- A normal exit with code 0 no longer shows a red error banner
 
-#### 优化异常退出文案
+#### Improved abnormal-exit copy
 
-- 改为中性三步排查清单
-- 不再默认归因于“设备未配对”
+- Changed to a neutral three-step troubleshooting checklist
+- No longer defaults to attributing the issue to "device not paired"
 
-### 🛠 错误透传与恢复能力增强
+### 🛠 Error Propagation & Recovery Improvements
 
-#### 新增 lastUpstreamError 全局错误寄存器
+#### Added a global `lastUpstreamError` register
 
-- 建立跨模块错误状态共享机制
+- Established a cross-module shared error-state mechanism
 
-#### V2 本地设置失败支持具体原因显示
+#### V2 local setup failures now show a specific reason
 
-- 支持识别：
+- Now recognizes:
 - not_paired
 - server_pubkey_failed
 - encryption_failed
 
-#### Manager 服务端拒绝请求支持详细提示
+#### Manager server-side rejections now show detailed messages
 
-- 支持解析：
+- Now parses:
 - 401 / 403
 - 5xx
-- 其它错误
-- 自动显示可读错误消息与恢复建议
+- other errors
+- Automatically shows a readable error message with recovery suggestions
 
-#### 修复网络异常 detail 丢失问题
+#### Fixed loss of network-error detail
 
-- 修复, encryptedFetch, 缺少 try/catch 导致异常被吞的问题
-- DNS / TLS / timeout 等异常现统一识别为：
+- Fixed `encryptedFetch` swallowing exceptions due to a missing try/catch
+- DNS / TLS / timeout and similar exceptions are now uniformly classified as:
 - network_error
 
-### 🚀 优化改进
+### 🚀 Improvements
 
-- 提升错误透传能力
-- 增强网络与鉴权问题可诊断性
-- 提供更明确恢复指引
+- Improved error propagation
+- Improved diagnosability of network and authentication issues
+- Provides clearer recovery guidance
 
-### ⚙️ 底层稳定性优化
+### ⚙️ Underlying Stability Improvements
 
-#### 优化 stderr drain 机制
+#### Improved the stderr drain mechanism
 
-- handleProcessExit, 改为 async
-- stderr drain 等待时间逐步提升：
+- `handleProcessExit` is now async
+- stderr drain wait time now increases progressively:
 - 500ms
 - 1500ms
 - 3000ms
 
-#### 新增 Proxy 调试日志
+#### Added Proxy debug logging
 
-- 新增：
+- Added:
 - [Proxy] V2 dispatch start
 - [Proxy] V2 dispatch returned
-- 便于后续问题排查与诊断
+- To aid future troubleshooting and diagnostics
 
-### 📌 阶段总结 本阶段更新核心聚焦于两项工作：
+### 📌 Phase Summary This phase focused on two core efforts:
 
-#### 🔐 鉴权体系升级
+#### 🔐 Authentication system upgrade
 
-- 将模型调用从 Bearer Token 全面切换为设备签名鉴权
-- 提升安全性与设备隔离能力
+- Fully switched model calls from Bearer Token to device-signature authentication
+- Improved security and device-isolation capability
 
-#### 🛠 用户体验与诊断强化
+#### 🛠 User experience & diagnostics improvements
 
-- 将原本模糊的：
-- CLI exited with code 1, 逐步细化为具体错误原因
-- 每类错误均提供对应恢复建议
+- Gradually refined the previously vague:
+- "CLI exited with code 1" into specific error causes
+- Each error category now provides a corresponding recovery suggestion
 
-### 🚀 附带优化收益
+### 🚀 Additional Improvements
 
-- 修复余额显示错误
-- 优化更新公告弹窗体验
-- 模型选择器不再显示不可用模型
-- code 0, 正常退出不再误报异常
-- 提升长时间运行与流式响应稳定性
+- Fixed incorrect balance display
+- Improved the update-announcement dialog experience
+- The model picker no longer shows unavailable models
+- Exiting normally with code 0 no longer triggers a false error report
+- Improved stability for long-running and streaming-response scenarios
 
 ## 2026.05.26 – 2026.06.08 · v0.4.8 – v0.5.0
 
-### 📌 版本概览
+### 📌 Release Overview
 
-本阶段加强登录与账号安全、扩充可用模型，并将 macOS / Windows 客户端统一升级至 v0.5.0。
+This phase strengthens login and account security, expands the available models, and unifies the macOS / Windows clients at v0.5.0.
 
-### 🔐 登录与账号安全
+### 🔐 Login & Account Security
 
-- 退出登录时彻底清除本机登录状态与设备绑定信息。
-- 登录凭证不再保存在普通配置文件中，账号更安全。
-- 修复部分情况下登录后无法正常使用（模型列表、余额无法加载）的问题。
+- Logging out now thoroughly clears local login state and device-binding information.
+- Login credentials are no longer stored in plaintext config files, making accounts more secure.
+- Fixed an issue where, in some cases, users couldn't use the app normally after logging in (model list and balance failed to load).
 
-### ✨ 模型与体验
+### ✨ Models & Experience
 
-- 新增 Gemini、GPT‑5.x Codex 等模型。
-- 输入框新增「推理强度」选项。
-- 网络异常时新增明确提示，错误信息更易理解。
+- Added models including Gemini and GPT-5.x Codex.
+- Added a "reasoning effort" option to the input box.
+- Added a clear notice for network errors, making error messages easier to understand.
 
-### ⚙️ 版本
+### ⚙️ Version
 
-- macOS / Windows 客户端统一升级至 v0.5.0。
+- The macOS / Windows clients are unified at v0.5.0.
 
 ## **2026.06.15 · v1.0.1**
 
-🐞 **修复与优化**
+🐞 **Fixes & Improvements**
 
-- 修复设备配对请求打错服务器导致登录后无法使用的问题（配对接口走网关地址而非登录服务地址，此前会 404 / 设备未绑定 / 模型列表与余额都拉不到）
+- Fixed device-pairing requests hitting the wrong server, which caused the app to be unusable after login (the pairing endpoint was pointed at the login service address instead of the gateway address, previously causing 404s / device not bound / model list and balance both failing to load)
 
-✨ **新增功能**
+✨ **New Features**
 
-- 新增邮箱 Magic-Link 登录方式
-- 新增客户端错误遥测（设备级、已脱敏、默认开启，可在设置中关闭）
+- Added email Magic-Link login
+- Added client error telemetry (device-level, redacted, on by default, can be disabled in settings)
 
-⚙ **工程调整**
+⚙ **Engineering Changes**
 
-- 客户端配置目录迁移至 `~/.heicode`（与 Claude Code 隔离，升级自动迁移）
+- Client config directory moved to `~/.heicode` (isolated from Claude Code, migrated automatically on upgrade)
 
 ## **2026.06.15 · v1.0.2**
 
-✨ **新增功能**
+✨ **New Features**
 
-- **任务驾驶舱（Swarm 蜂群可视化）上线**：查看 / 驱动真实蜂群运行 —— 运行列表、状态机、任务图、事件流、产物，以及资源 / 预算 / 用量 / 审计详情
-- **客户端「发起蜂群」**：选择命名配置 + 填写目标即可发起蜂群任务（命名配置在 Manager 中绑定资源后生成）
+- **Task Cockpit (Swarm visualization) launched**: view and drive real Swarm runs — run list, state machine, task graph, event stream, artifacts, plus resource / budget / usage / audit details
+- **"Launch Swarm" in the client**: select a named configuration and fill in a goal to launch a Swarm task (named configurations are generated after binding resources in Manager)
 
-🔧 **功能调整**
+🔧 **Adjustments**
 
-- 会话「Agents」控件：开启蜂群与附加云 Agent 改为**双向互斥**，避免冲突
+- Session "Agents" control: enabling Swarm and attaching a Cloud Agent are now **mutually exclusive** to avoid conflicts
 
-🚀 **优化改进**
+🚀 **Improvements**
 
-- Cloud Agent / 会话 Agents 列表刷新降频：首次成功获取后降到 1 小时，显著减少后台请求
-- 任务结果按「暂无结果」与「空结果」区分展示，不再误显空结果块
+- Reduced polling frequency for the Cloud Agent / session Agents list: drops to once per hour after the first successful fetch, significantly reducing background requests
+- Task results now distinguish between "no result yet" and "empty result", no longer mistakenly showing an empty result block
 
 ## **2026.06.15 · v1.0.3**
 
-✨ **新增功能**
+✨ **New Features**
 
-- 用户菜单新增「文档中心」入口，一键打开 Heicode 文档
+- Added a "Documentation Center" entry to the user menu, for one-click access to the Heicode docs
 
-🔧 **功能调整**
+🔧 **Adjustments**
 
-- **任务驾驶舱并入蜂群**：在会话「Agents」里勾选「开启蜂群」并选择一个蜂群配置后，直接发送消息即发起蜂群（消息即目标）；运行进度 / 待审批移到右侧「蜂群」面板（可在面板菜单开关），左侧「驾驶舱」入口已移除
+- **Task Cockpit merged into Swarm**: checking "Enable Swarm" in the session's "Agents" panel and selecting a Swarm configuration lets you launch a Swarm run just by sending a message (the message becomes the goal); run progress / pending approvals moved to the right-side "Swarm" panel (toggleable from the panel menu); the left-side "Cockpit" entry has been removed
 
-🐞 **修复与优化**
+🐞 **Fixes & Improvements**
 
-- 修复刚发起的蜂群「运行详情」偶发加载失败（事件 / 产物接口短暂不可用时优雅降级，不再整页报错）
+- Fixed occasional load failures in "Run Details" for a just-launched Swarm (gracefully degrades when the events / artifacts API is briefly unavailable, no longer causes a full-page error)
 
 ## **2026.06.16 · v1.0.4**
 
-🐞 **修复与优化**
+🐞 **Fixes & Improvements**
 
-- 修复**新装 / 从旧版本升级后没有登录界面、直接进入主界面**的问题（迁移用户数据但不携带旧凭据，首启走一次正式登录）
-- 修复版本更新时出现**两条重叠 / 一短一长跳动**的下载进度（下载中不再被后台周期检查打断，且不再重复下载）
-- 会话切换更快、不再卡在「正在加载会话…」；修复某些情况下打开后一片空白
+- Fixed a new install / upgrade from an older version going straight to the main UI without showing the login screen (user data is migrated but old credentials are not carried over; the first launch now goes through a proper login)
+- Fixed the download progress bar showing **two overlapping / one short one long jittering** progress indicators during a version update (downloads are no longer interrupted by periodic background checks, and are no longer duplicated)
+- Session switching is now faster and no longer gets stuck on "Loading session…"; fixed a blank screen after opening in certain cases
 
-🚀 **优化改进（蜂群）**
+🚀 **Improvements (Swarm)**
 
-- 勾选「开启蜂群」从初始页 / 新建会话发起，会创建带标题的会话并自动跳转；蜂群结果与交付物作为回复显示在会话中
-- 右侧「蜂群」面板可在任意页面（含 Cloud Agent）打开；蜂群事件流标签人话化（任务创建 / 执行中 / 重试 / 完成…）
-- 「开启蜂群」改为按本次对话的本地开关（在 Manager 启用蜂群后才显示）
+- Checking "Enable Swarm" from the initial page / a new session now creates a titled session and auto-navigates to it; Swarm results and deliverables are shown as replies within the session
+- The right-side "Swarm" panel can now be opened from any page (including Cloud Agent); Swarm event-stream labels are now human-readable (task created / running / retrying / completed…)
+- "Enable Swarm" is now a local toggle scoped to the current conversation (only shown once Swarm is enabled in Manager)
 
-✨ **新增功能**
+✨ **New Features**
 
-- 客户端最低版本支持：版本过低时提示升级
+- Minimum supported client version: users are now prompted to upgrade if their version is too old
 
 ## **2026.06.17 · v1.0.5**
 
-🐞 修复与优化
+🐞 Fixes & Improvements
 
-- 修复 Files 面板打开报「API error 403」的问题(浏览会话所在目录时被文件系统白名单拦截;现已正确放行当前会话目录)
-- 修复重启客户端后,之前创建的蜂群会话从会话列表消失的问题(蜂群会话不再被本地 CLI 预热误删占位记录,发起时始终新建独立的容器会话)
-- 修复蜂群任务完成后在同一会话继续发送指令时回显上一轮旧结果的问题 —— 完成后的后续指令改为新发起一轮,在已被上一轮更新过的工作区上继续执行
+- Fixed the Files panel showing an "API error 403" (browsing the session's directory was blocked by the filesystem allowlist; the current session directory is now correctly allowed)
+- Fixed a Swarm session created earlier disappearing from the session list after restarting the client (Swarm sessions were mistakenly deleted by local CLI pre-warming as placeholder records; a dedicated container session is now always created fresh when launching)
+- Fixed the previous round's stale result being echoed when continuing to send commands in the same session after a Swarm task completed — subsequent commands after completion now start a new round, continuing on the workspace already updated by the previous round
 
-🚀 优化改进(蜂群)
+🚀 Improvements (Swarm)
 
-- 运行面板打开即同步到最终状态,不再停留在「运行中」;事件流标签更可读
-- 右侧「蜂群」面板的「待审批」只跟随当前打开的任务,不再串显其它任务的待审批
-- 「Agents」控件在 Manager 已开通蜂群时正确显示「开启蜂群」选项;移除运行面板中无效的「向该 Run 发送指令」输入框
+- Opening the run panel now syncs to the final state immediately, no longer stuck showing "Running"; event-stream labels are more readable
+- "Pending Approvals" in the right-side "Swarm" panel now only follows the currently open task, no longer mixing in pending approvals from other tasks
+- The "Agents" control now correctly shows the "Enable Swarm" option once Swarm is enabled in Manager; removed the ineffective "Send command to this Run" input from the run panel
 
-🚀 优化改进
+🚀 Improvements
 
-- Files / Terminal 面板在当前会话所在目录打开(不再是默认目录)
-- 模型配置加载更快:本地缓存模型列表,启动即显示,不再短暂空白
+- Files / Terminal panels now open in the current session's directory (no longer the default directory)
+- Model configuration loads faster: the model list is now cached locally and shown immediately on launch, no longer briefly blank
 
 ## **2026.06.17 · v1.0.6**
 
-🐞 修复与优化
+🐞 Fixes & Improvements
 
-- 修复发送斜杠命令报「CLI 进程启动失败 / Provider not found」的问题(登录或配置目录迁移后旧 provider 失效时,自动回退到当前登录账号)
-- 修复用 `/status`、`/cost`、`/context` 打开「会话检查器」时偶发「An unexpected error occurred」(读取失败优雅降级,不再整页报错)
-- 修复打开历史会话时用量面板一律显示 0 的问题 —— 现从会话记录回填该会话真实的 token 消耗
-- 修复新建会话偶发从左侧会话列表消失、且头部不显示项目目录的问题(列表刷新不再丢弃正在使用的会话)
+- Fixed sending a slash command showing "CLI process failed to start / Provider not found" (when an old provider becomes invalid after login or a config-directory migration, it now automatically falls back to the currently logged-in account)
+- Fixed an occasional "An unexpected error occurred" when opening the "Session Inspector" via `/status`, `/cost`, or `/context` (read failures now degrade gracefully instead of causing a full-page error)
+- Fixed the usage panel always showing 0 when opening a historical session — it now backfills the session's real token consumption from session records
+- Fixed newly created sessions occasionally disappearing from the left session list, with the header not showing the project directory (list refreshes no longer discard the session currently in use)
 
-🚀 优化改进
+🚀 Improvements
 
-- Preview 面板新增「启动 dev」:检测到项目目录后,一键在后台运行 dev 脚本(npm/bun/pnpm/yarn)并自动加载预览,「停止」连带结束后台进程
-- 修复 Preview 预览本地 dev 服务时页面被拦「已阻止此内容」;未启动任何服务时不再误报「本地服务启动失败」,改为友好的空闲提示
-- 技能页文案品牌名修正(技能扩展 Heicode 的能力)
+- Added "Start dev" to the Preview panel: once a project directory is detected, run the dev script (npm/bun/pnpm/yarn) in the background with one click and auto-load the preview; "Stop" also ends the background process
+- Fixed the Preview panel blocking content with "this content has been blocked" when previewing a local dev service; no longer falsely reports "local service failed to start" when no service has been started, showing a friendly idle notice instead
+- Corrected the brand name in the Skills page copy (skills extend Heicode's capabilities)
 
 ## 2026.06.18 · v1.0.7
 
-🐞 修复与优化
+🐞 Fixes & Improvements
 
-- 修复发送图片(含读取本地图片 / 截图)后模型「看不到图 / 识别错误」的问题 —— 工具返回的图片改以正确的多模态格式送达模型;同时修复一次发送多张图片时消息顺序异常导致请求失败的问题
-- 修复 PDF 解析:文本型 PDF 改用纯 JS 提取(不再依赖 poppler,修复 Windows 上「pdftoppm 不可用」导致的解析失败);图文 / 扫描型 PDF 改交模型原生读取
-- 修复偶发「No such tool available」—— 容错上游把工具名改写成 `Compat<名称><随机串>` 的情况
-- 收紧助手回复的分段间距;复制按钮只在整段回复末尾显示
+- Fixed the model being unable to "see" or misreading images after sending them (including reading local images / screenshots) — images returned by tools are now delivered to the model in the correct multimodal format; also fixed a request failure caused by message-order issues when sending multiple images at once
+- Fixed PDF parsing: text-based PDFs now use pure-JS extraction (no longer depends on poppler, fixing parsing failures caused by "pdftoppm unavailable" on Windows); image-based / scanned PDFs are now handed directly to the model to read natively
+- Fixed an occasional "No such tool available" — handles the case where an upstream provider rewrites a tool name to `Compat<name><random string>`
+- Tightened spacing between paragraphs in assistant replies; the copy button now only shows at the end of the full reply
 
-🚀 优化改进
+🚀 Improvements
 
-- 默认模型由 gpt-5.4 调整为 qwen3.7-max
-- 模型协议路由优化:GPT / qwen / grok / deepseek 走原生 OpenAI 协议、Claude 走 Anthropic 协议;修复此前一律经网关转换、导致图片 / PDF 等附件内容被丢弃的问题
-- 技能页文案品牌名修正(技能扩展 Heicode 的能力)
+- Changed the default model from gpt-5.4 to qwen3.7-max
+- Improved model protocol routing: GPT / Qwen / Grok / DeepSeek now use the native OpenAI protocol, and Claude uses the native Anthropic protocol; fixed an issue where everything previously went through gateway conversion, causing attachment content like images / PDFs to be dropped
+- Corrected the brand name in the Skills page copy (skills extend Heicode's capabilities)
 
 ## 2026.06.18 · v1.0.8
 
-🐞 修复与优化
+🐞 Fixes & Improvements
 
-图片在对话中正常显示:用 `@` 引用的图片、以及工具读取 / 截图返回的图片都会显示缩略图(不再只显示文件路径,也不再堆一长串编码);附件与图片在用户消息中右对齐
+Images now display properly in conversations: images referenced with `@`, as well as images returned by tool reads / screenshots, now show thumbnails (no longer just a file path, and no longer a long block of encoded text); attachments and images are right-aligned in user messages
 
-会话列表不再冒出一堆空的「Untitled Session」,并自动清理这些空占位文件;最近项目列表加载更快
+The session list no longer fills up with empty "Untitled Session" entries, and these empty placeholder files are now automatically cleaned up; the recent projects list loads faster
 
-新增界面崩溃兜底:渲染出错时显示可「重新载入」的提示页,不再整屏白屏
+Added a fallback for UI crashes: a "reload" prompt is now shown on render errors, instead of a full blank screen
 
-更新公告只显示当前版本的更新内容(不再堆叠历史版本)
+Update announcements now only show the current version's changes (no longer stacking historical versions)
 
-🚀 优化改进
+🚀 Improvements
 
-「需要你输入」的提问卡片优化:回答后自动折叠为一行摘要、去掉刺眼白底、整体更紧凑
+Improved the "needs your input" question cards: after answering, they auto-collapse into a one-line summary, the harsh white background is removed, and the overall look is more compact
 
-减少误导性的红色感叹号:可恢复的工具结果、用户主动取消不再标红(降为琥珀 / 中性),红色只留给真正的致命错误
+Reduced misleading red exclamation marks: recoverable tool results and user-initiated cancellations are no longer marked red (downgraded to amber / neutral), with red reserved only for genuinely fatal errors
 
-启动更快:按需加载图表 / diff 组件;窗口最小化时暂停后台轮询,更省电省网
+Faster startup: chart / diff components now load on demand; background polling is paused when the window is minimized, saving power and network usage
 
-执行权限模式文案调整为「请求权限」「接受编辑」
+Updated execution permission-mode copy to "Request Permission" / "Accept Edits"
 
-图像按尺寸压缩,减少不必要的传输(不降低识别效果)
+Images are now compressed by size to reduce unnecessary transfer (without reducing recognition quality)
 
 ## 2026.06.22 · v1.0.9
 
-🐞 修复与优化
+🐞 Fixes & Improvements
 
-修复「自动化 / 定时任务」在安装版客户端中不执行的问题 —— 此前定时任务仅在开发环境能跑,打包后无法真正运行;现已可按计划自动执行
+Fixed "Automation / Scheduled Tasks" not executing in the installed client — scheduled tasks previously only ran in the dev environment and did not actually run once packaged; they now execute on schedule as expected
 
-修复使用 GPT / qwen / grok / deepseek 等模型时,单轮并行工具调用过多(超过上游 128 上限)导致请求报错 400、会话卡住无法继续的问题 —— 客户端自动拆分为合规的多段请求
+Fixed a 400 error and a stuck, unrecoverable session caused by too many parallel tool calls in a single turn (exceeding the upstream limit of 128) when using models like GPT / Qwen / Grok / DeepSeek — the client now automatically splits these into compliant multi-part requests
 
-修复「自动化 → 新建任务」中模型配置下拉为空的问题 —— 现与对话框使用同一份模型列表
+Fixed the model configuration dropdown being empty in "Automation → New Task" — it now uses the same model list as the chat dialog
 
-修复「跳过权限」确认框:弹窗位置居中(不再偏移);按 Esc 只关闭确认框,不再误关整个新建任务表单
+Fixed the "Skip Permissions" confirmation dialog: the popup is now centered (no longer offset); pressing Esc now only closes the confirmation dialog instead of accidentally closing the entire new-task form
 
-🚀 优化改进
+🚀 Improvements
 
-「自动化 → 新建任务」简化:去掉多余的「描述」必填项,只需填写任务名称与对话内容
+Simplified "Automation → New Task": removed the redundant required "Description" field, now only requires a task name and conversation content
 
-会话管理增强:支持归档 / 取消归档、复制会话(Fork 为新会话),并新增「Active / Archived / All」状态筛选
+Enhanced session management: supports archive / unarchive and duplicating a session (fork into a new session), plus new "Active / Archived / All" status filters
 
-标题栏与「设置 → 关于」新增「预览」标识
+Added a "Preview" badge to the title bar and "Settings → About"
 
 ## 2026.06.23 · v1.1.0
 
-### ✨ 新增功能
+### ✨ New Features
 
-- 用量信息面板新增「上下文窗口」：可视化当前模型的上下文占用（分类明细 + 按占用率分级的彩色进度条），可折叠，并随模型切换自动更新
-- 点击对话中的文件路径，可直接在右侧查看文件内容
-- 会话支持按内容全文搜索（不止标题），并可将整段对话导出为 Markdown（右键菜单或 /export）
-- 计划模式：当 AI 给出执行计划时，以专门的审批卡片展示，可一键批准执行或继续完善
+- Added a "Context Window" section to the usage info panel: visualizes the current model's context usage (category breakdown + a color-coded progress bar graded by usage ratio), collapsible, and auto-updates when switching models
+- Clicking a file path in a conversation now shows the file's content directly in the right-side panel
+- Sessions now support full-text search by content (not just titles), and an entire conversation can be exported as Markdown (via right-click menu or `/export`)
+- Plan mode: when the AI produces an execution plan, it is now shown as a dedicated approval card, letting you approve and execute it in one click or continue refining it
 
-### 🚀 优化改进
+### 🚀 Improvements
 
-- 隐藏顶部会话标签条，统一用侧边栏切换会话，界面更清爽
+- Hid the top session tab bar, unifying session switching via the sidebar for a cleaner UI
 
-### 🐞 修复与优化
+### 🐞 Fixes & Improvements
 
-- 修复用量信息有时显示为 0：现在打开历史会话也能看到真实的累计 token 消耗（与会话检查器一致）
-- 修复偶发的「CLI 启动失败」：对瞬时启动失败自动重试一次，减少需要手动重试的情况
+- Fixed usage info sometimes showing 0: opening a historical session now shows the real cumulative token consumption (consistent with the Session Inspector)
+- Fixed occasional "CLI failed to start": transient startup failures are now automatically retried once, reducing the need for manual retries
 
 ## 2026.06.24 · v1.1.1
 
-### 🐞 修复与优化
+### 🐞 Fixes & Improvements
 
-- 用量信息：修复历史会话/多模型切换后「输入·输出·总 token」显示为 0 或只显示当前轮，现在正确显示整个会话的累计用量；非 Claude（如 GPT）会话不再因算价异常导致整会话用量归零
-- 上下文窗口：修正「已用」在恢复会话时显示为 0（与下方分类明细对齐），并改为秒级加载（先出估算、再用实时数据刷新）
-- 修复从 GPT 切换到 Gemini 后会话报 400；修复 Gemini 回复的输入 token 不计数
+- Usage info: fixed "input · output · total tokens" showing 0 or only the current turn after switching to a historical session / switching models — it now correctly shows the cumulative usage for the entire session; non-Claude (e.g. GPT) sessions no longer have their entire session usage zeroed out due to a pricing calculation error
+- Context window: fixed "used" showing 0 when restoring a session (now aligned with the category breakdown below), and changed to load in seconds (showing an estimate first, then refreshing with real-time data)
+- Fixed a 400 error when switching from GPT to Gemini in a session; fixed Gemini reply input tokens not being counted
 
-### 🚀 优化改进
+### 🚀 Improvements
 
-- 输入框右键新增编辑菜单（撤销/重做/剪切/复制/粘贴/全选）；恢复对话内容选中后右键「复制」；会话右键菜单更紧凑
-- 跨系列切换模型前给出提醒，降低会话损坏风险
-- 导出对话为 Markdown 时可自行选择保存位置
+- Added an edit menu to the input box's right-click menu (undo/redo/cut/copy/paste/select all); restored "copy" on right-click after selecting conversation content; the session right-click menu is now more compact
+- Added a warning before switching models across model families, reducing the risk of session corruption
+- You can now choose the save location when exporting a conversation as Markdown
 
 ## 2026.06.25 · v1.1.2
 
-### 🐞 修复与优化
+### 🐞 Fixes & Improvements
 
-- 修复计划模式下「选项栏」（供你选择的提问框）出现后，下方仍残留转圈提示（如 Vibing…）的问题
-- 修复小上下文窗口模型（如 qwen-max）在首条消息就被误「压缩上下文」、导致 token 消耗近乎翻倍的问题；现在按上下文窗口大小合理设置压缩阈值，大窗口模型行为不变
-- 修复计划模式下提问选项栏有时不出现的问题
-- Windows：修复 Bash 工具报「No suitable shell found」；现在会自动探测 Git for Windows 自带的 bash，缺失时给出安装指引
+- Fixed a lingering spinner (e.g. "Vibing…") remaining below the "option bar" (the prompt for you to choose an answer) in Plan mode after it appears
+- Fixed small-context-window models (e.g. qwen-max) having their context mistakenly "compressed" on the very first message, causing token consumption to nearly double — the compression threshold is now set sensibly based on the model's context window size, with no behavior change for large-window models
+- Fixed the question option bar sometimes not appearing in Plan mode
+- Windows: fixed the Bash tool reporting "No suitable shell found"; it now automatically detects the bash bundled with Git for Windows, and gives install guidance when it's missing
 
 ## 2026.06.26 · v1.1.3
 
-### ✨ 新增功能
+### ✨ New Features
 
-- 新增「会话调用链」：在用量信息面板里可查看本会话每一轮的模型、耗时、工具调用与结果，排查问题更直观
-- 排队消息可编辑：回答进行中排队的后续消息，现在可以直接修改后再发送
-- 蜂群（需套餐开通）：蜂群功能面已打通（经 HM 反向代理收发任务、审批、取结果）；未开通蜂群套餐的用户不受影响，其它功能照常使用
+- Added "Session Call Chain": in the usage info panel, you can now view each turn's model, duration, tool calls, and results for the current session, making troubleshooting more intuitive
+- Queued messages are now editable: a follow-up message queued while a reply is in progress can now be edited directly before sending
+- Swarm (requires the plan to be enabled): the Swarm feature panel is now fully wired up (sending/receiving tasks, approvals, and results via reverse proxy through HM); users without the Swarm plan enabled are unaffected and other features work as usual
 
-### 🚀 优化改进
+### 🚀 Improvements
 
-- 长会话性能优化：消息很多的长会话，滚动与渲染明显更流畅（窗口化虚拟渲染）；Markdown 渲染与组件重绘也做了优化
-- 跳过权限更彻底：选择「跳过权限」后，模型不再中途切入计划模式要求你手动确认计划
-- 提问卡片自动折叠：「Heicode 需要你的输入」卡片在你回答后（无论用选项还是直接输入）折叠为一行摘要，不再占屏
+- Long-session performance improvements: scrolling and rendering are noticeably smoother for long sessions with many messages (windowed virtual rendering); Markdown rendering and component re-rendering were also optimized
+- More thorough permission skipping: after choosing "Skip Permissions", the model no longer interrupts mid-task to switch into Plan mode asking for manual plan confirmation
+- Question cards auto-collapse: the "Heicode needs your input" card now collapses into a one-line summary after you answer (whether via an option or direct input), taking up less screen space
 
-### 🐞 修复与优化
+### 🐞 Fixes & Improvements
 
-- 稳定性与兼容性：修复 OpenAI 兼容模型（如 qwen）发消息报「tools 数组过长」400；慢速或异常的服务商不再让对话无限卡在「…」；OpenAI 兼容路径加稳定 prompt 缓存键以更好命中缓存
+- Stability & compatibility: fixed a 400 error ("tools array too long") when sending messages with OpenAI-compatible models (e.g. Qwen); slow or misbehaving providers no longer leave the conversation stuck indefinitely on "…"; the OpenAI-compatible path now uses a stable prompt-cache key for better cache hits
 
 ## 2026.07.01 · v1.2.0
 
-### ✨ 新增功能
+### ✨ New Features
 
-- 蜂群多轮对话记忆：同一蜂群里可连续追问，上下文不丢
-- 新增输出风格：内置「默认/讲解型/学习型」
-- 新增 LaTeX/KaTeX 数学公式渲染
-- 可按 branch/worktree 隔离新建会话（在独立 git worktree 中运行）
-- @-mention 从文件扩展到 skills/子 Agent
+- Swarm multi-turn conversation memory: you can now ask follow-up questions within the same Swarm without losing context
+- Added new output styles: built-in "Default / Explanatory / Learning" styles
+- Added LaTeX/KaTeX math formula rendering
+- New sessions can now be isolated by branch/worktree (running in a dedicated git worktree)
+- @-mentions now extend from files to skills/sub-agents
 
-### 🚀 优化改进
+### 🚀 Improvements
 
-- 蜂群驾驶舱重做：任务面板进驻 Dock，审批卡片移入对话内联展示（决策后折叠）；任务详情分「概览/执行过程/子任务」三页；详情与历史会话加载更快
+- Reworked the Swarm cockpit: the task panel now docks in the Dock, and approval cards are shown inline within the conversation (collapsing after a decision); task details are now split into "Overview / Execution / Subtasks" tabs; details and historical sessions load faster
 
-### 🐞 修复与优化
+### 🐞 Fixes & Improvements
 
-- 设备配对达上限时显示提醒（此前静默失败）
+- Now shows a notice when device pairing hits its limit (previously failed silently)
 
 ## 2026.07.02 · v1.2.1
 
-### ✨ 新增功能
+### ✨ New Features
 
-- 新增「下一步建议」：每轮回复后在输入框上方给出建议的下一步提问，点击即发送（设置→通用开关，默认关）
-- 点击输入框上方的项目名标签，可在文件管理器中打开工作目录，或一键复制目录路径
+- Added "Suggested Next Steps": after each reply, suggested follow-up questions are shown above the input box — click to send immediately (Settings → General toggle, off by default)
+- Clicking the project name label above the input box now opens the working directory in the file manager, or copies the directory path with one click
 
-### 🚀 优化改进
+### 🚀 Improvements
 
-- 统一新建/会话内对话框宽度与边距，切换不再跳动
-- 会话卡片（工具调用/思考/任务）增加轻微阴影与更清晰描边，视觉更柔和
+- Unified the width and margins of new-session / in-session dialogs, so switching no longer causes layout jumps
+- Session cards (tool calls/thinking/tasks) now have a subtle shadow and clearer outline, for a softer visual look
 
-### 🐞 修复与优化
+### 🐞 Fixes & Improvements
 
-- 修复代理计费口径下「下一步建议」被误判而始终不出现的问题
+- Fixed "Suggested Next Steps" being incorrectly suppressed and never appearing under proxy billing setups
 
 ## 2026.07.08 · v1.3.0
 
-### ✨ 新增功能
+### ✨ New Features
 
-- 窗口可自由左右缩放，并修复无边框窗口「只能上下拉长、不能左右拉宽」；对话区宽度随窗口流式变宽（上限提高到 1600px）
-- 新建会话页的「+」菜单新增「输出风格」选择（默认/讲解型/学习型），开会话前即可选
-- 新增 /btw 临时旁支：输入 `/btw 问题` 开一个独立旁支提问，不进入主对话上下文；也可从标题栏「面板」菜单打开
-- 支持把文件直接拖拽到输入框添加为附件
-- 新增启动耗时诊断（设置→诊断）；回复被输出上限截断时给出明确提示
+- The window can now be freely resized horizontally, fixing an issue where the borderless window could only be resized vertically; the conversation area now fluidly widens with the window (max width raised to 1600px)
+- Added an "Output Style" selector (Default / Explanatory / Learning) to the "+" menu on the new-session page, so you can choose it before starting a session
+- Added `/btw` for a temporary side-thread: type `/btw <question>` to open an independent side thread that doesn't enter the main conversation context; also accessible from the "Panels" menu in the title bar
+- Support dragging files directly into the input box to add them as attachments
+- Added startup-time diagnostics (Settings → Diagnostics); shows a clear notice when a reply is truncated by the output limit
 
-### 🚀 优化改进
+### 🚀 Improvements
 
-- 启动明显更快：优化会话标签还原，冷启动少等约 1 秒
+- Noticeably faster startup: improved session-tab restoration, cutting roughly 1 second off cold start
 
-### 🐞 修复与优化
+### 🐞 Fixes & Improvements
 
-- 重开客户端后，历史消息里的附件恢复成干净卡片（路径附件/抽取内容/图片），不再是原始文本或大段堆叠
+- After restarting the client, attachments in historical messages are now restored as clean cards (path attachments/extracted content/images) instead of raw text or a large stacked block
 
 ## 2026.07.09 · v1.3.1
 
-### 🐞 修复与优化
+### 🐞 Fixes & Improvements
 
-- 修复「更新失败」：更新源存储地址迁移后，更新器改指向新地址，自动更新恢复
-- 修复 /btw 临时旁支偶发出现在会话列表的问题
-- 修复 macOS 端右键「粘贴」需先点系统授权、无法直接粘贴的问题
+- Fixed "update failed": after the update source's storage address was migrated, the updater now points to the new address, restoring auto-update
+- Fixed `/btw` temporary side-threads occasionally showing up in the session list
+- Fixed being unable to paste directly on macOS via right-click "Paste" without first granting system permission
 
 ## 2026.07.10 · v1.3.2
 
-### ✨ 新增功能
+### ✨ New Features
 
-- 会话按登录账号隔离：只看到自己的会话；升级前的历史会话会自动归到当前账号，不会丢
-- 模型选择器同时显示官方模型和你的自定义模型（BYOK），在一个下拉里即可切换：选官方走官方，选自定义走你自己的 key
-- 新增「自定义模型」设置：添加第三方 Provider（自带 baseUrl/API Key），保存后模型自动出现在选择器里
+- Sessions are now isolated per logged-in account: you only see your own sessions; sessions from before the upgrade are automatically assigned to the current account and are not lost
+- The model picker now shows both official models and your custom models (BYOK) in a single dropdown: pick an official model to use the official channel, or a custom model to use your own key
+- Added "Custom Models" settings: add a third-party provider (with its own baseUrl/API key); once saved, the model automatically appears in the picker
 
-### 🚀 优化改进
+### 🚀 Improvements
 
-- 会话标题按你所用语言生成（中文对话给中文标题）；很短的消息直接用原文作标题，不再套用英文摘要
-- 切换会话后，输入框里未发送的草稿会保留，切回来内容还在
+- Session titles are now generated in the language you're using (a Chinese conversation gets a Chinese title); very short messages are used verbatim as the title instead of an English summary
+- After switching sessions, unsent drafts in the input box are preserved and still there when you switch back
 
-### 🐞 修复与优化
+### 🐞 Fixes & Improvements
 
-- 修复调用第三方模型时地址包含 /v1 被拼重复导致的请求失败
-- 修复长任务中工具过多触发的 128 上限报错（工具数组/tool_calls），对话不再中途卡死、无需重启
+- Fixed request failures caused by a duplicated `/v1` when the third-party model's address already included it
+- Fixed the 128-limit error (tools array/tool_calls) triggered by too many tools in long tasks — conversations no longer get stuck mid-task and no longer require a restart

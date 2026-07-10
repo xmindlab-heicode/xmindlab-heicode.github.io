@@ -1,194 +1,194 @@
 ---
-title: "常见问题和故障处理"
+title: "FAQ and Troubleshooting"
 ---
 
-# 常见问题和故障处理
+# FAQ and Troubleshooting
 
-本页说明创建和运行 Agent 时最常见的问题。
+This page describes the most common issues when creating and running Agents.
 
-## Agent 无法启动
+## The Agent won't launch
 
-可能原因：
+Possible causes:
 
-- 任务目标为空或过短。
-- 没有连接必要资源。
-- 没有设置预算。
-- Agent 角色为空。
-- Git 或云授权失败。
-- 审批策略缺失。
+- The task goal is empty or too short.
+- Necessary resources aren't connected.
+- The budget hasn't been set.
+- The Agent role is empty.
+- Git or cloud authorization failed.
+- The approval policy is missing.
 
-处理方式：
+How to handle it:
 
-1. 补充任务目标。
-2. 打开准备清单。
-3. 连接缺失资源。
-4. 重新确认 Agent 角色。
-5. 设置预算。
-6. 再次启动。
+1. Add more detail to the task goal.
+2. Open the preparation checklist.
+3. Connect the missing resources.
+4. Re-confirm the Agent roles.
+5. Set the budget.
+6. Launch again.
 
-## 任务一直准备中
+## The task is stuck in preparing
 
-可能原因：
+Possible causes:
 
-- 资源发现较慢。
-- SK 快照解析失败。
-- 云资源接口超时。
-- 密钥保管器不可用。
-- Agent 平台排队。
+- Resource discovery is slow.
+- SK snapshot parsing failed.
+- The cloud resource API timed out.
+- The secret vault is unavailable.
+- The Agent platform is queued.
 
-处理方式：
+How to handle it:
 
-- 查看准备清单状态。
-- 查看最近事件。
-- 重新解析 SK。
-- 检查资源授权。
-- 稍后重试。
-- 联系管理员查看平台状态。
+- Check the preparation checklist status.
+- Check recent events.
+- Re-parse the SK.
+- Check resource authorization.
+- Retry later.
+- Contact the administrator to check platform status.
 
-## 任务显示需要输入
+## The task shows "needs input"
 
-任务本身仍是 running，但 Agent 触发了 `task.blocked` 事件，说明 Agent 无法继续判断。
+The task itself is still running, but the Agent triggered a `task.blocked` event, meaning the Agent can't decide how to continue.
 
-常见问题：
+Common issues:
 
-- 需求有多个方向。
-- 资源范围不明确。
-- 需要选择方案。
-- 缺少测试账号。
-- 缺少部署目标。
+- The requirements have multiple possible directions.
+- The resource scope is unclear.
+- An approach needs to be chosen.
+- A test account is missing.
+- A deployment target is missing.
 
-处理方式：
+How to handle it:
 
-- 打开任务详情。
-- 阅读问题。
-- 给出明确选择。
-- 不要只回复“继续”。
+- Open the task details.
+- Read the question.
+- Give a clear choice.
+- Don't just reply "continue."
 
-## 等待审批
+## Awaiting approval
 
-任务仍是 running，但存在一条状态为 pending 的审批请求，说明 Agent 请求了高危操作。
+The task is still running, but there's an approval request in the pending state, meaning the Agent requested a high-risk operation.
 
-处理方式：
+How to handle it:
 
-1. 查看操作类型。
-2. 查看请求的 Agent。
-3. 查看目标资源。
-4. 查看风险等级和凭证 TTL。
-5. 批准或拒绝。
+1. Check the operation type.
+2. Check the requesting Agent.
+3. Check the target resource.
+4. Check the risk level and credential TTL.
+5. Approve or reject.
 
-不确定时选择拒绝，并要求 Agent 生成更详细计划。
+If unsure, reject and ask the Agent to produce a more detailed plan.
 
-## Git 授权失败
+## Git authorization failed
 
-可能原因：
+Possible causes:
 
-- token 过期。
-- 仓库权限不足。
-- 分支不存在。
-- 路径范围过窄。
-- 组织策略不允许访问。
+- The token has expired.
+- Insufficient repository permissions.
+- The branch doesn't exist.
+- The path scope is too narrow.
+- Organization policy disallows access.
 
-处理方式：
+How to handle it:
 
-- 重新授权 Git。
-- 检查仓库权限。
-- 选择正确分支。
-- 调整路径范围。
-- 联系组织管理员。
+- Re-authorize Git.
+- Check repository permissions.
+- Choose the correct branch.
+- Adjust the path scope.
+- Contact the organization administrator.
 
-## SK 解析失败
+## SK parsing failed
 
-可能原因：
+Possible causes:
 
-- SK 仓库不可访问。
-- ref 不存在。
-- SKILL.md 缺失。
-- 技能声明格式错误。
-- 技能请求了禁止工具。
+- The SK repository is inaccessible.
+- The ref doesn't exist.
+- SKILL.md is missing.
+- The skill declaration format is wrong.
+- The skill requested a disallowed tool.
 
-处理方式：
+How to handle it:
 
-- 选择可访问的 SK 仓库。
-- 固定到有效 tag 或 commit。
-- 修复 SKILL.md。
-- 禁用危险技能。
-- 重新解析快照。
+- Choose an accessible SK repository.
+- Pin to a valid tag or commit.
+- Fix SKILL.md.
+- Disable the dangerous skill.
+- Re-parse the snapshot.
 
-## 云资源不可访问
+## Cloud resource inaccessible
 
-可能原因：
+Possible causes:
 
-- 云授权过期。
-- 资源不在授权范围。
-- 环境选择错误。
-- 需要审批。
-- 短期凭证过期。
+- The cloud authorization expired.
+- The resource is outside the authorized scope.
+- The wrong environment was selected.
+- Approval is required.
+- The short-lived credential expired.
 
-处理方式：
+How to handle it:
 
-- 重新连接云账号。
-- 调整资源范围。
-- 重新审批。
-- 重新派生短期凭证。
-- 检查云平台状态。
+- Reconnect the cloud account.
+- Adjust the resource scope.
+- Re-approve.
+- Re-derive a short-lived credential.
+- Check the cloud platform status.
 
-## 预算耗尽
+## Budget exhausted
 
-可能原因：
+Possible causes:
 
-- 任务范围过大。
-- 失败后重复重试。
-- 使用了高成本模型。
-- 多个 Agent 并行执行。
+- The task scope is too large.
+- Repeated retries after failure.
+- A high-cost model was used.
+- Multiple Agents executed in parallel.
 
-处理方式：
+How to handle it:
 
-- 暂停任务。
-- 查看消耗明细。
-- 缩小范围。
-- 拆分任务。
-- 调整模型策略。
-- 提高预算后继续。
+- Pause the task.
+- Review the consumption breakdown.
+- Narrow the scope.
+- Split the task.
+- Adjust the model strategy.
+- Raise the budget and continue.
 
-## 任务失败
+## Task failed
 
-处理顺序：
+Handling order:
 
-1. 查看失败原因。
-2. 查看最近日志。
-3. 查看资源访问记录。
-4. 查看是否有审批被拒绝。
-5. 查看预算是否耗尽。
-6. 查看测试或构建输出。
-7. 让 Agent 汇总可恢复方案。
+1. Check the failure reason.
+2. Check recent logs.
+3. Check resource access records.
+4. Check whether an approval was rejected.
+5. Check whether the budget ran out.
+6. Check test or build output.
+7. Ask the Agent to summarize a recoverable approach.
 
-## 疑似密钥泄漏
+## Suspected secret leak
 
-立即处理：
+Handle immediately:
 
-1. 停止任务。
-2. 撤销相关凭证。
-3. 轮换密钥。
-4. 检查 Git、日志、Markdown 和截图。
-5. 通知安全负责人。
-6. 查看审计记录。
-7. 重新授权后再继续。
+1. Stop the task.
+2. Revoke the relevant credentials.
+3. Rotate the secret.
+4. Check Git, logs, Markdown, and screenshots.
+5. Notify the security lead.
+6. Check the audit trail.
+7. Re-authorize before continuing.
 
-## 交付结果不符合预期
+## The delivered result doesn't meet expectations
 
-处理方式：
+How to handle it:
 
-- 对照验收标准。
-- 明确指出不符合的地方。
-- 要求 Agent 只修复指定问题。
-- 不要扩大任务范围。
-- 必要时退回到计划阶段。
+- Compare against the acceptance criteria.
+- Point out clearly what doesn't match.
+- Ask the Agent to fix only the specified issue.
+- Don't expand the task's scope.
+- Roll back to the planning stage if necessary.
 
-示例：
+Example:
 
 ```text
-当前结果不符合验收标准第 2 条。
-请只修复用户登录后的项目列表为空问题。
-不要修改通知模块。
-完成后运行现有测试，并给出 diff 摘要。
+The current result doesn't meet acceptance criterion #2.
+Please only fix the empty project list issue after user login.
+Don't modify the notifications module.
+When done, run the existing tests and give me a diff summary.
 ```

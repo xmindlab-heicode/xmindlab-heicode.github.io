@@ -1,276 +1,276 @@
 ---
-title: "创建第一个 Agent"
+title: "Create Your First Agent"
 ---
 
-# 创建第一个 Agent
+# Create Your First Agent
 
-本页说明如何从零创建第一个 Agent 任务。你会完成目标输入、资源连接、角色确认、预算确认和启动。
+This page describes how to create your first Agent task from scratch. You'll go through entering a goal, connecting resources, confirming roles, confirming the budget, and launching.
 
-## 什么时候需要创建 Agent
+## When you need to create an Agent
 
-适合创建 Agent 的场景：
+Good scenarios for creating an Agent:
 
-- 从一个产品想法生成 MVP。
-- 给现有项目增加功能。
-- 修复复杂 bug。
-- 生成或整理文档。
-- 执行测试和代码审查。
-- 部署到云环境。
-- 做安全检查或权限整改。
+- Generating an MVP from a product idea.
+- Adding a feature to an existing project.
+- Fixing a complex bug.
+- Generating or organizing documentation.
+- Running tests and code reviews.
+- Deploying to a cloud environment.
+- Doing a security check or permissions remediation.
 
-不建议创建 Agent 的场景：
+Scenarios where creating an Agent is not recommended:
 
-- 目标不明确。
-- 没有资源授权。
-- 没有验收标准。
-- 想绕过人工审批操作生产环境。
-- 希望 Agent 长期持有明文密钥。
+- The goal is unclear.
+- There's no resource authorization.
+- There are no acceptance criteria.
+- You want to bypass human approval to operate on production.
+- You want the Agent to hold plaintext secrets long-term.
 
-## 第一步：写清楚目标
+## Step 1: Write a clear goal
 
-好的目标要包含：
+A good goal should include:
 
-- 背景。
-- 期望结果。
-- 已有资源。
-- 不允许做什么。
-- 验收标准。
+- Background.
+- Expected outcome.
+- Existing resources.
+- What's not allowed.
+- Acceptance criteria.
 
-推荐模板：
-
-```text
-任务名称：
-背景：
-要完成的结果：
-已有代码或文档：
-目标环境：
-不允许做的事情：
-需要审批的事情：
-验收标准：
-```
-
-示例：
+Recommended template:
 
 ```text
-任务名称：给官网增加法律资源页面
-背景：官网需要展示隐私、密钥保管、法律声明。
-要完成的结果：生成站内页面和 Markdown 文档。
-已有代码或文档：website 目录，docs/legal 目录。
-目标环境：Azure Static Web Apps。
-不允许做的事情：不要改登录系统，不要暴露密钥。
-需要审批的事情：生产部署。
-验收标准：页面可访问，文档可被文档站直接使用。
+Task name:
+Background:
+Outcome to accomplish:
+Existing code or documentation:
+Target environment:
+What's not allowed:
+What requires approval:
+Acceptance criteria:
 ```
 
-## 第二步：确认任务类型
+Example:
 
-选择任务类型可以帮助 Heicode 推荐角色。
+```text
+Task name: Add a legal resources page to the website
+Background: The website needs to show privacy, secret vault, and legal notices.
+Outcome to accomplish: Generate an in-site page and Markdown documentation.
+Existing code or documentation: the website directory, the docs/legal directory.
+Target environment: Azure Static Web Apps.
+What's not allowed: Don't change the login system, don't expose secrets.
+What requires approval: Production deployment.
+Acceptance criteria: The page is accessible, and the documentation can be used directly by the docs site.
+```
 
-| 任务类型 | 推荐角色 |
+## Step 2: Confirm the task type
+
+Choosing a task type helps Heicode recommend roles.
+
+| Task type | Recommended roles |
 |---|---|
-| 新产品 | Product、Architect、Frontend、Backend、Reviewer、Ops |
-| 功能迭代 | Product、Frontend、Backend、Reviewer |
-| Bug 修复 | Backend、Reviewer |
-| 文档 | Product、Reviewer |
-| 部署 | Ops、Reviewer |
-| 安全整改 | Architect、Reviewer、Ops |
+| New product | Product, Architect, Frontend, Backend, Reviewer, Ops |
+| Feature iteration | Product, Frontend, Backend, Reviewer |
+| Bug fix | Backend, Reviewer |
+| Documentation | Product, Reviewer |
+| Deployment | Ops, Reviewer |
+| Security remediation | Architect, Reviewer, Ops |
 
-推荐角色来自 Heicode 的六角色目录：Product Agent、Architect Agent、Frontend Agent、Backend Agent、Reviewer Agent、Ops Agent。目前没有独立的 Debug、Docs 或 Security 角色，相关工作由上述角色承担。
+The recommended roles come from Heicode's six-role catalog: Product Agent, Architect Agent, Frontend Agent, Backend Agent, Reviewer Agent, Ops Agent. There is currently no separate Debug, Docs, or Security role — that work is handled by the roles above.
 
-如果你不确定任务类型，可以让 Heicode 根据目标自动推荐。
+If you're not sure of the task type, you can let Heicode recommend one automatically based on the goal.
 
-## 第三步：选择工作模式
+## Step 3: Choose a working mode
 
-工作模式决定 Agent 怎样拆分任务、怎样协作、什么时候需要你确认。
+The working mode determines how the Agent splits up tasks, how it collaborates, and when it needs your confirmation.
 
-Sub 模式和蜂群模式是两种协作方式：Sub 模式由主 Agent 拆分任务并显式分配给子 Agent；蜂群模式是一台租户级虚拟机上由 lead（主管）Agent 接收任务、拆解后派发给 worker（工作）Agent 执行，worker 数量上限 8 个、默认 3 个（随套餐可调整），不是自由角色数量的自组织协作。
+Sub mode and Swarm mode are two collaboration styles: in Sub mode, a main Agent splits tasks and explicitly assigns them to sub-agents; in Swarm mode, on a tenant-level virtual machine, a lead Agent receives the task, breaks it down, and dispatches it to worker Agents for execution — up to 8 workers, 3 by default (adjustable by plan). This is not free-form self-organization with an unlimited number of roles.
 
-瀑布模式和敏捷模式对应“开发模式团队”一键部署功能里的两个固定模板，角色和数量是固定的：
+Waterfall mode and Agile mode correspond to the two fixed templates in the one-click "Dev Mode Team" deployment feature, with fixed roles and headcounts:
 
-- 敏捷模板：产品(planner) + 开发(executor) + 评审(code-reviewer)，共 3 个角色。
-- 瀑布模板：分析(analyst) + 架构(architect) + 开发(executor) + 测试(qa-tester) + 评审(code-reviewer)，共 5 个角色。
+- Agile template: Product (planner) + Dev (executor) + Review (code-reviewer), 3 roles total.
+- Waterfall template: Analysis (analyst) + Architecture (architect) + Dev (executor) + QA (qa-tester) + Review (code-reviewer), 5 roles total.
 
-| 模式 | 适合情况 | 不适合情况 |
+| Mode | Good fit | Not a good fit |
 |---|---|---|
-| Sub 模式 | 子任务边界清楚、多角色分工、复杂排障、代码审查 | 小任务、任务会动态生成 |
-| 蜂群模式 | 多方向探索、任务动态生成、多 worker 并行处理、大规模审查 | 预算很紧、验收标准不清楚、生产高危边界不清楚 |
-| 瀑布模式（5 角色固定模板） | 需求明确、阶段固定、生产发布、法律或合规内容 | 目标还在探索、需要频繁试错 |
-| 敏捷模式（3 角色固定模板） | MVP、产品迭代、UI 调整、多轮反馈 | 无人验收、一次性迁移或强顺序发布 |
+| Sub mode | Clear subtask boundaries, multi-role division of labor, complex troubleshooting, code review | Small tasks, tasks generated dynamically |
+| Swarm mode | Exploring multiple directions, dynamically generated tasks, parallel processing across multiple workers, large-scale review | Very tight budget, unclear acceptance criteria, unclear production high-risk boundaries |
+| Waterfall mode (fixed 5-role template) | Clear requirements, fixed stages, production releases, legal or compliance content | Goal still being explored, need for frequent trial and error |
+| Agile mode (fixed 3-role template) | MVP, product iteration, UI adjustments, multiple rounds of feedback | No one to accept the work, one-off migrations, or strictly sequential releases |
 
-推荐选择方式：
+Recommended way to choose:
 
-- 子任务边界清楚，先选 Sub 模式做可控拆分。
-- 任务需要多个 worker 并行探索，选蜂群模式。
-- 已经知道要做什么，且风险较高，一键部署瀑布团队模板。
-- 希望先做一版再调整，一键部署敏捷团队模板。
-- 大型任务可以组合使用：先用 Sub 或蜂群模式探索方案，方案稳定后再切换到瀑布或敏捷模板推进正式交付。
+- If subtask boundaries are clear, start with Sub mode for controlled decomposition.
+- If the task needs multiple workers exploring in parallel, choose Swarm mode.
+- If you already know what to build and the risk is high, one-click deploy the Waterfall team template.
+- If you want to ship a first version and adjust afterward, one-click deploy the Agile team template.
+- For large tasks, combine modes: explore with Sub or Swarm mode first, then switch to the Waterfall or Agile template once the approach has stabilized, to drive formal delivery.
 
-详细说明见 [选择 Agent 工作模式](choose-agent-mode.mdx)。
+See [Choosing an Agent Working Mode](choose-agent-mode.mdx) for details.
 
-## 第四步：连接 Git 仓库
+## Step 4: Connect a Git repository
 
-如果任务需要读写代码，连接 Git 仓库。
+If the task needs to read or write code, connect a Git repository.
 
-操作步骤：
+Steps:
 
-1. 打开任务准备清单。
-2. 点击连接 Git。
-3. 选择仓库。
-4. 选择分支。
-5. 设置允许读取的路径。
-6. 设置允许写入的路径。
-7. 设置是否允许创建分支或 PR。
+1. Open the task preparation checklist.
+2. Click Connect Git.
+3. Choose the repository.
+4. Choose the branch.
+5. Set the paths allowed for reading.
+6. Set the paths allowed for writing.
+7. Set whether branch or PR creation is allowed.
 
-推荐权限：
+Recommended permissions:
 
-| 场景 | 推荐权限 |
+| Scenario | Recommended permission |
 |---|---|
-| 只分析 | 只读 |
-| 小修复 | 当前分支读写 |
-| 新功能 | 新分支读写，允许 PR |
-| 生产热修 | 读写前必须审批 |
+| Analysis only | Read-only |
+| Small fix | Read/write on the current branch |
+| New feature | Read/write on a new branch, PR allowed |
+| Production hotfix | Approval required before write |
 
-## 第五步：连接文档
+## Step 5: Connect documentation
 
-文档可以帮助 Agent 理解产品和项目。
+Documentation helps the Agent understand the product and project.
 
-建议连接：
+Recommended to connect:
 
-- 产品说明。
-- 需求文档。
-- API 文档。
-- 架构文档。
-- 设计说明。
-- 测试用例。
-- 发布说明。
+- Product descriptions.
+- Requirements documents.
+- API documentation.
+- Architecture documentation.
+- Design specs.
+- Test cases.
+- Release notes.
 
-文档默认只读。只有你明确允许时，负责该任务的 Agent 才能写入文档目录。
+Documentation is read-only by default. Only when you explicitly allow it can the Agent responsible for the task write to the docs directory.
 
-## 第六步：连接 SK 技能库
+## Step 6: Connect an SK skill library
 
-SK 技能库用于告诉 Agent 团队规范和特定工作方式。
+The SK skill library is used to tell the Agent team standards and specific ways of working.
 
-可以包含：
+Can include:
 
-- 编码规范。
-- 前端设计规范。
-- API 规范。
-- 测试规范。
-- 部署流程。
-- 安全检查清单。
-- 文档模板。
+- Coding standards.
+- Frontend design standards.
+- API standards.
+- Testing standards.
+- Deployment procedures.
+- Security checklists.
+- Documentation templates.
 
-建议：
+Recommendations:
 
-- 只启用当前任务需要的 SK。
-- 高危 SK 默认禁用。
-- shell、云资源、数据库、部署相关 SK 必须受审批控制。
-- 使用固定版本或快照，避免任务过程中规则变化。
+- Only enable the SKs the current task needs.
+- High-risk SKs are disabled by default.
+- SKs that touch shell, cloud resources, databases, or deployment must be under approval control.
+- Use a pinned version or snapshot to avoid rules changing mid-task.
 
-## 第七步：连接云资源
+## Step 7: Connect cloud resources
 
-如果任务需要部署或访问云资源，连接云账号。
+If the task needs to deploy or access cloud resources, connect a cloud account.
 
-连接后，Heicode 会自动发现可用资源。
+Once connected, Heicode automatically discovers available resources.
 
-你需要确认：
+You need to confirm:
 
-- 哪些资源可以用于本任务。
-- 哪些环境可以使用。
-- 哪些资源只读。
-- 哪些操作需要审批。
+- Which resources can be used for this task.
+- Which environments can be used.
+- Which resources are read-only.
+- Which operations require approval.
 
-生产资源默认不应开放给普通任务。
+Production resources should not be opened up to ordinary tasks by default.
 
-## 第八步：确认 Agent 角色
+## Step 8: Confirm Agent roles
 
-Heicode 会推荐子 Agent。
+Heicode will recommend sub-agents.
 
-示例：
+Example:
 
-| 角色 | 本次职责 |
+| Role | Responsibility for this task |
 |---|---|
-| Product Agent | 整理需求和验收标准 |
-| Frontend Agent | 修改页面和交互 |
-| Reviewer Agent | 检查 diff 和风险 |
-| Ops Agent | 构建和部署 |
+| Product Agent | Organize requirements and acceptance criteria |
+| Frontend Agent | Modify pages and interactions |
+| Reviewer Agent | Check diffs and risk |
+| Ops Agent | Build and deploy |
 
-你可以减少或增加角色。
+You can reduce or add roles.
 
-建议：
+Recommendations:
 
-- Sub 模式可以增加多个职责明确的子 Agent。
-- 蜂群模式下角色体现为 lead 和 worker：lead 负责接收任务并拆解派发，worker 负责领取并执行子任务，worker 数量最多 8 个、默认 3 个（随套餐可调整）。
-- 瀑布模式使用固定的 5 角色模板（分析、架构、开发、测试、评审），一键部署即已包含全部角色。
-- 敏捷模式使用固定的 3 角色模板（产品、开发、评审）。
-- 不要创建没有明确职责的角色。
-- 不要让同一个 Agent 同时负责开发、审查和部署审批。
-- 不要给所有角色相同权限。
+- In Sub mode, you can add multiple sub-agents with clearly defined responsibilities.
+- In Swarm mode, roles show up as lead and worker: the lead is responsible for receiving the task and breaking it down for dispatch, workers are responsible for claiming and executing subtasks — up to 8 workers, 3 by default (adjustable by plan).
+- Waterfall mode uses a fixed 5-role template (Analysis, Architecture, Dev, QA, Review); one-click deployment already includes all the roles.
+- Agile mode uses a fixed 3-role template (Product, Dev, Review).
+- Don't create roles without clearly defined responsibilities.
+- Don't let the same Agent be responsible for development, review, and deployment approval at the same time.
+- Don't give all roles the same permissions.
 
-## 第九步：确认预算
+## Step 9: Confirm the budget
 
-预算用于控制模型消耗。
+The budget controls model consumption.
 
-需要确认：
+You need to confirm:
 
-- 最大 token。
-- 最大成本。
-- 最大执行时间。
-- 超额是否暂停。
-- 大额消耗是否审批。
+- Maximum tokens.
+- Maximum cost.
+- Maximum execution time.
+- Whether to pause on overage.
+- Whether large consumption requires approval.
 
-平台对单个 Agent 预算有硬性上限：最多 500,000 token、最多 200 美元成本、最长运行 24 小时，超出任一项都会被平台拒绝并返回 `BUDGET_EXCEEDED`。你设置的预算只能在这个上限以内。
+The platform enforces a hard cap on any single Agent's budget: at most 500,000 tokens, at most $200 in cost, and a maximum runtime of 24 hours — exceeding any one of these gets rejected by the platform and returns `BUDGET_EXCEEDED`. The budget you set can only be within this cap.
 
-建议：
+Recommendations:
 
-| 任务 | 建议方式 |
+| Task | Recommended approach |
 |---|---|
-| 小修复 | 小预算，超出暂停 |
-| 中等功能 | 分阶段预算 |
-| MVP | 阶段验收后继续 |
-| 文档 | 低预算，限制工具 |
-| 部署 | 小预算，高审批 |
-| Sub 模式 | 按子 Agent 设置预算，异常子任务可单独暂停 |
-| 蜂群模式 | 设置总预算和单个 worker 上限，worker 数量不超过 8 个（默认 3 个） |
-| 瀑布模式 | 按阶段设置预算，阶段完成后再释放下一段 |
-| 敏捷模式 | 按迭代设置预算，每轮验收后再继续 |
+| Small fix | Small budget, pause on overage |
+| Medium feature | Staged budget |
+| MVP | Continue after stage acceptance |
+| Documentation | Low budget, restricted tools |
+| Deployment | Small budget, high approval bar |
+| Sub mode | Set a budget per sub-agent; an anomalous subtask can be paused individually |
+| Swarm mode | Set a total budget and a per-worker cap; the number of workers does not exceed 8 (3 by default) |
+| Waterfall mode | Set a budget per stage; release the next stage's budget only after the current stage is done |
+| Agile mode | Set a budget per iteration; continue only after each round's acceptance |
 
-## 第十步：确认审批规则
+## Step 10: Confirm approval rules
 
-必须审批的操作：
+Operations that must require approval:
 
-- 生产部署。
-- 生产数据库读写。
-- 访问生产密钥。
-- 删除云资源。
-- 扩缩容。
-- 外部发送敏感数据。
-- 合并到主分支。
-- 大额模型消耗。
+- Production deployment.
+- Production database read/write.
+- Access to production secrets.
+- Deleting cloud resources.
+- Scaling up or down.
+- Sending sensitive data externally.
+- Merging to the main branch.
+- Large model consumption.
 
-审批时你会看到：
+During approval you'll see:
 
-- 操作类型。
-- 请求的 Agent。
-- 要操作什么资源。
-- 风险等级。
-- 凭证有效期（TTL）。
+- Operation type.
+- Requesting Agent.
+- Which resource is targeted.
+- Risk level.
+- Credential TTL (time to live).
 
-目标环境、预计影响、预算影响、是否可回滚等信息，视具体审批场景可能提供，不是每次审批都保证展示。
+Target environment, expected impact, budget impact, and rollback availability may be shown depending on the specific approval scenario — they aren't guaranteed to appear every time.
 
-## 第十一步：启动 Agent
+## Step 11: Launch the Agent
 
-启动前确认：
+Before launching, confirm:
 
-- 目标清楚。
-- 工作模式已选择。
-- 资源已连接。
-- 角色合理。
-- 权限最小。
-- 预算已设置。
-- 审批规则已设置。
-- 验收标准明确。
+- The goal is clear.
+- The working mode has been chosen.
+- Resources are connected.
+- The roles are reasonable.
+- Permissions are minimal.
+- The budget has been set.
+- Approval rules have been set.
+- Acceptance criteria are clear.
 
-点击启动后，Agent 会进入任务视图。
+After clicking Launch, the Agent enters the task view.
 
-你可以关闭页面后稍后回来查看。任务状态会保留在 Heicode 中。
+You can close the page and come back later. The task status is preserved in Heicode.

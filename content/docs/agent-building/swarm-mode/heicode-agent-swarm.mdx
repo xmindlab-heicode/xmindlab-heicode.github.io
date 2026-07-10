@@ -1,594 +1,592 @@
 ---
-title: "Heicode Agent 蜂群"
+title: "Heicode Agent Swarm"
 ---
 
-# Heicode Agent 蜂群特色说明
+# Heicode Agent Swarm: What Makes It Different
 
-## 一句话说明
+## In one sentence
 
-Heicode 的 Agent 蜂群，是一种面向真实软件交付的 AI 协作机制。它不是简单地同时启动多个 AI，而是让多个 Agent 围绕同一个用户目标，在统一的任务、资源、产物和审计体系中协同工作。
+Heicode's Agent Swarm is an AI collaboration mechanism built for real software delivery. It isn't simply launching multiple AIs at once — it's having multiple Agents work around a single user goal, together, within a unified system of tasks, resources, artifacts, and audit records.
 
-蜂群模式采用 lead（主管）加 worker（工作）的主从架构：每个租户对应一台 Azure 虚拟机，虚拟机上以 docker-compose 运行一个 api 容器、一个 lead 容器和若干 worker 容器。lead 接收用户目标、拆解任务并派发给 worker；worker 领取任务、执行、上报心跳，并把结果回传给 lead 聚合。worker 数量最多 8 个，默认 3 个（随套餐可调整）。
-
-```text
-用户提出目标
--> Heicode 理解需求
--> lead Agent 拆解任务
--> lead 把子任务派发给 worker Agent
--> worker 执行、上报心跳、回传结果
--> 高危操作进入审批
--> lead 聚合结果
--> 产物、日志、用量和审计统一回传
-```
-
-> Heicode 会根据你的目标自动组织一支 AI 开发团队，让不同 Agent 分别处理需求、架构、代码、测试、审查、部署和维护，并把过程安全地记录下来。
-
-## 为什么需要 Agent 蜂群
-
-单个 AI 助手适合回答问题或完成局部任务，但真实软件开发通常不是一个单点动作。
-
-一个产品从想法到上线，通常会涉及：
-
-- 需求理解。
-- 产品拆解。
-- 技术方案。
-- 前端开发。
-- 后端开发。
-- 数据库设计。
-- 测试验证。
-- 安全检查。
-- 部署上线。
-- 日志排查。
-- 后续维护。
-
-如果只依赖一个 Agent，它容易出现几个问题：
-
-- 上下文过长后容易遗漏重点。
-- 复杂任务拆解不稳定。
-- 代码、测试、部署之间缺少交接。
-- 失败后不知道如何回流修复。
-- 资源权限、密钥和生产操作难以控制。
-- 客户无法清楚看到谁做了什么、用了什么资源、结果是什么。
-
-Agent 蜂群的价值，就是把一个大目标交给 lead Agent 拆成多个可追踪、可协作、可验证的子任务，再由多个 worker Agent 在受控边界内并行完成。
-
-## Heicode 产品中的蜂群技术
-
-Heicode 的蜂群技术由以下部分组成：
+Swarm mode uses a lead-plus-worker architecture: each tenant maps to an Azure virtual machine, on which an api container, a lead container, and several worker containers run via docker-compose. The lead receives the user's goal, breaks the task down, and dispatches it to workers; workers claim tasks, execute them, report heartbeat, and send results back to the lead for aggregation. Up to 8 workers, 3 by default (adjustable by plan).
 
 ```text
-目标理解 -> lead 任务拆解 -> worker 并行执行 -> 结果聚合 -> 治理与审计
+User states a goal
+-> Heicode understands the requirements
+-> The lead Agent breaks down the task
+-> The lead dispatches subtasks to worker Agents
+-> Workers execute, report heartbeat, and return results
+-> High-risk operations go through approval
+-> The lead aggregates the results
+-> Artifacts, logs, usage, and audit are reported back together
 ```
 
-这些能力共同构成了 Heicode 的 AI 开发团队运行机制。
+> Heicode automatically organizes an AI development team around your goal, letting different Agents handle requirements, architecture, code, testing, review, deployment, and maintenance respectively — and safely records the process along the way.
 
-### 1. lead Agent：拆解和派发任务
+## Why we need an Agent Swarm
 
-客户每次启动一个目标，lead Agent 都会接收目标、理解需求、拆解成若干子任务，再派发给 worker Agent 执行。
+A single AI assistant is well-suited to answering questions or completing a local task, but real software development is rarely a single-point action.
 
-例如客户输入：
+Taking a product from idea to launch usually involves:
+
+- Understanding requirements.
+- Breaking down the product.
+- Technical design.
+- Frontend development.
+- Backend development.
+- Database design.
+- Test verification.
+- Security review.
+- Deployment and launch.
+- Log troubleshooting.
+- Ongoing maintenance.
+
+Relying on a single Agent tends to run into a few problems:
+
+- It easily loses track of key points once context gets too long.
+- Complex task decomposition is unstable.
+- There's no proper handoff between coding, testing, and deployment.
+- After a failure, it doesn't know how to feed that back into a fix.
+- Resource permissions, secrets, and production operations are hard to control.
+- Customers can't clearly see who did what, what resources were used, or what the result was.
+
+The value of an Agent Swarm is handing a big goal to the lead Agent, which breaks it into multiple trackable, collaborative, verifiable subtasks, then has multiple worker Agents complete them in parallel within controlled boundaries.
+
+## The Swarm technology inside Heicode's product
+
+Heicode's Swarm technology is made up of the following parts:
 
 ```text
-帮我基于现有代码增加团队成员邀请功能，并完成测试。
+Goal understanding -> lead task decomposition -> parallel worker execution -> result aggregation -> governance and audit
 ```
 
-lead 会围绕这个目标拆解任务、派发给 worker，后续所有任务、产物、用量和审计都归属于这次运行。
+Together, these capabilities form Heicode's AI development team operating mechanism.
 
-客户价值：
+### 1. lead Agent: breaking down and dispatching tasks
 
-- 每次任务有独立记录。
-- 过程可查看。
-- 结果可验收。
-- 失败可追踪。
-- 用量可归因。
+Each time a customer launches a goal, the lead Agent receives the goal, understands the requirements, breaks it into subtasks, and dispatches them to worker Agents for execution.
 
-### 2. worker 并行执行：把任务真正跑起来
+For example, a customer might enter:
 
-worker Agent 从 lead 派发的子任务开始执行。执行过程中发现新问题，lead 可以派发新的任务，例如：
+```text
+Add a team member invitation feature to the existing codebase, and complete testing.
+```
 
-- 测试失败，自动生成修复任务派发给 worker。
-- 发现权限不足，进入资源补充或审批。
-- 发现部署风险，生成回滚计划。
-- 发现需求不完整，回到客户确认。
+The lead breaks down tasks around this goal and dispatches them to workers; all subsequent tasks, artifacts, usage, and audit records for this run belong to it.
 
-客户价值：
+Customer value:
 
-- 系统不是机械执行固定流程。
-- 任务可以根据实际情况自我调整。
-- 失败后可以继续推进。
-- 客户能看到任务为何新增、为何暂停、为何需要审批。
+- Each task has its own independent record.
+- The process can be viewed.
+- Results can be reviewed and accepted.
+- Failures can be traced.
+- Usage can be attributed.
 
-### 3. 能力编队：按任务需要组织 worker
+### 2. Parallel worker execution: actually getting the work done
 
-Heicode 不要求客户手动选择 worker 数量，lead 会根据任务目标决定需要拆解出多少子任务、派发给多少个 worker（不超过套餐规定的上限，最多 8 个，默认 3 个）。
+Worker Agents start executing the subtasks dispatched by the lead. When new problems come up during execution, the lead can dispatch new tasks, for example:
 
-简单任务可能只需要少量 worker 完成目标理解、实现和验证；复杂任务会用到更多 worker，分别处理产品理解、架构分析、前端实现、后端实现、安全审查、测试验证、运维部署、文档整理等工作。
+- If a test fails, a fix task is automatically generated and dispatched to a worker.
+- If insufficient permissions are found, it moves to resource supplementation or approval.
+- If deployment risk is found, a rollback plan is generated.
+- If requirements are incomplete, it goes back to the customer for confirmation.
 
-客户价值：
+Customer value:
 
-- 不需要理解底层 Agent 配置。
-- 任务越复杂，系统自动组织更多 worker。
-- 每个 Agent 都有明确职责和边界。
-- 客户可以看到"谁在做什么"。
+- The system isn't mechanically executing a fixed process.
+- Tasks can adjust themselves based on actual conditions.
+- Progress can continue after a failure.
+- Customers can see why a task was added, why it was paused, and why approval is needed.
 
-### 4. 共同资源层：蜂群协作的共享工作台
+### 3. Capability formation: organizing workers around what the task needs
 
-共同资源层是 Heicode 蜂群技术的核心。它让 lead 和多个 worker 使用同一套任务、资源、产物和审计记录。如果没有共同资源层，多个 Agent 只是同时运行；有了共同资源层，lead 和 worker 之间才能协作。
+Heicode doesn't require customers to manually choose the number of workers — the lead decides how many subtasks to break the goal into and how many workers to dispatch them to (not exceeding the plan's cap, up to 8, 3 by default).
 
-共同资源层包含：
+A simple task might only need a small number of workers to handle understanding the goal, implementation, and verification; a complex task will use more workers, handling product understanding, architecture analysis, frontend implementation, backend implementation, security review, test verification, ops deployment, documentation, and more, respectively.
 
-| 层面 | 作用 |
+Customer value:
+
+- No need to understand the underlying Agent configuration.
+- The more complex the task, the more workers the system organizes automatically.
+- Every Agent has clearly defined responsibilities and boundaries.
+- Customers can see "who is doing what."
+
+### 4. The shared resource layer: Swarm's shared workbench
+
+The shared resource layer is the core of Heicode's Swarm technology. It lets the lead and multiple workers use the same set of tasks, resources, artifacts, and audit records. Without a shared resource layer, multiple Agents would just be running at the same time; with it, the lead and workers can actually collaborate.
+
+The shared resource layer includes:
+
+| Layer | Role |
 |---|---|
-| 任务层 | 管理 lead 拆解的任务、worker 的领取和执行状态、失败重试 |
-| 产物层 | 保存代码 diff、测试报告、文档、部署计划和日志摘要 |
-| 权限层 | 管理 Git、文档、SK、云资源和密钥引用 |
-| 审批层 | 管理生产部署、云操作、密钥访问等高危确认 |
-| 审计层 | 记录每个动作的主体、资源、时间、结果和用量 |
+| Task layer | Manages tasks broken down by the lead, worker claim/execution status, and failure retries |
+| Artifact layer | Stores code diffs, test reports, documentation, deployment plans, and log summaries |
+| Permission layer | Manages Git, documentation, SK, cloud resources, and secret references |
+| Approval layer | Manages high-risk confirmations for production deployment, cloud operations, secret access, etc. |
+| Audit layer | Records the subject, resource, time, result, and usage of every action |
 
-客户价值：
+Customer value:
 
-- 多个 Agent 不会各自为战。
-- 任务可以交接。
-- 失败可以回流。
-- 产物可以集中查看。
-- 权限和密钥不会失控。
-- 过程可以审计。
+- Multiple Agents don't operate in isolation from each other.
+- Tasks can be handed off.
+- Failures can flow back for fixing.
+- Artifacts can be viewed centrally.
+- Permissions and secrets don't get out of control.
+- The process can be audited.
 
-### 5. 受控自治：允许自动协作，但不能越权
+### 5. Controlled autonomy: allowing automatic collaboration, but never exceeding authority
 
-Heicode 蜂群不是完全放任 AI 自动操作。它采用的是受控自治：
-
-```text
-Agent 可以自动拆解任务、领取任务、调用工具、生成产物、修复失败。
-但 Agent 不能越过权限、密钥、预算、审批和审计边界。
-```
-
-受控内容包括：
-
-- 用户身份。
-- 资源访问范围。
-- Git 路径范围。
-- SK 技能调用范围。
-- 云资源操作范围。
-- 模型预算。
-- 生产部署。
-- 数据删除。
-- 生产密钥访问。
-- 审计记录。
-
-客户价值：
-
-- 自动化带来效率。
-- 审批和权限保证安全。
-- 所有关键动作可追溯。
-- 企业客户可以放心接入自己的代码和云资源。
-
-### 6. 最小上下文：给每个 Agent 恰好够用的信息
-
-Heicode 不会把所有历史对话、所有代码和所有资源一次性塞给每个 Agent。系统会为每个任务准备最小可用的上下文，包括：
-
-- 当前任务目标。
-- 相关需求摘要。
-- 可编辑文件范围。
-- 可使用资源引用。
-- 可调用 SK。
-- 禁止动作。
-- 验收标准。
-- 失败历史。
-- 审批要求。
-
-客户价值：
-
-- Agent 不会拿到不必要的信息。
-- 上下文更准确。
-- 代码修改范围更可控。
-- 密钥和敏感资源不进入普通上下文。
-
-### 7. 交付物：让结果可查看、可验收
-
-Heicode 蜂群强调产物，而不只是对话。每个关键任务都应该沉淀可查看的交付物，常见包括：
-
-- 需求摘要。
-- 技术方案。
-- 代码 diff。
-- 测试报告。
-- 失败原因。
-- 修复记录。
-- 部署计划。
-- 回滚方案。
-- 使用说明。
-- 交付总结。
-
-客户价值：
-
-- 不是只看 AI 说了什么。
-- 可以看到实际产出。
-- 可以复盘每一步。
-- 可以判断是否达到验收标准。
-
-## Heicode 蜂群的产品特色
-
-### 1. 从想法到交付的连续体验
-
-客户不需要把需求、代码、部署、安全和审计拆到多个系统中手动协调。Heicode 会把这些环节组织在一个连续流程中：
+Heicode's Swarm doesn't leave AI to operate completely freely. It uses controlled autonomy:
 
 ```text
-想法 -> 需求 -> 任务 -> 开发 -> 测试 -> 审查 -> 部署 -> 审计 -> 维护
+Agents can automatically break down tasks, claim tasks, call tools, produce artifacts, and fix failures.
+But Agents cannot cross the boundaries of permissions, secrets, budget, approval, and audit.
 ```
 
-这让客户看到的是完整软件生命周期，而不是单次 AI 对话。
+What's controlled includes:
 
-### 2. 客户只确认关键事项，不填写底层参数
+- User identity.
+- Resource access scope.
+- Git path scope.
+- SK skill invocation scope.
+- Cloud resource operation scope.
+- Model budget.
+- Production deployment.
+- Data deletion.
+- Production secret access.
+- Audit records.
 
-客户不需要理解：
+Customer value:
 
-- Kubernetes。
-- Azure 虚拟机和 docker-compose 编排细节。
-- Azure Key Vault 路径。
-- secret_ref 的具体格式。
-- Agent 内部调度策略。
+- Automation brings efficiency.
+- Approval and permissions guarantee safety.
+- Every key action is traceable.
+- Enterprise customers can safely connect their own code and cloud resources.
 
-客户只需要确认：
+### 6. Minimal context: giving every Agent just enough information
 
-- 要做什么。
-- 允许使用哪些资源。
-- 哪些动作需要审批。
-- 是否接受当前执行结果。
+Heicode doesn't dump the entire conversation history, all the code, and all resources onto every Agent at once. The system prepares the minimum usable context for each task, including:
 
-### 3. 能接入客户已有代码和云资源
+- The current task goal.
+- A summary of relevant requirements.
+- The scope of editable files.
+- References to usable resources.
+- Which SKs can be called.
+- Prohibited actions.
+- Acceptance criteria.
+- Failure history.
+- Approval requirements.
 
-Heicode 的蜂群不是只在空白环境中生成代码。它可以围绕客户已有资源工作：
+Customer value:
 
-- Git 仓库。
-- 项目文档。
-- SK 技能。
-- 云账号。
-- 云资源。
-- 测试环境。
-- 部署环境。
+- Agents don't get unnecessary information.
+- The context is more accurate.
+- The scope of code changes is more controllable.
+- Secrets and sensitive resources don't enter ordinary context.
 
-客户价值：
+### 7. Deliverables: making results viewable and acceptable
 
-- 可以基于现有项目继续开发。
-- 可以把 AI 引入真实工程流程。
-- 不需要重新搭一套独立开发环境。
+Heicode's Swarm emphasizes artifacts, not just conversation. Every key task should leave behind viewable deliverables, commonly including:
 
-### 4. 安全地使用密钥和云资源
+- Requirements summary.
+- Technical approach.
+- Code diff.
+- Test report.
+- Failure reason.
+- Fix record.
+- Deployment plan.
+- Rollback plan.
+- Usage instructions.
+- Delivery summary.
 
-客户授权资源后，Heicode 不把长期密钥暴露给 Agent。系统通过：
+Customer value:
 
-- 密钥保管器。
-- secret_ref。
-- 短期凭证。
-- 权限范围。
-- 客户端审批。
-- 审计记录。
+- You're not just looking at what the AI said.
+- You can see the actual output.
+- You can review every step.
+- You can judge whether acceptance criteria are met.
 
-来控制资源访问。
+## Heicode Swarm's product characteristics
 
-客户价值：
+### 1. A continuous experience from idea to delivery
 
-- 不需要把密钥复制给 AI。
-- 不需要担心 Agent 长期持有生产密钥。
-- 高危操作可审批、可拒绝、可追踪。
-
-### 5. 失败可解释，过程可复盘
-
-传统 AI 工具失败后，客户经常只看到一个错误结果。Heicode 蜂群会记录：
-
-- 哪个任务失败。
-- 哪个 worker 执行失败。
-- 失败发生在哪一步。
-- 是否已经重试。
-- 是否生成修复任务。
-- 是否需要客户审批或补充资源。
-
-客户价值：
-
-- 失败不是黑盒。
-- 团队可以复盘。
-- 系统可以继续修复。
-
-### 6. 用量和成本可见
-
-Agent 蜂群运行中会产生模型调用和运行资源消耗。Heicode 会把用量与任务关联：
-
-- 哪个任务消耗了模型。
-- 哪个 worker 产生了调用。
-- 当前预算是否接近上限。
-- 是否发生大额消耗审批。
-
-客户价值：
-
-- 成本可解释。
-- 预算可控制。
-- 团队使用更透明。
-
-### 7. 适合个人、团队和企业逐步扩展
-
-个人用户可以用蜂群完成从想法到 MVP 的快速交付。团队用户可以用蜂群协作推进需求、开发、测试和部署。企业用户可以把蜂群放在已有代码、云资源、权限和审计体系内使用。不同规模的客户看到的是同一套产品能力，但 worker 数量上限、审批、预算和安全边界可以随套餐调整。
-
-## Heicode 蜂群的核心特色
-
-### 1. 目标驱动，不要求客户选择复杂流程
-
-客户不需要先规划好任务图或角色分工。客户只需要描述目标，例如：
+Customers don't need to manually coordinate requirements, code, deployment, security, and audit across multiple systems. Heicode organizes these stages into one continuous flow:
 
 ```text
-我想做一个小团队任务管理 SaaS，
-需要登录、项目、任务、评论、通知和后台管理，
-希望部署到 Azure。
+Idea -> Requirements -> Task -> Development -> Testing -> Review -> Deployment -> Audit -> Maintenance
 ```
 
-Heicode 会根据目标自动判断：
+This lets customers see the full software lifecycle, rather than a single AI conversation.
 
-- 需要哪些任务。
-- 需要哪些 worker 能力。
-- 是否需要读取代码仓库。
-- 是否需要项目文档或 SK 技能。
-- 是否涉及云资源。
-- 是否需要测试。
-- 是否需要部署。
-- 哪些操作属于高危操作。
-- 预计会产生哪些模型和运行消耗。
+### 2. Customers only confirm key decisions, not low-level parameters
 
-客户看到的是清晰的推荐摘要，而不是底层复杂参数。
+Customers don't need to understand:
 
-### 2. lead 拆解任务，而不是固定流水线
+- Kubernetes.
+- The details of Azure VM and docker-compose orchestration.
+- Azure Key Vault paths.
+- The specific format of secret_ref.
+- The Agent's internal scheduling strategy.
 
-传统流程通常是一条固定链路：
+Customers only need to confirm:
+
+- What to do.
+- Which resources are allowed to be used.
+- Which actions require approval.
+- Whether to accept the current execution result.
+
+### 3. Can connect to a customer's existing code and cloud resources
+
+Heicode's Swarm doesn't only generate code in a blank environment — it can work around a customer's existing resources:
+
+- Git repositories.
+- Project documentation.
+- SK skills.
+- Cloud accounts.
+- Cloud resources.
+- Test environments.
+- Deployment environments.
+
+Customer value:
+
+- You can continue developing on top of an existing project.
+- You can bring AI into a real engineering workflow.
+- No need to rebuild a separate development environment.
+
+### 4. Uses secrets and cloud resources safely
+
+Once a customer authorizes a resource, Heicode never exposes long-lived secrets to Agents. The system controls resource access through:
+
+- The secret vault.
+- secret_ref.
+- Short-lived credentials.
+- Permission scopes.
+- Client-side approval.
+- Audit records.
+
+Customer value:
+
+- No need to copy secrets over to the AI.
+- No need to worry about an Agent holding production secrets long-term.
+- High-risk operations can be approved, rejected, and traced.
+
+### 5. Failures are explainable, and the process is reviewable
+
+With traditional AI tools, customers often only see an error result after a failure. Heicode's Swarm records:
+
+- Which task failed.
+- Which worker's execution failed.
+- At which step the failure happened.
+- Whether it has already been retried.
+- Whether a fix task was generated.
+- Whether customer approval or additional resources are needed.
+
+Customer value:
+
+- Failure isn't a black box.
+- The team can conduct a retrospective.
+- The system can keep fixing things.
+
+### 6. Usage and cost are visible
+
+Running an Agent Swarm generates model calls and runtime resource consumption. Heicode ties usage to tasks:
+
+- Which task consumed model usage.
+- Which worker generated the calls.
+- Whether the current budget is close to its cap.
+- Whether large-consumption approval has occurred.
+
+Customer value:
+
+- Cost is explainable.
+- Budget is controllable.
+- Team usage is more transparent.
+
+### 7. Scales gradually for individuals, teams, and enterprises
+
+Individual users can use Swarm to quickly deliver from idea to MVP. Team users can use Swarm to collaborate on requirements, development, testing, and deployment. Enterprise users can run Swarm within their existing code, cloud resources, permissions, and audit systems. Customers of different sizes see the same set of product capabilities, but the worker count cap, approvals, budget, and security boundaries can be adjusted by plan.
+
+## Heicode Swarm's core distinguishing features
+
+### 1. Goal-driven — customers don't need to choose a complex flow
+
+Customers don't need to plan out a task graph or role division in advance. They just need to describe the goal, for example:
 
 ```text
-需求 -> 开发 -> 测试 -> 部署
+I want to build a small-team task management SaaS,
+with login, projects, tasks, comments, notifications, and an admin backend,
+and deploy it to Azure.
 ```
 
-真实任务往往不是这么线性的。开发过程中可能会出现：
+Heicode automatically determines:
 
-- 需求不清，需要补充澄清。
-- 代码依赖复杂，需要先阅读架构。
-- 测试失败，需要回到实现修复。
-- 部署前发现风险，需要生成回滚方案。
-- 云资源权限不足，需要等待客户确认。
+- What tasks are needed.
+- What worker capabilities are needed.
+- Whether the code repository needs to be read.
+- Whether project documentation or SK skills are needed.
+- Whether cloud resources are involved.
+- Whether testing is needed.
+- Whether deployment is needed.
+- Which operations count as high-risk.
+- What model and runtime consumption to expect.
 
-lead Agent 会根据实际情况调整派发给 worker 的任务：
+Customers see a clear recommendation summary, not low-level parameters underneath.
+
+### 2. The lead breaks down tasks, rather than following a fixed pipeline
+
+A traditional process is usually one fixed chain:
 
 ```text
-用户目标
--> lead 拆解为需求理解、架构分析、前端实现、后端实现、测试验证、安全审查、部署准备等子任务
--> 派发给 worker 并行执行
--> 发现问题后新增修复、交接、审批或验证任务
--> lead 聚合、生成交付总结
+Requirements -> Development -> Testing -> Deployment
 ```
 
-### 3. 能力编队，而不是固定岗位
+Real tasks are often not this linear. During development, you might run into:
 
-worker 不是传统公司岗位，也不是固定 Scrum 角色。每次任务开始时，lead 会根据目标临时决定需要多少 worker、承担哪些能力。
+- Unclear requirements that need clarification.
+- Complex code dependencies that require reading the architecture first.
+- Test failures that require going back to fix the implementation.
+- Risks discovered before deployment that require a rollback plan.
+- Insufficient cloud resource permissions that require waiting on customer confirmation.
 
-常见能力包括：
+The lead Agent adjusts the tasks dispatched to workers based on actual conditions:
 
-| 能力 | 主要作用 |
+```text
+User goal
+-> The lead breaks it into subtasks like requirements understanding, architecture analysis, frontend implementation, backend implementation, test verification, security review, deployment preparation
+-> Dispatches them to workers for parallel execution
+-> When issues arise, new fix, handoff, approval, or verification tasks are added
+-> The lead aggregates and generates a delivery summary
+```
+
+### 3. Capability formation, not fixed positions
+
+Workers aren't traditional company job titles, nor are they fixed Scrum roles. At the start of each task, the lead temporarily decides how many workers are needed and which capabilities they'll take on.
+
+Common capabilities include:
+
+| Capability | Main role |
 |---|---|
-| 目标理解 | 理解客户目标、约束和验收标准 |
-| 产品 | 拆解需求、生成产品说明和用户流程 |
-| 架构 | 分析技术方案、模块边界和系统风险 |
-| 前端 | 实现页面、交互和客户端体验 |
-| 后端 | 实现 API、数据库和业务逻辑 |
-| 测试 | 执行测试、检查失败并反馈原因 |
-| 审查 | 检查代码质量、安全和回归风险 |
-| 运维 | 准备部署、回滚、日志和监控 |
-| 文档 | 整理交付说明、使用文档和变更记录 |
+| Goal understanding | Understand the customer's goal, constraints, and acceptance criteria |
+| Product | Break down requirements, produce product descriptions and user flows |
+| Architecture | Analyze the technical approach, module boundaries, and system risk |
+| Frontend | Implement pages, interactions, and client-side experience |
+| Backend | Implement APIs, databases, and business logic |
+| Testing | Run tests, check failures, and report reasons |
+| Review | Check code quality, security, and regression risk |
+| Ops | Prepare deployment, rollback, logs, and monitoring |
+| Documentation | Organize delivery notes, usage docs, and change records |
 
-一个简单任务可能只需要少量 worker；复杂任务会派发给更多 worker，但总数不超过套餐上限（最多 8 个，默认 3 个）。
+A simple task may only need a small number of workers; a complex task will dispatch to more workers, but the total never exceeds the plan's cap (up to 8, 3 by default).
 
-### 4. 共同资源层，让 lead 和 worker 真正协作
+### 4. The shared resource layer, so the lead and workers actually collaborate
 
-蜂群不是多个 Agent 各自独立工作，而是需要一个共同资源层。这个共同资源层可以理解为 lead 和 worker 共享的工作台，包含：
+Swarm isn't multiple Agents each working independently — it needs a shared resource layer. This shared resource layer can be thought of as the shared workbench between the lead and workers, containing:
 
-| 资源 | 作用 |
+| Resource | Role |
 |---|---|
-| 任务分派记录 | lead 拆解的任务、worker 的领取和执行状态 |
-| 产物池 | 保存代码 diff、测试报告、文档、日志摘要和部署计划 |
-| 资源引用 | 管理 Git、文档、SK、云资源和密钥引用 |
-| 审批记录 | 管理生产部署、云操作、密钥访问等高危审批 |
-| 审计记录 | 记录谁、什么时候、让哪个 Agent、使用了什么资源、执行了什么动作 |
+| Task dispatch records | Tasks broken down by the lead, and worker claim/execution status |
+| Artifact pool | Stores code diffs, test reports, documentation, log summaries, and deployment plans |
+| Resource references | Manages Git, documentation, SK, cloud resources, and secret references |
+| Approval records | Manages high-risk approvals for production deployment, cloud operations, secret access, etc. |
+| Audit records | Records who, when, using which Agent, which resources, and which actions |
 
-简单说：
-
-```text
-lead 决定拆解出什么任务
-worker 执行并上报进度
-lead 聚合各 worker 的结果
-治理层保证安全和可审计
-```
-
-这也是 Heicode 蜂群区别于普通多 Agent 对话的关键。
-
-### 5. 任务派发与心跳机制
-
-worker 不是被随意调用，而是执行 lead 派发给自己的任务。任务派发时，系统会检查：
-
-- 当前 worker 是否具备对应能力。
-- 是否有访问相关资源的权限。
-- 依赖任务是否完成。
-- 是否存在高危操作审批要求。
-- 是否超过预算或运行限制。
-
-worker 领取任务后，会持续上报 heartbeat。如果某个 worker 异常退出或长时间没有响应，lead 可以释放任务，重新派发给其他 worker，避免整个任务卡死。
-
-### 6. 失败回流，而不是失败后停止
-
-真实开发中，失败是正常情况。例如：
-
-- 测试失败。
-- 构建失败。
-- 接口不兼容。
-- 部署失败。
-- 权限不足。
-- 上下文缺失。
-
-普通 AI 工具往往只是返回失败结果。Heicode 蜂群会把失败变成新的任务：
+In short:
 
 ```text
-测试失败 -> 记录失败原因 -> lead 生成修复任务 -> 交给合适的 worker -> 修改后重新验证
+The lead decides which tasks to break down
+Workers execute and report progress
+The lead aggregates results from each worker
+The governance layer guarantees safety and auditability
 ```
 
-这叫失败回流。它让系统具备持续修复能力，而不是一次失败就中断。
+This is also the key difference between Heicode's Swarm and an ordinary multi-Agent conversation.
 
-### 7. 交接机制，让不同能力连续工作
+### 5. Task dispatch and heartbeat mechanism
 
-一个 worker 完成的结果，往往需要另一个 worker 继续处理。例如：
+Workers aren't called arbitrarily — they execute tasks dispatched to them by the lead. When a task is dispatched, the system checks:
+
+- Whether the current worker has the matching capability.
+- Whether it has permission to access the relevant resources.
+- Whether dependent tasks are complete.
+- Whether high-risk operation approval is required.
+- Whether the budget or runtime limit has been exceeded.
+
+After a worker claims a task, it continuously reports a heartbeat. If a worker exits abnormally or stops responding for a long time, the lead can release the task and redispatch it to another worker, preventing the whole task from stalling.
+
+### 6. Failure feeds back, rather than stopping on failure
+
+Failure is a normal part of real development. For example:
+
+- Test failures.
+- Build failures.
+- Interface incompatibility.
+- Deployment failure.
+- Insufficient permissions.
+- Missing context.
+
+Ordinary AI tools often just return a failure result. Heicode's Swarm turns failure into a new task:
 
 ```text
-产品能力生成需求说明
--> 架构能力设计技术方案
--> 后端能力实现 API
--> 前端能力接入页面
--> 测试能力验证功能
--> 运维能力准备部署
+Test fails -> Failure reason recorded -> The lead generates a fix task -> Hands it to the right worker -> Modify and re-verify
 ```
 
-交接时，系统会记录：
+This is called failure feedback. It gives the system ongoing repair capability, instead of stopping at the first failure.
 
-- 来源 Agent。
-- 目标能力。
-- 交接原因。
-- 输入产物。
-- 期望输出。
-- 风险等级。
+### 7. Handoff mechanism, letting different capabilities work in sequence
 
-这样客户可以看到任务不是"黑盒运行"，而是有明确过程和交付链路。
-
-### 8. SK 技能调用，让 Agent 能使用专业工具
-
-Heicode 的 Agent 不只是调用模型生成文本。在客户授权后，Agent 可以使用 SK 技能和工具能力，例如：
-
-- 代码检查。
-- API 审查。
-- 测试执行。
-- 部署检查。
-- 文档生成。
-- 云资源检查。
-- 日志分析。
-
-SK 技能会进入共同资源层，Agent 只能调用被授权的技能。
-
-客户可以理解为：
-
-> Agent 不只是会"想"，还可以在授权范围内使用工具完成实际工程动作。
-
-### 9. 高危操作必须审批
-
-蜂群可以自动推进任务，但不能越过客户的安全边界。以下操作属于高危操作：
-
-- 生产部署。
-- 云资源创建、删除、扩缩容。
-- 数据库迁移或写入。
-- 访问生产密钥。
-- 删除数据。
-- 大额模型预算消耗。
-- 对外发布。
-
-这些操作必须进入审批。审批时，客户应该看到：
-
-- 操作类型。
-- 请求的 Agent。
-- 目标资源。
-- 风险等级。
-- 短期凭证 TTL。
-
-请求原因、预计影响等信息，视具体审批场景可能提供，不是每次都保证展示。
-
-客户可以批准，也可以拒绝。审批通过后，平台只会给 Agent 派发短期、最小权限、可审计的访问能力。
-
-### 10. 密钥不交给 Agent 长期保存
-
-Heicode 的设计原则是：
+The result completed by one worker often needs another worker to continue processing. For example:
 
 ```text
-长期密钥进入密钥保管器
-Agent 只拿短期权限或资源引用
+The product capability produces a requirements description
+-> The architecture capability designs the technical approach
+-> The backend capability implements the API
+-> The frontend capability wires up the page
+-> The testing capability verifies the functionality
+-> The ops capability prepares deployment
 ```
 
-长期密钥不会进入：
+During a handoff, the system records:
 
-- Git。
-- Markdown。
-- 普通日志。
-- 前端响应。
-- Agent 长期状态。
-- 任务事件正文。
+- Source Agent.
+- Target capability.
+- Reason for the handoff.
+- Input artifact.
+- Expected output.
+- Risk level.
 
-Agent 使用资源时，默认拿到的是：
+This lets customers see that a task isn't "running as a black box," but has a clear process and delivery chain.
 
-- secret_ref。
-- 资源范围。
-- 权限边界。
-- 审批记录。
+### 8. SK skill invocation, giving the Agent access to professional tools
 
-这可以降低凭证泄露风险，也方便企业客户审计。
+Heicode's Agents don't just call a model to generate text. Once authorized by the customer, an Agent can use SK skills and tool capabilities, for example:
 
-客户日常使用时，不需要理解所有底层机制。典型流程是：
+- Code checks.
+- API review.
+- Test execution.
+- Deployment checks.
+- Documentation generation.
+- Cloud resource checks.
+- Log analysis.
+
+SK skills enter the shared resource layer, and Agents can only call skills they've been authorized to use.
+
+Customers can think of it this way:
+
+> An Agent doesn't just "think" — it can also use tools within its authorized scope to complete real engineering actions.
+
+### 9. High-risk operations must be approved
+
+Swarm can advance tasks automatically, but it can't cross the customer's safety boundaries. The following operations are considered high-risk:
+
+- Production deployment.
+- Creating, deleting, or scaling cloud resources.
+- Database migration or write.
+- Access to production secrets.
+- Data deletion.
+- Large model budget consumption.
+- Publishing externally.
+
+These operations must go through approval. During approval, the customer should see:
+
+- Operation type.
+- Requesting Agent.
+- Target resource.
+- Risk level.
+- Short-lived credential TTL.
+
+The reason for the request, expected impact, and other information may be shown depending on the specific approval scenario, but aren't guaranteed to appear every time.
+
+Customers can approve or reject. Once approval passes, the platform only dispatches the Agent a short-lived, least-privilege, auditable access capability.
+
+### 10. Secrets are never held long-term by the Agent
+
+Heicode's design principle is:
 
 ```text
-1. 登录 Heicode
-2. 在客户端输入目标
-3. 按准备清单连接 Git、文档、SK 和云资源
-4. 查看 Heicode 推荐的资源范围和 worker 数量
-5. 确认启动 Agent 蜂群
-6. 在客户端和 Manager 查看执行进度
-7. 对高危操作进行审批或拒绝
-8. 查看代码、文档、测试、部署计划等交付物
-9. 查看模型用量、日志和审计
-10. 持续提出维护或升级需求
+Long-lived secrets go into the secret vault
+Agents only get short-lived permissions or resource references
 ```
 
-## 与普通多 Agent 的区别
+Long-lived secrets never enter:
 
-| 对比项 | 普通多 Agent | Heicode Agent 蜂群 |
+- Git.
+- Markdown.
+- Ordinary logs.
+- Frontend responses.
+- An Agent's long-lived state.
+- The body of task events.
+
+When an Agent uses a resource, it gets by default:
+
+- secret_ref.
+- Resource scope.
+- Permission boundary.
+- Approval record.
+
+This reduces the risk of credential leaks, and also makes it easier for enterprise customers to audit.
+
+Customers don't need to understand all the underlying mechanisms in day-to-day use. The typical flow is:
+
+```text
+1. Sign in to Heicode
+2. Enter a goal in the client
+3. Connect Git, documentation, SK, and cloud resources per the checklist
+4. Review Heicode's recommended resource scope and worker count
+5. Confirm and launch the Agent Swarm
+6. Watch execution progress in the client and Manager
+7. Approve or reject high-risk operations
+8. Review deliverables such as code, documentation, tests, and deployment plans
+9. Review model usage, logs, and audit records
+10. Keep raising maintenance or upgrade requests
+```
+
+## Difference from ordinary multi-Agent setups
+
+| Comparison | Ordinary multi-Agent | Heicode Agent Swarm |
 |---|---|---|
-| 协作方式 | 多个 Agent 各自输出 | lead 拆解、worker 执行，基于共同资源层协作 |
-| 任务组织 | 固定流程或人工分配 | lead 根据目标动态拆解 |
-| 上下文 | 容易散落在对话中 | 每个任务只拿最小必要上下文 |
-| 失败处理 | 失败后需要人工判断 | 失败回流、重试、交接 |
-| 产物 | 分散在对话或日志中 | 统一归档 |
-| 工具调用 | 不一定受控 | 只调用授权 SK 和工具 |
-| 密钥安全 | 容易进入上下文 | 只传引用和短期凭证 |
-| 高危操作 | 容易被忽略 | 必须审批 |
-| 审计 | 难追踪 | 全链路事件和审计 |
-| 客户体验 | 像聊天工具 | 像可追踪的 AI 开发团队 |
+| Collaboration style | Multiple Agents each produce their own output | The lead breaks down tasks, workers execute, collaborating via a shared resource layer |
+| Task organization | Fixed process or manual assignment | The lead dynamically breaks it down based on the goal |
+| Context | Easily scattered across the conversation | Each task only gets the minimum necessary context |
+| Failure handling | Requires human judgment after a failure | Failure feedback, retry, and handoff |
+| Artifacts | Scattered across conversation or logs | Centrally archived |
+| Tool calls | Not necessarily controlled | Only authorized SKs and tools can be called |
+| Secret security | Easily ends up in context | Only references and short-lived credentials are passed |
+| High-risk operations | Easily overlooked | Must be approved |
+| Audit | Hard to trace | Full-chain events and audit |
+| Customer experience | Feels like a chat tool | Feels like a trackable AI development team |
 
-## 与 Chain、Sub 的区别
+## Difference from Chain and Sub
 
-客户可以这样理解几种协作方式：
+Customers can understand the different collaboration styles this way:
 
-| 模式 | 说明 | 适合场景 | 局限 |
+| Mode | Description | Good fit | Limitation |
 |---|---|---|---|
-| Chain 链式模式 | 概念参考，Heicode 目前不提供这个可选模式 | 简单线性任务（仅作理解参考） | 某一步失败会影响后续流程 |
-| Sub 模式 | 主 Agent 拆分任务并显式分配给子 Agent | 分工明确的任务 | 主 Agent 拆分不准会导致重复工作 |
-| 蜂群模式 | lead 拆解任务，派发给最多 8 个（默认 3 个）worker 并行执行 | 复杂、需要多 worker 并行处理的任务 | 必须有共同资源层和治理机制 |
+| Chain mode | A conceptual reference — Heicode does not currently offer this as a selectable mode | Simple linear tasks (for reference understanding only) | A single failed step affects the whole downstream flow |
+| Sub mode | The main Agent splits the task and explicitly assigns it to sub-agents | Tasks with a clear division of labor | Inaccurate splitting by the main Agent can lead to duplicate work |
+| Swarm mode | The lead breaks down the task, dispatching it to up to 8 (3 by default) workers for parallel execution | Complex tasks needing parallel processing across multiple workers | Requires a shared resource layer and governance mechanism |
 
-Heicode Agent 蜂群给客户带来的核心价值：
+The core value the Heicode Agent Swarm brings to customers:
 
-1. 从一个想法开始，自动组织 AI 开发团队。
-2. 把复杂任务拆成可执行、可追踪、可验证的子任务。
-3. 让多个 Agent 围绕同一目标协作，而不是各自输出建议。
-4. 让失败可以被记录、解释、修复和回流。
-5. 让代码、测试、文档和部署结果形成可验收产物。
-6. 让密钥、云资源和生产操作处于受控状态。
-7. 让模型消耗和运行成本可见。
-8. 让每次任务都有完整审计，便于企业复盘和合规。
+1. Starting from a single idea, automatically organize an AI development team.
+2. Break a complex task into executable, trackable, verifiable subtasks.
+3. Have multiple Agents collaborate around the same goal, instead of each producing independent suggestions.
+4. Let failures be recorded, explained, fixed, and fed back into the flow.
+5. Let code, tests, documentation, and deployment results become acceptable artifacts.
+6. Keep secrets, cloud resources, and production operations under control.
+7. Make model consumption and running cost visible.
+8. Give every task a full audit trail, for enterprise retrospectives and compliance.
 
-> Heicode 的 Agent 蜂群不是简单启动多个 AI，而是让 lead Agent 拆解任务、派发给多个 worker Agent 并行执行，所有 Agent 在统一的任务、资源、产物和审计体系中协作。Agent 可以自主领取任务、交接产物、修复失败，但不能越过权限、密钥、预算和审批边界。客户看到的是清晰的任务进度、交付物、高危审批和审计记录，而不是复杂的底层参数。
+> Heicode's Agent Swarm isn't simply launching multiple AIs — it's having the lead Agent break down a task and dispatch it to multiple worker Agents for parallel execution, with all Agents collaborating within a unified system of tasks, resources, artifacts, and audit. Agents can autonomously claim tasks, hand off artifacts, and fix failures, but they cannot cross the boundaries of permissions, secrets, budget, and approval. Customers see clear task progress, deliverables, high-risk approvals, and audit records — not complex low-level parameters.
 
-## 总结
+## Summary
 
-Heicode Agent 蜂群的特色可以概括为四句话：
+Heicode Agent Swarm's distinguishing features can be summed up in four lines:
 
 ```text
-目标驱动，而不是流程驱动。
-能力协作，而不是单点问答。
-失败回流，而不是失败终止。
-受控自治，而不是无边界自动化。
+Goal-driven, not process-driven.
+Capability collaboration, not single-point Q&A.
+Failure feedback, not failure termination.
+Controlled autonomy, not boundaryless automation.
 ```
 
-它让 AI 从"回答问题的工具"，变成"可以参与软件交付的受控 AI 开发团队"。
+It turns AI from "a tool that answers questions" into "a controlled AI development team that can participate in software delivery."

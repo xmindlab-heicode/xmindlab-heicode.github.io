@@ -19,50 +19,50 @@ const sections: {
 }[] = [
   {
     href: '/docs/introduction',
-    title: '介绍',
-    description: 'Heicode 是什么，能帮你做什么。',
+    title: 'Introduction',
+    description: 'What Heicode is, and how it can help you.',
     icon: <BookOpen className="size-5" />,
   },
   {
     href: '/docs/platform-guide',
-    title: '登录平台和使用平台指南',
-    description: '注册登录、平台功能与客户端下载。',
+    title: 'Login & Platform Guide',
+    description: 'Signing in, platform features, and client downloads.',
     icon: <Compass className="size-5" />,
   },
   {
     href: '/docs/security-credentials',
-    title: '安全与凭证管理说明',
-    description: '密钥、凭证与权限的安全边界。',
+    title: 'Security & Credentials',
+    description: 'Security boundaries for keys, credentials, and permissions.',
     icon: <ShieldCheck className="size-5" />,
   },
   {
     href: '/docs/agent-building/quickstart',
-    title: 'Agent 构建',
-    description: '创建、配置并运行你的第一个 Agent。',
+    title: 'Building Agents',
+    description: 'Create, configure, and run your first Agent.',
     icon: <Bot className="size-5" />,
   },
   {
     href: '/docs/team-usage/quickstart',
-    title: '团队使用',
-    description: '团队协作、审批、角色与权限管理。',
+    title: 'Team Usage',
+    description: 'Team collaboration, approvals, roles, and permissions.',
     icon: <Users className="size-5" />,
   },
   {
     href: '/docs/billing/personal-and-team',
-    title: '计费',
-    description: '个人、团队与企业版的套餐与定价。',
+    title: 'Billing',
+    description: 'Personal, team, and enterprise plans and pricing.',
     icon: <CreditCard className="size-5" />,
   },
   {
     href: '/docs/privacy-and-legal/privacy-policy',
-    title: '隐私及法规',
-    description: '隐私政策与法律声明。',
+    title: 'Privacy & Legal',
+    description: 'Privacy policy and legal notices.',
     icon: <Scale className="size-5" />,
   },
   {
     href: '/docs/changelog',
-    title: '版本更新',
-    description: '最新功能与变更记录。',
+    title: 'Changelog',
+    description: 'Latest features and changes.',
     icon: <History className="size-5" />,
   },
 ];
@@ -81,16 +81,17 @@ export default function HomePage() {
             className="rounded-full px-3 py-1 text-xs font-medium text-white shadow-sm"
             style={{ background: 'var(--gradient-brand)' }}
           >
-            Heicode 官方文档
+            Heicode Official Docs
           </span>
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
-            从想法到上线的
+            The intelligent dev platform
             <br />
-            智能开发平台
+            from idea to production
           </h1>
           <p className="max-w-xl text-fd-muted-foreground">
-            了解如何在 Heicode 中构建 Agent、协作团队、管理计费与安全，
-            覆盖软件生命周期的每一步。
+            Learn how to build Agents, collaborate as a team, and manage
+            billing and security in Heicode — covering every step of the
+            software lifecycle.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
             <Link
@@ -98,15 +99,9 @@ export default function HomePage() {
               className="inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold text-white shadow-md transition-transform hover:scale-[1.02]"
               style={{ background: 'var(--gradient-brand)' }}
             >
-              开始阅读
+              Start Reading
               <ArrowRight className="size-4" />
             </Link>
-            <a
-              href="https://github.com/xmindlab-heicode/xmindlab-heicode.github.io"
-              className="inline-flex items-center gap-2 rounded-lg border border-fd-border px-5 py-2.5 text-sm font-semibold text-fd-foreground transition-colors hover:bg-fd-accent"
-            >
-              GitHub
-            </a>
           </div>
         </div>
       </section>

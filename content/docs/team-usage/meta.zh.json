@@ -1,0 +1,13 @@
+{
+  "title": "团队使用",
+  "pages": [
+    "quickstart",
+    "task-collaboration-workflow",
+    "roles-and-permissions",
+    "approval-delivery-release",
+    "management-and-governance",
+    "collaboration-sop",
+    "usage-billing-audit",
+    "faq-troubleshooting"
+  ]
+}

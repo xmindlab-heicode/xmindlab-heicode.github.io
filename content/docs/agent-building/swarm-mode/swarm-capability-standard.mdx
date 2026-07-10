@@ -1,186 +1,186 @@
 ---
-title: "Heicode 蜂群能力评价标准"
+title: "Heicode Swarm Capability Evaluation Standard"
 ---
 
-# Agent 蜂群能力评价标准
+# Agent Swarm Capability Evaluation Standard
 
-> **说明：以下评价体系是 Heicode 蜂群能力的目标评估框架，用于指导产品和工程演进方向，当前系统尚未实现自动化评分。** 本文中的 ACO/信息素数学模型、`G_E = Q_swarm − Q_base` 等能力增益公式、加权奖励函数，以及 L0-L5 成熟度等级和对应的数值阈值，目前都还没有在代码中落地为自动化打分系统，属于规划中的目标标准，不代表当前系统会输出这些分数或等级。今天真实存在的是：agent_swarm 的事件回调体系（见第 12 节）、以及 lead 加 worker（最多 8 个、默认 3 个）的蜂群执行架构。
-
----
-
-## 1. 标准目的
-
-本标准用于评价 Agent 蜂群系统在软件开发生命周期中的综合能力，尤其是评价多个 Agent 是否能够通过角色分工、任务图协作、状态反馈、验证回路、失败恢复、安全治理和企业可观测性，形成稳定、可控、可度量的软件交付能力。
-
-本标准关注的问题不是“单个模型有多强”，也不是“任务最终是否偶然完成”，而是：
-
-1. 蜂群是否真正带来超过单 Agent 的综合效果。
-2. 蜂群是否能在可控成本下完成复杂软件工程任务。
-3. 蜂群是否具有稳定的协作、验证和恢复能力。
-4. 蜂群是否满足企业场景中的权限、审计和安全治理要求。
-5. 蜂群过程是否可观测、可回放、可度量。
-
-本标准可用于：
-
-- Heicode 内部技术评测。
-- Agent 三代模式对比：链式、Sub、蜂群。
-- 不同模型组合的效果比较。
-- 企业客户验收。
-- 产品白皮书和学术论文指标体系。
-- 后续形成 Heicode 自有 benchmark。
+> **Note: the evaluation framework below is an aspirational framework for Heicode's Swarm capability, used to guide product and engineering direction — the current system has not yet implemented automated scoring.** The ACO/pheromone mathematical model in this document, capability-gain formulas such as `G_E = Q_swarm − Q_base`, the weighted reward function, and the L0-L5 maturity levels with their numeric thresholds have not yet been implemented in code as an automated scoring system — they are a planned target standard, and do not mean the current system will output these scores or levels. What genuinely exists today is: the agent_swarm event callback system (see Section 12), and the lead-plus-worker (up to 8, 3 by default) Swarm execution architecture.
 
 ---
 
-## 2. 标准背景
+## 1. Purpose of the standard
 
-### 2.1 现状判断
+This standard is used to evaluate the Agent Swarm system's overall capability across the software development lifecycle — specifically, whether multiple Agents can form a stable, controllable, measurable software delivery capability through role division, task-graph collaboration, status feedback, verification loops, failure recovery, security governance, and enterprise observability.
 
-当前学术界和工业界已有 AgentBench、AgentBoard、GAIA、MultiAgentBench、MAESTRO、AgentsNet、COLLAB、ChatDev、MetaGPT、AgileCoder、HyperAgent 等相关研究或系统。
+This standard isn't concerned with "how strong a single model is," nor with "whether a task happened to get completed eventually" — it's concerned with:
 
-这些工作分别覆盖：
+1. Whether the Swarm truly delivers a comprehensive effect beyond a single Agent.
+2. Whether the Swarm can complete complex software engineering tasks at a controllable cost.
+3. Whether the Swarm has stable collaboration, verification, and recovery capability.
+4. Whether the Swarm meets the permission, audit, and security governance requirements of enterprise scenarios.
+5. Whether the Swarm process is observable, replayable, and measurable.
 
-- 单 Agent 工具使用能力。
-- 多轮交互能力。
-- 多 Agent 协作与竞争。
-- 多 Agent trace 与可观测性。
-- 软件开发多 Agent 工作流。
-- 任务完成率、通信效率、执行轨迹、资源消耗等指标。
+This standard can be used for:
 
-但是，目前尚无一个被广泛接受的、专门面向 **LLM Agent 蜂群软件开发系统** 的统一行业标准。
-
-### 2.2 Heicode 的标准化机会
-
-Heicode 的特点是把 Agent 放入完整软件生命周期中，而不是只让 Agent 完成孤立任务。Heicode 同时具备：
-
-- 客户端主体验。
-- Manager 控制台。
-- Agent 执行平台。
-- CodeGW 模型与用量底座。
-- 密钥保管器。
-- Resource Grant 权限系统。
-- 审批、审计、日志和企业驾驶舱。
-
-因此，Heicode 的 Agent 蜂群评价标准不能只看任务结果，还必须评价：
-
-- 软件工程质量。
-- 多 Agent 协作效率。
-- 成本和 token 消耗。
-- 安全和权限边界。
-- 审计和可回放能力。
-- 企业研发管理可见性。
+- Heicode's internal technical evaluation.
+- Comparing the three generations of Agent modes: Chain, Sub, and Swarm.
+- Comparing the effects of different model combinations.
+- Enterprise customer acceptance.
+- Product whitepapers and academic paper metric systems.
+- Building Heicode's own benchmark going forward.
 
 ---
 
-## 3. 适用范围
+## 2. Background of the standard
 
-本标准适用于以下类型的 Agent 蜂群任务：
+### 2.1 Assessment of the current state
 
-| 类型 | 示例 |
+Academia and industry already have related research or systems such as AgentBench, AgentBoard, GAIA, MultiAgentBench, MAESTRO, AgentsNet, COLLAB, ChatDev, MetaGPT, AgileCoder, and HyperAgent.
+
+These works respectively cover:
+
+- Single-Agent tool-use capability.
+- Multi-turn interaction capability.
+- Multi-Agent collaboration and competition.
+- Multi-Agent trace and observability.
+- Multi-Agent software development workflows.
+- Metrics such as task completion rate, communication efficiency, execution trace, and resource consumption.
+
+However, there is currently no widely accepted industry standard specifically for **LLM Agent Swarm software development systems**.
+
+### 2.2 Heicode's opportunity for standardization
+
+Heicode's distinguishing feature is placing Agents within the full software lifecycle, rather than only having Agents complete isolated tasks. Heicode simultaneously has:
+
+- The client-side core experience.
+- The Manager console.
+- The Agent execution platform.
+- The CodeGW model and usage foundation.
+- The secret vault.
+- The Resource Grant permission system.
+- Approval, audit, logging, and an enterprise command center.
+
+Because of this, Heicode's Agent Swarm evaluation standard can't just look at task outcomes — it must also evaluate:
+
+- Software engineering quality.
+- Multi-Agent collaboration efficiency.
+- Cost and token consumption.
+- Security and permission boundaries.
+- Audit and replay capability.
+- Enterprise engineering-management visibility.
+
+---
+
+## 3. Scope of application
+
+This standard applies to the following types of Agent Swarm tasks:
+
+| Type | Examples |
 |------|------|
-| 需求与产品 | 需求澄清、产品文档、原型描述、里程碑拆解 |
-| 代码开发 | 新功能开发、模块开发、接口实现、前后端联调 |
-| Bug 修复 | 复现问题、定位原因、修改代码、回归验证 |
-| 测试补全 | 单元测试、集成测试、端到端测试、测试数据生成 |
-| 代码审查 | 安全审查、逻辑审查、架构审查、回归风险识别 |
-| 部署运维 | 构建、发布、部署、回滚、监控、告警处理 |
-| 企业管理 | 项目里程碑、Bug 趋势、团队进度、成本归因、ETA 预测 |
+| Requirements and product | Requirements clarification, product documentation, prototype descriptions, milestone breakdown |
+| Code development | New feature development, module development, interface implementation, frontend-backend integration |
+| Bug fixing | Reproducing an issue, locating the cause, modifying code, regression verification |
+| Test coverage | Unit tests, integration tests, end-to-end tests, test data generation |
+| Code review | Security review, logic review, architecture review, regression risk identification |
+| Deployment and ops | Build, release, deploy, rollback, monitoring, alert handling |
+| Enterprise management | Project milestones, bug trends, team progress, cost attribution, ETA prediction |
 
-本标准不直接用于评价：
+This standard is not directly used to evaluate:
 
-- 单轮聊天质量。
-- 单函数代码生成能力。
-- 单一模型推理能力。
-- 无工具、无状态、无任务图的简单对话系统。
+- Single-turn chat quality.
+- Single-function code generation capability.
+- Single-model reasoning capability.
+- Tool-free, stateless, task-graph-free simple conversational systems.
 
 ---
 
-## 4. 核心定义
+## 4. Core definitions
 
 ### 4.1 Agent
 
-Agent 是 Heicode 系统中的 AI 开发角色。每个 Agent 具有明确的角色、任务目标、可用工具、资源权限、模型配置、预算约束和审计记录。
+An Agent is an AI development role within the Heicode system. Each Agent has a clearly defined role, task goal, available tools, resource permissions, model configuration, budget constraints, and audit records.
 
-典型角色包括六角色目录中的 Product Agent、Architect Agent、Frontend Agent、Backend Agent、Reviewer Agent、Ops Agent；瀑布模板中另有独立的测试角色（qa-tester）。
+Typical roles include, from the six-role catalog: Product Agent, Architect Agent, Frontend Agent, Backend Agent, Reviewer Agent, Ops Agent; the Waterfall template additionally has a separate testing role (qa-tester).
 
-### 4.2 Agent 蜂群
+### 4.2 Agent Swarm
 
-Agent 蜂群是由多个 Agent 组成的协作系统。它通过任务图、角色分工、依赖调度、状态回传、日志、验证、审批和资源权限控制，共同完成一个复杂软件工程任务。
+An Agent Swarm is a collaborative system made up of multiple Agents. Through task graphs, role division, dependency scheduling, status reporting, logging, verification, approval, and resource permission control, it jointly completes a complex software engineering task.
 
-Agent 蜂群不是多个 Agent 的简单并发，而是一个包含编排、状态、通信、验证和治理的系统。
+An Agent Swarm is not simple concurrency of multiple Agents — it's a system that encompasses orchestration, state, communication, verification, and governance.
 
-### 4.3 能力增益
+### 4.3 Capability gain
 
-Agent 能力增益是指：
+Agent capability gain refers to:
 
-> 在相同任务、相同资源边界或可控成本条件下，多个 Agent 通过角色分工、任务图协作、状态反馈、验证回路和失败恢复，产生超过单 Agent 或单强模型基线的任务完成能力、质量稳定性、交付速度或治理可控性。
+> Under the same task, the same resource boundary, or a controllable cost condition, multiple Agents — through role division, task-graph collaboration, status feedback, verification loops, and failure recovery — produce task completion capability, quality stability, delivery speed, or governance controllability that exceeds the baseline of a single Agent or a single strong model.
 
-涌现能力是能力增益中的一种特殊形式，强调蜂群整体表现出单个 Agent 不具备的系统级行为。换言之，涌现是 Agent 蜂群能力标准中的关键组成部分，但不是标准的全部。
+Emergent capability is a special form of capability gain, emphasizing system-level behavior exhibited by the Swarm as a whole that no individual Agent possesses. In other words, emergence is a key component of the Agent Swarm capability standard, but not the entirety of the standard.
 
-### 4.4 蜂群能力增益
+### 4.4 Swarm capability gain
 
-蜂群能力增益是蜂群系统相对于基线系统的综合能力提升。
+Swarm capability gain is the Swarm system's overall capability improvement relative to a baseline system.
 
-基线可以是：
+The baseline can be:
 
-- 单 Agent。
-- 链式 Agent。
-- Sub 模式。
-- 单个强模型 Agent。
-- 人工定义的传统流程。
+- A single Agent.
+- A Chain of Agents.
+- Sub mode.
+- A single strong-model Agent.
+- A manually defined traditional process.
 
-形式化表示：
+Formal expression:
 
 ```text
 G_E = Q_swarm − Q_base
 ```
 
-其中：
+Where:
 
-- `G_E`：能力增益，其中包含涌现增益。
-- `Q_{\mathrm{swarm}}`：蜂群系统在同一任务集上的综合表现。
-- `Q_{\mathrm{base}}`：基线系统在同一任务集上的综合表现。
+- `G_E`: capability gain, including emergent gain.
+- `Q_{\mathrm{swarm}}`: the Swarm system's overall performance on the same task set.
+- `Q_{\mathrm{base}}`: the baseline system's overall performance on the same task set.
 
-考虑成本后：
+After accounting for cost:
 
 ```text
 G_{E,c} = (Q_swarm / C_swarm) − (Q_base / C_base)
 ```
 
-其中：
+Where:
 
-- `G_{E,c}`：成本归一化能力增益。
-- `C_{\mathrm{swarm}}`：蜂群系统成本，可由 token、时间、基础设施和人工介入加权得到。
-- `C_{\mathrm{base}}`：基线系统成本。
-
----
-
-## 5. Agent 三代演进模型
-
-Agent 协作模式可分为三代。
-
-| 代际 | 模式 | 核心特征 | 局限 |
-|------|------|----------|------|
-| 第一代 | 链式 Chain（概念基线，非 Heicode 现有模式） | 角色按固定顺序流转 | 吞吐有限，容易单点阻塞 |
-| 第二代 | Sub 模式 | 子任务、审批和角色分工，主 Agent 显式协调 | 并行能力有限，仍依赖人工编排 |
-| 第三代 | 蜂群 Swarm | lead 拆解任务、派发给最多 8 个（默认 3 个）worker 并行执行 | 编排复杂、成本更高、需要可观测和治理 |
-
-第一代链式 Chain 仅作为评测中的最弱概念基线，Heicode 产品本身不提供链式模式。本标准主要评价第三代蜂群模式，但也要求与第一代、第二代形成可比较基线。
+- `G_{E,c}`: cost-normalized capability gain.
+- `C_{\mathrm{swarm}}`: Swarm system cost, which can be a weighted combination of tokens, time, infrastructure, and human intervention.
+- `C_{\mathrm{base}}`: baseline system cost.
 
 ---
 
-## 6. 理论模型
+## 5. The three-generation Agent evolution model
 
-### 6.1 理论来源：马尔可夫过程与 ACO
+Agent collaboration patterns can be divided into three generations.
 
-蜂群行为常被建模为马尔可夫过程或近似马尔可夫过程。其基本思想是：系统处在某个状态时，Agent 根据当前状态、候选动作集合、历史反馈和即时启发，选择下一步动作，从而形成状态转移。
+| Generation | Mode | Core characteristics | Limitations |
+|------|------|----------|----------|
+| 1st generation | Chain (conceptual baseline, not an existing Heicode mode) | Roles flow through in a fixed sequence | Limited throughput, easily blocked at a single point |
+| 2nd generation | Sub mode | Subtasks, approval, and role division, explicitly coordinated by the main Agent | Limited parallelism, still relies on manual orchestration |
+| 3rd generation | Swarm | The lead breaks down tasks and dispatches them to up to 8 (3 by default) workers for parallel execution | Complex orchestration, higher cost, requires observability and governance |
 
-蚁群优化（Ant Colony Optimization, ACO）是经典的蜂群智能模型。ACO 中，蚂蚁从节点 `i` 选择下一个节点 `j`，其路径选择概率由路径上的信息素浓度和启发式信息共同决定。
+The 1st-generation Chain serves only as the weakest conceptual baseline in evaluation — Heicode's product itself does not offer Chain mode. This standard primarily evaluates the 3rd-generation Swarm mode, but also requires forming comparable baselines against the 1st and 2nd generations.
 
-需要强调的是：本标准中的 Agent 公式不是重新发明一个新的数学公式，而是以 ACO 路径选择概率为原型，将“物理路径选择”映射到“软件工程状态下的动作选择”。
+---
 
-### 6.2 ACO 原始路径选择概率公式
+## 6. Theoretical model
 
-以蚁群优化（ACO）为例，路径选择概率公式为：
+### 6.1 Theoretical origin: Markov processes and ACO
+
+Swarm behavior is often modeled as a Markov process or an approximate Markov process. The basic idea: when the system is in a given state, an Agent selects its next action based on the current state, the set of candidate actions, historical feedback, and immediate heuristics, thereby forming a state transition.
+
+Ant Colony Optimization (ACO) is a classic swarm-intelligence model. In ACO, an ant chooses the next node `j` from node `i`, and the path-selection probability is jointly determined by the pheromone concentration on the path and heuristic information.
+
+It should be emphasized: the Agent formula in this standard is not a newly invented mathematical formula — it takes the ACO path-selection probability as its prototype, mapping "physical path selection" onto "action selection under a software engineering state."
+
+### 6.2 The original ACO path-selection probability formula
+
+Taking Ant Colony Optimization (ACO) as an example, the path-selection probability formula is:
 
 ```text
                  [τ_ij]^α · [η_ij]^β
@@ -188,33 +188,33 @@ P_ij^k  =  ───────────────────────
             Σ ( l ∈ N_i^k )  [τ_il]^α · [η_il]^β
 ```
 
-其中：
+Where:
 
-- `τ_ij`：边 `(i,j)` 上的信息素浓度。
-- `η_ij`：启发式信息（如距离倒数）。
-- `α, β`：权重参数。
-- `N_i^k`：Agent `k` 在节点 `i` 的可选邻居集合。
+- `τ_ij`: the pheromone concentration on edge `(i,j)`.
+- `η_ij`: heuristic information (e.g., the inverse of distance).
+- `α, β`: weighting parameters.
+- `N_i^k`: the set of candidate neighbors available to Agent `k` at node `i`.
 
-该公式表达的是一个概率转移过程：Agent 并非确定性地选择某条路径，而是在候选集合中，根据历史经验与即时启发共同决定下一步选择概率。
+This formula expresses a probabilistic transition process: an Agent doesn't deterministically choose a given path — within the candidate set, it decides the probability of the next choice jointly from historical experience and immediate heuristics.
 
-### 6.3 从 ACO 到 Agent 的符号映射
+### 6.3 Mapping ACO symbols onto Agents
 
-在 Agent 蜂群中，Agent 不再沿物理图上的边移动，而是在软件开发状态之间进行任务推进。因此，本标准将 ACO 的核心元素做如下映射：
+In an Agent Swarm, an Agent no longer moves along edges of a physical graph — it advances tasks between software development states. So this standard maps the core elements of ACO as follows:
 
-| ACO 符号 / 概念 | 含义 | Agent 蜂群映射 |
+| ACO symbol / concept | Meaning | Agent Swarm mapping |
 |-----------------|------|----------------|
-| 节点 `i` | 当前所在位置 | 当前软件开发状态 `s` |
-| 下一个节点 `j` | 下一条路径目标 | 下一步动作 `a_j` |
-| Agent `k` | 第 `k` 只蚂蚁 | 第 `k` 类 Agent 角色 `r_k` |
-| `N_i^k` | Agent `k` 在节点 `i` 的可选邻居集合 | 角色 `r_k` 在状态 `s` 下的合法动作集合 `A(s,r_k)` |
-| `τ_ij` | 路径 `(i,j)` 上的信息素浓度 | `τ(s,a_j,r_k)`：角色 `r_k` 在状态 `s` 下执行动作 `a_j` 的历史有效性 |
-| `η_ij` | 路径 `(i,j)` 的启发式信息 | `η(s,a_j,r_k)`：当前上下文下动作 `a_j` 的即时收益 |
-| `α` | 信息素权重 | 历史执行经验权重 |
-| `β` | 启发式信息权重 | 当前上下文启发权重 |
+| Node `i` | Current location | Current software development state `s` |
+| Next node `j` | Target of the next path | Next action `a_j` |
+| Agent `k` | The `k`-th ant | The `k`-th Agent role `r_k` |
+| `N_i^k` | Candidate neighbor set for Agent `k` at node `i` | The set of legal actions `A(s,r_k)` for role `r_k` in state `s` |
+| `τ_ij` | Pheromone concentration on path `(i,j)` | `τ(s,a_j,r_k)`: historical effectiveness of role `r_k` executing action `a_j` in state `s` |
+| `η_ij` | Heuristic information for path `(i,j)` | `η(s,a_j,r_k)`: immediate payoff of action `a_j` in the current context |
+| `α` | Pheromone weight | Weight on historical execution experience |
+| `β` | Heuristic-information weight | Weight on current contextual heuristics |
 
-### 6.4 Agent 动作选择概率公式
+### 6.4 The Agent action-selection probability formula
 
-基于上述映射，将 ACO 的路径选择概率公式迁移到 Agent 软件工程场景，可得到 Agent 动作选择概率：
+Based on the mapping above, migrating ACO's path-selection probability formula to the Agent software engineering scenario yields the Agent action-selection probability:
 
 ```text
                         [τ(s,a_j,r_k)]^α · [η(s,a_j,r_k)]^β
@@ -222,60 +222,60 @@ P_(s,a_j)^(r_k)  =  ────────────────────
                      Σ ( a_l ∈ A(s,r_k) )  [τ(s,a_l,r_k)]^α · [η(s,a_l,r_k)]^β
 ```
 
-其中：
+Where:
 
-- `P_{s,a_j}^{r_k}`：角色 `r_k` 在软件开发状态 `s` 下选择动作 `a_j` 的概率。
-- `τ(s,a_j,r_k)`：角色 `r_k` 在状态 `s` 下执行动作 `a_j` 的历史有效性。
-- `η(s,a_j,r_k)`：当前上下文下动作 `a_j` 的即时收益。
-- `α, β`：历史经验和当前启发的权重参数。
-- `A(s,r_k)`：角色 `r_k` 在状态 `s` 下的合法动作集合。
-- `a_l`：合法动作集合中的候选动作。
+- `P_{s,a_j}^{r_k}`: the probability that role `r_k` selects action `a_j` in software development state `s`.
+- `τ(s,a_j,r_k)`: the historical effectiveness of role `r_k` executing action `a_j` in state `s`.
+- `η(s,a_j,r_k)`: the immediate payoff of action `a_j` in the current context.
+- `α, β`: weighting parameters for historical experience versus current heuristics.
+- `A(s,r_k)`: the set of legal actions for role `r_k` in state `s`.
+- `a_l`: a candidate action within the legal action set.
 
-该公式不是一个独立原创公式，而是 ACO 公式在 Agent 场景下的语义演化。它保留了 ACO 的核心结构：分子表示某个候选动作的吸引力，分母表示所有候选动作吸引力之和，用于归一化形成概率分布。
+This formula is not an independently original formula — it's a semantic evolution of the ACO formula applied to the Agent setting. It retains ACO's core structure: the numerator represents the attractiveness of a given candidate action, and the denominator represents the sum of attractiveness across all candidate actions, used to normalize into a probability distribution.
 
-### 6.5 信息素定义
+### 6.5 Pheromone definition
 
-Agent 信息素不是简单的成功次数，而是一个多维历史信号。
+An Agent's pheromone is not simply a success count — it's a multi-dimensional historical signal.
 
 ```text
 τ(s,a,r) = f( success, quality, cost, time, risk, rollback, acceptance )
 ```
 
-可由以下因素组成：
+Can be composed of the following factors:
 
-| 因素 | 含义 |
+| Factor | Meaning |
 |------|------|
-| success | 动作历史成功率 |
-| quality | 产物质量，例如测试通过率、Bug 引入率 |
-| cost | token、时间、运行资源消耗 |
-| time | 完成耗时与阻塞时长 |
-| risk | 是否触发高危审批、权限异常或安全事件 |
-| rollback | 是否导致回滚、返工或任务重试 |
-| acceptance | 用户或 Reviewer 是否接受结果 |
+| success | Historical success rate of the action |
+| quality | Artifact quality, e.g. test pass rate, bug-introduction rate |
+| cost | Token, time, and runtime resource consumption |
+| time | Time to completion and blocking duration |
+| risk | Whether high-risk approval, permission anomalies, or security incidents were triggered |
+| rollback | Whether it led to a rollback, rework, or task retry |
+| acceptance | Whether the user or Reviewer accepted the result |
 
-### 6.6 启发式信息定义
+### 6.6 Heuristic-information definition
 
-当前启发式信息表示在当前上下文下，某个动作是否值得执行。
+Current heuristic information represents whether a given action is worth executing in the current context.
 
 ```text
 η(s,a,r) = g( match, urgency, dependency, resource, risk, budget, confidence )
 ```
 
-可由以下因素组成：
+Can be composed of the following factors:
 
-| 因素 | 含义 |
+| Factor | Meaning |
 |------|------|
-| match | 任务与角色能力匹配度 |
-| urgency | 当前任务紧急程度 |
-| dependency | 依赖是否满足 |
-| resource | 所需资源是否已授权 |
-| risk | 当前动作风险等级 |
-| budget | 剩余 token、成本和时间预算 |
-| confidence | Agent 对当前计划的置信度 |
+| match | How well the task matches the role's capability |
+| urgency | Current task urgency |
+| dependency | Whether dependencies are satisfied |
+| resource | Whether the needed resource is already authorized |
+| risk | The current action's risk level |
+| budget | Remaining token, cost, and time budget |
+| confidence | The Agent's confidence in the current plan |
 
-### 6.7 奖励函数
+### 6.7 Reward function
 
-Agent 蜂群的奖励函数应避免只奖励“完成”。建议定义为：
+An Agent Swarm's reward function should avoid rewarding "completion" alone. It's recommended to define it as:
 
 ```text
 R =  w1·S_task + w2·Q_quality + w3·V_speed + w4·E_cost
@@ -283,34 +283,34 @@ R =  w1·S_task + w2·Q_quality + w3·V_speed + w4·E_cost
    − w7·P_risk − w8·P_rework
 ```
 
-其中：
+Where:
 
-- `TaskSuccess`：任务是否完成。
-- `Quality`：测试、审查、Bug 和用户验收质量。
-- `Speed`：完成速度。
-- `CostEfficiency`：单位成本产出。
-- `Robustness`：失败恢复能力。
-- `Governance`：审批、权限、审计是否合规。
-- `RiskPenalty`：风险惩罚。
-- `ReworkPenalty`：返工惩罚。
+- `TaskSuccess`: whether the task was completed.
+- `Quality`: quality as measured by tests, review, bugs, and user acceptance.
+- `Speed`: speed of completion.
+- `CostEfficiency`: output per unit cost.
+- `Robustness`: failure-recovery capability.
+- `Governance`: whether approval, permissions, and audit are compliant.
+- `RiskPenalty`: risk penalty.
+- `ReworkPenalty`: rework penalty.
 
 ---
 
-## 7. 评价维度
+## 7. Evaluation dimensions
 
-本标准采用七个一级维度：
+This standard uses seven top-level dimensions:
 
-| 维度 | 权重 | 说明 |
+| Dimension | Weight | Description |
 |------|------|------|
-| 任务完成能力 | 25% | 是否完成软件工程目标 |
-| 能力增益 | 20% | 是否超过单 Agent、链式或 Sub 模式基线；其中包含涌现增益 |
-| 协作效率 | 15% | 任务拆分、角色分工和依赖调度是否有效 |
-| 通信质量 | 10% | Agent 之间信息传递是否有效 |
-| 成本效率 | 10% | token、时间、资源是否合理 |
-| 鲁棒性 | 10% | 失败、阻塞、重试和恢复能力 |
-| 安全治理与可审计性 | 10% | 权限、审批、密钥、日志是否闭环 |
+| Task completion capability | 25% | Whether the software engineering goal was accomplished |
+| Capability gain | 20% | Whether it exceeds the single-Agent, Chain, or Sub mode baseline; includes emergent gain |
+| Collaboration efficiency | 15% | Whether task splitting, role division, and dependency scheduling are effective |
+| Communication quality | 10% | Whether information transfer between Agents is effective |
+| Cost efficiency | 10% | Whether tokens, time, and resources are used reasonably |
+| Robustness | 10% | Failure, blocking, retry, and recovery capability |
+| Security governance and auditability | 10% | Whether permissions, approval, secrets, and logging form a closed loop |
 
-总分：
+Total score:
 
 ```text
 S_swarm =  0.25·S_completion + 0.20·S_gain + 0.15·S_collaboration
@@ -320,113 +320,113 @@ S_swarm =  0.25·S_completion + 0.20·S_gain + 0.15·S_collaboration
 
 ---
 
-## 8. 一级指标与二级指标
+## 8. Top-level metrics and sub-metrics
 
-### 8.1 任务完成能力
+### 8.1 Task completion capability
 
-| 二级指标 | 说明 |
+| Sub-metric | Description |
 |----------|------|
-| 需求完成率 | 是否完成用户需求和任务目标 |
-| 测试通过率 | 单元测试、集成测试、端到端测试是否通过 |
-| 构建成功率 | 代码是否可构建 |
-| 部署成功率 | 是否成功部署到目标环境 |
-| 交付物完整性 | 是否包含代码、说明、测试结果、部署说明 |
-| 用户验收率 | 用户或团队负责人是否接受结果 |
+| Requirements completion rate | Whether the user's requirements and task goal were completed |
+| Test pass rate | Whether unit, integration, and end-to-end tests passed |
+| Build success rate | Whether the code builds successfully |
+| Deployment success rate | Whether deployment to the target environment succeeded |
+| Deliverable completeness | Whether code, notes, test results, and deployment notes are included |
+| User acceptance rate | Whether the user or team lead accepted the result |
 
-### 8.2 能力增益
+### 8.2 Capability gain
 
-| 二级指标 | 说明 |
+| Sub-metric | Description |
 |----------|------|
-| 相对单 Agent 成功率提升 | 蜂群相对单 Agent 的完成率提升 |
-| 相对单强模型质量提升 | 蜂群相对单强模型的质量提升 |
-| 相对链式模式提升 | 蜂群相对第一代链式 Agent 的能力提升 |
-| 相对 Sub 模式提升 | 蜂群相对第二代 Sub 模式的能力提升 |
-| 复杂任务拆解收益 | 大型任务被拆解后是否提升效率 |
-| 质量闭环收益 | Review/Test/Fix 循环是否减少 Bug |
-| 成本归一化收益 | 单位成本下蜂群是否更优 |
-| 涌现行为证据 | 是否出现单 Agent 不具备的协同、纠错、恢复或系统级优化行为 |
+| Relative improvement over single Agent | The Swarm's completion-rate improvement over a single Agent |
+| Relative improvement over a single strong model | The Swarm's quality improvement over a single strong model |
+| Relative improvement over Chain mode | The Swarm's capability improvement over 1st-generation Chain Agents |
+| Relative improvement over Sub mode | The Swarm's capability improvement over 2nd-generation Sub mode |
+| Gain from complex task decomposition | Whether breaking down a large task improves efficiency |
+| Quality closed-loop gain | Whether the Review/Test/Fix loop reduces bugs |
+| Cost-normalized gain | Whether the Swarm performs better per unit cost |
+| Evidence of emergent behavior | Whether collaboration, self-correction, recovery, or system-level optimization not present in a single Agent appears |
 
-### 8.3 协作效率
+### 8.3 Collaboration efficiency
 
-| 二级指标 | 说明 |
+| Sub-metric | Description |
 |----------|------|
-| 任务拆分合理性 | 子任务是否独立、清晰、可执行 |
-| 角色匹配度 | 任务是否分配给合适角色 |
-| 依赖调度正确率 | 前置依赖是否被正确处理 |
-| 冲突率 | 多 Agent 之间代码冲突、目标冲突、重复工作比例 |
-| handoff 成功率 | Agent 之间任务移交是否成功 |
-| 阻塞解除率 | 阻塞任务是否被及时处理 |
+| Task-splitting reasonableness | Whether subtasks are independent, clear, and executable |
+| Role-matching quality | Whether tasks are assigned to the appropriate role |
+| Dependency-scheduling accuracy | Whether upstream dependencies are handled correctly |
+| Conflict rate | Rate of code conflicts, goal conflicts, and duplicate work between Agents |
+| Handoff success rate | Whether task handoffs between Agents succeed |
+| Blocker-resolution rate | Whether blocked tasks are handled promptly |
 
-### 8.4 通信质量
+### 8.4 Communication quality
 
-| 二级指标 | 说明 |
+| Sub-metric | Description |
 |----------|------|
-| 消息有效率 | 通信是否包含可执行信息 |
-| 上下文压缩质量 | 是否传递必要上下文且避免噪音 |
-| 错误传播率 | 一个 Agent 的错误是否扩散到其他 Agent |
-| 争议解决率 | 多 Agent 结论冲突时是否能收敛 |
-| 通信开销比 | 通信 token 占总 token 比例 |
+| Message effectiveness rate | Whether communication contains actionable information |
+| Context-compression quality | Whether necessary context is conveyed while avoiding noise |
+| Error-propagation rate | Whether one Agent's error spreads to other Agents |
+| Dispute-resolution rate | Whether conflicting conclusions between multiple Agents can be resolved |
+| Communication-overhead ratio | The share of communication tokens in total tokens |
 
-### 8.5 成本效率
+### 8.5 Cost efficiency
 
-| 二级指标 | 说明 |
+| Sub-metric | Description |
 |----------|------|
-| 总 token 消耗 | 完成任务所需 token |
-| 单任务成本 | 每个任务平均成本 |
-| 单有效产物成本 | 每个被接受产物的成本 |
-| 时间成本 | 从任务开始到完成的耗时 |
-| Agent 数量效率 | 增加 Agent 是否带来边际收益 |
-| 基础设施成本 | 运行容器、存储、网络、队列等资源消耗 |
+| Total token consumption | Tokens needed to complete the task |
+| Per-task cost | Average cost per task |
+| Cost per accepted artifact | Cost of each accepted artifact |
+| Time cost | Elapsed time from task start to completion |
+| Agent-count efficiency | Whether adding more Agents yields marginal benefit |
+| Infrastructure cost | Resource consumption from running containers, storage, network, queues, etc. |
 
-### 8.6 鲁棒性
+### 8.6 Robustness
 
-| 二级指标 | 说明 |
+| Sub-metric | Description |
 |----------|------|
-| Agent 失败恢复率 | Agent 崩溃或超时后是否恢复 |
-| 任务重试成功率 | 失败任务重试后是否完成 |
-| 模型失败降级率 | 模型调用失败后是否切换或降级 |
-| 状态恢复能力 | Orchestrator 重启后是否恢复任务 |
-| 双执行避免率 | 任务是否避免被多个 Agent 重复执行 |
-| 灾难恢复时间 | 故障后恢复服务的时间 |
+| Agent failure-recovery rate | Whether an Agent recovers after crashing or timing out |
+| Task retry success rate | Whether a failed task succeeds after retrying |
+| Model-failure degradation rate | Whether it switches or degrades after a model call fails |
+| State-recovery capability | Whether the orchestrator recovers tasks after a restart |
+| Duplicate-execution avoidance rate | Whether a task avoids being executed redundantly by multiple Agents |
+| Disaster-recovery time | Time to restore service after a failure |
 
-### 8.7 安全治理与可审计性
+### 8.7 Security governance and auditability
 
-| 二级指标 | 说明 |
+| Sub-metric | Description |
 |----------|------|
-| 最小权限符合率 | Agent 权限是否最小化 |
-| 高危审批覆盖率 | 高危操作是否 100% 审批 |
-| 密钥暴露次数 | Git、日志、Markdown、前端中密钥暴露次数 |
-| 审计完整率 | 是否记录用户、Agent、资源、动作、时间、结果 |
-| Resource Grant 正确率 | 授权是否与资源绑定一致 |
-| 撤销生效率 | 授权撤销后是否立即生效 |
-| 产物可回放率 | 是否能根据日志和事件复盘执行过程 |
+| Least-privilege compliance rate | Whether Agent permissions are minimized |
+| High-risk approval coverage rate | Whether high-risk operations are 100% approved |
+| Secret-exposure incidents | Number of times secrets are exposed in Git, logs, Markdown, or the frontend |
+| Audit completeness rate | Whether user, Agent, resource, action, time, and result are all recorded |
+| Resource Grant accuracy rate | Whether authorization is consistent with the bound resource |
+| Revocation-effectiveness rate | Whether authorization revocation takes effect immediately |
+| Artifact replayability rate | Whether the execution process can be reconstructed from logs and events |
 
 ---
 
-## 9. 评分方法
+## 9. Scoring method
 
-### 9.1 单项评分
+### 9.1 Individual scoring
 
-每个二级指标按 0 到 5 分评分：
+Each sub-metric is scored from 0 to 5:
 
-| 分数 | 含义 |
+| Score | Meaning |
 |------|------|
-| 0 | 不支持或严重失败 |
-| 1 | 初步支持，但不可依赖 |
-| 2 | 可用，但存在明显缺陷 |
-| 3 | 达到基本生产要求 |
-| 4 | 稳定可靠，可用于企业场景 |
-| 5 | 优秀，可作为标杆能力 |
+| 0 | Not supported, or a severe failure |
+| 1 | Initial support, but not reliable |
+| 2 | Usable, but with obvious flaws |
+| 3 | Meets basic production requirements |
+| 4 | Stable and reliable, usable in enterprise scenarios |
+| 5 | Excellent, can serve as a benchmark capability |
 
-### 9.2 一级维度评分
+### 9.2 Top-level dimension scoring
 
-一级维度得分为所属二级指标平均值，并归一化到 100 分。
+A top-level dimension's score is the average of its sub-metrics, normalized to 100 points.
 
 ```text
 DimensionScore = Average(SubMetricScores) / 5 · 100
 ```
 
-### 9.3 总分
+### 9.3 Total score
 
 ```text
 FinalScore =
@@ -441,143 +441,143 @@ FinalScore =
 
 ---
 
-## 10. 蜂群能力等级
+## 10. Swarm capability levels
 
-本标准定义六个 Agent 蜂群能力等级。涌现能力是等级判定的重要依据之一，但等级本身评价的是蜂群综合能力。
+This standard defines six Agent Swarm capability levels. Emergent capability is an important factor in level determination, but the level itself evaluates the Swarm's overall capability.
 
-| 等级 | 名称 | 定义 |
+| Level | Name | Definition |
 |------|------|------|
-| L0 | 无有效蜂群能力 | 多 Agent 只是重复单 Agent 工作，没有可测收益 |
-| L1 | 流程能力 | 多 Agent 能按链式或阶段式流程完成协作 |
-| L2 | 协作能力 | 多 Agent 能有效拆分任务、减少阻塞、提升完成率 |
-| L3 | 质量能力 | 多 Agent 通过 review、test、fix 循环提升质量 |
-| L4 | 系统级能力 | 多 Agent 在速度、质量、成本、鲁棒性上整体优于单 Agent 或低代模式 |
-| L5 | 企业级蜂群能力 | 多 Agent 在企业权限、审计、风险、成本和管理视图下稳定运行 |
+| L0 | No effective Swarm capability | Multiple Agents merely repeat a single Agent's work, with no measurable benefit |
+| L1 | Process capability | Multiple Agents can complete collaboration through a Chain or staged process |
+| L2 | Collaboration capability | Multiple Agents can effectively split tasks, reduce blocking, and improve completion rate |
+| L3 | Quality capability | Multiple Agents improve quality through review, test, and fix loops |
+| L4 | System-level capability | Multiple Agents overall outperform a single Agent or an earlier-generation mode in speed, quality, cost, and robustness |
+| L5 | Enterprise-grade Swarm capability | Multiple Agents run stably under enterprise permission, audit, risk, cost, and management views |
 
-### 10.1 等级判定条件
+### 10.1 Level determination conditions
 
-| 等级 | 最低要求 |
+| Level | Minimum requirement |
 |------|----------|
-| L0 | FinalScore < 40，或无可观测数据 |
-| L1 | FinalScore ≥ 40，任务可按流程完成 |
-| L2 | FinalScore ≥ 55，协作维度 ≥ 60 |
-| L3 | FinalScore ≥ 65，质量相关指标优于基线 |
-| L4 | FinalScore ≥ 75，能力增益为正且成本可控 |
-| L5 | FinalScore ≥ 85，安全治理与可审计性 ≥ 90 |
+| L0 | FinalScore < 40, or no observable data |
+| L1 | FinalScore ≥ 40, task can be completed via the process |
+| L2 | FinalScore ≥ 55, Collaboration dimension ≥ 60 |
+| L3 | FinalScore ≥ 65, quality-related metrics outperform the baseline |
+| L4 | FinalScore ≥ 75, capability gain is positive and cost is controllable |
+| L5 | FinalScore ≥ 85, Security governance and auditability ≥ 90 |
 
-### 10.2 强制降级规则
+### 10.2 Mandatory downgrade rules
 
-即使总分较高，出现以下情况必须降级：
+Even with a high total score, the following events must trigger a downgrade:
 
-| 事件 | 降级规则 |
-|------|----------|
-| 明文密钥进入日志、Git、Markdown 或前端 | 最高 L1 |
-| 高危操作无审批执行 | 最高 L1 |
-| 无法追踪 Agent 使用了什么资源 | 最高 L2 |
-| 任务成功但不可复现、不可回放 | 最高 L3 |
-| 成本超过单 Agent 5 倍且质量无明显提升 | 最高 L2 |
-| 多 Agent 重复执行导致生产故障 | 最高 L1 |
+| Event | Downgrade rule |
+|------|------|
+| Plaintext secret enters logs, Git, Markdown, or the frontend | Capped at L1 |
+| A high-risk operation executes without approval | Capped at L1 |
+| Unable to trace what resources an Agent used | Capped at L2 |
+| Task succeeded but is not reproducible or replayable | Capped at L3 |
+| Cost exceeds 5x a single Agent with no clear quality improvement | Capped at L2 |
+| Duplicate execution by multiple Agents causes a production incident | Capped at L1 |
 
 ---
 
-## 11. 实验设计
+## 11. Experimental design
 
-### 11.1 对照组
+### 11.1 Control groups
 
-每个任务至少设置以下对照：
+Each task should set up at least the following controls:
 
-| 组别 | 说明 |
+| Group | Description |
 |------|------|
-| Baseline A | 单 Agent |
-| Baseline B | 单强模型 Agent |
-| Baseline C | 链式 Agent |
-| Baseline D | Sub 模式 |
-| Experimental | 蜂群模式 |
+| Baseline A | Single Agent |
+| Baseline B | Single strong-model Agent |
+| Baseline C | Chain Agent |
+| Baseline D | Sub mode |
+| Experimental | Swarm mode |
 
-### 11.2 任务集
+### 11.2 Task set
 
-建议构建 Heicode 内部任务集：
+It's recommended to build an internal Heicode task set:
 
-| 任务类型 | 示例 |
+| Task type | Examples |
 |----------|------|
-| Feature | 新增账号设置页、团队视图、审批流程 |
-| Bugfix | 修复登录失败、余额加载失败、Runtime callback 失败 |
-| Refactor | 重构资源绑定、统一鉴权、清理旧入口 |
-| Test | 为关键 API 补单元测试和集成测试 |
-| Deploy | 构建、部署、回滚、监控 |
-| Review | 安全审查、边界漂移审查、上线风险审查 |
+| Feature | New account settings page, team view, approval flow |
+| Bugfix | Fix login failure, balance loading failure, runtime callback failure |
+| Refactor | Refactor resource binding, unify auth, clean up legacy entry points |
+| Test | Add unit and integration tests for key APIs |
+| Deploy | Build, deploy, rollback, monitor |
+| Review | Security review, boundary-drift review, launch risk review |
 
-### 11.3 实验约束
+### 11.3 Experimental constraints
 
-每次评测必须记录：
+Every evaluation run must record:
 
-- 任务描述。
-- 代码仓库版本。
-- 模型版本。
-- Agent 数量。
-- 角色配置。
-- 工具权限。
-- 资源授权。
-- token 预算。
-- 时间预算。
-- 是否允许人工介入。
-- 是否允许高危审批。
+- Task description.
+- Code repository version.
+- Model version.
+- Agent count.
+- Role configuration.
+- Tool permissions.
+- Resource authorization.
+- Token budget.
+- Time budget.
+- Whether human intervention is allowed.
+- Whether high-risk approval is allowed.
 
-### 11.4 结果记录
+### 11.4 Result recording
 
-每次评测必须输出：
+Every evaluation run must output:
 
-- 成功 / 失败。
-- 代码 diff。
-- 测试结果。
-- 构建结果。
-- 部署结果。
-- token 消耗。
-- 总耗时。
-- Agent 贡献。
-- 失败原因。
-- 审批记录。
-- 审计事件。
-- 用户验收结果。
+- Success / failure.
+- Code diff.
+- Test results.
+- Build results.
+- Deployment results.
+- Token consumption.
+- Total elapsed time.
+- Agent contribution.
+- Failure reason.
+- Approval records.
+- Audit events.
+- User acceptance result.
 
 ---
 
-## 12. 数据采集规范
+## 12. Data collection specification
 
-### 12.1 必采事件
+### 12.1 Required events
 
-以下事件名称与当前 agent_swarm 回调体系一致：
+The following event names match the current agent_swarm callback system:
 
-| 事件 | 说明 |
+| Event | Description |
 |------|------|
-| task.created | 任务创建 |
-| task.claimed | 任务被领取 |
-| task.running | 任务开始执行 |
-| task.heartbeat | 任务心跳 |
-| task.blocked | 任务阻塞 |
-| task.retried | 任务重试 |
-| task.released | 任务被释放 |
-| task.completed | 任务完成 |
-| task.failed | 任务失败 |
-| handoff.requested | 任务移交请求 |
-| handoff.created | 任务移交创建 |
-| handoff.completed | 任务移交完成 |
-| approval.requested | 审批请求 |
-| approval.approved | 审批通过 |
-| approval.rejected | 审批拒绝 |
-| review.started | 审查开始 |
-| review.decision_made | 审查结论产生 |
-| rework.requested | 返工请求 |
-| rework.completed | 返工完成 |
-| artifact.created | 交付物创建 |
-| sk_tool.called | SK 工具调用 |
-| sk_tool.completed | SK 工具调用完成 |
-| sk_tool.failed | SK 工具调用失败 |
-| budget.alert | 预算告警 |
+| task.created | Task created |
+| task.claimed | Task claimed |
+| task.running | Task started executing |
+| task.heartbeat | Task heartbeat |
+| task.blocked | Task blocked |
+| task.retried | Task retried |
+| task.released | Task released |
+| task.completed | Task completed |
+| task.failed | Task failed |
+| handoff.requested | Handoff requested |
+| handoff.created | Handoff created |
+| handoff.completed | Handoff completed |
+| approval.requested | Approval requested |
+| approval.approved | Approval approved |
+| approval.rejected | Approval rejected |
+| review.started | Review started |
+| review.decision_made | Review decision made |
+| rework.requested | Rework requested |
+| rework.completed | Rework completed |
+| artifact.created | Artifact created |
+| sk_tool.called | SK tool called |
+| sk_tool.completed | SK tool call completed |
+| sk_tool.failed | SK tool call failed |
+| budget.alert | Budget alert |
 
-### 12.2 必采字段
+### 12.2 Required fields
 
-每条事件至少包含：
+Every event must include at least:
 
 ```json
 {
@@ -604,43 +604,43 @@ FinalScore =
 }
 ```
 
-### 12.3 Trace 要求
+### 12.3 Trace requirements
 
-每次蜂群执行必须形成完整 trace：
+Every Swarm run must form a complete trace:
 
 ```text
-用户输入
--> 任务图生成
--> 角色分配
--> 资源授权
--> Agent 执行
--> 工具调用
--> 测试验证
--> 审批
--> 交付物
--> 审计结果
+User input
+-> Task-graph generation
+-> Role assignment
+-> Resource authorization
+-> Agent execution
+-> Tool calls
+-> Test verification
+-> Approval
+-> Deliverables
+-> Audit result
 ```
 
-没有 trace 的任务不得纳入高等级评测。
+Tasks without a trace must not be included in high-level evaluation.
 
 ---
 
-## 13. 企业管理指标
+## 13. Enterprise management metrics
 
-面向团队开发和企业场景，Agent 蜂群还必须提供研发管理指标。
+For team development and enterprise scenarios, the Agent Swarm must also provide R&D management metrics.
 
-| 指标 | 说明 |
+| Metric | Description |
 |------|------|
-| 项目总进度 | 当前项目完成比例 |
-| 里程碑完成率 | 里程碑按期完成情况 |
-| 开发者进度 | 人类开发者和 Agent 的任务状态 |
-| Bug 趋势 | 新增、修复、重开、严重等级分布 |
-| Token 消耗 | 按项目、成员、Agent、任务、模型统计 |
-| 预计完成时间 | 基于剩余任务、吞吐和风险估算 ETA |
-| 风险预警 | 延期、超预算、Bug 激增、审批阻塞 |
-| 质量趋势 | 测试通过率、构建成功率、变更失败率 |
+| Overall project progress | Current project completion percentage |
+| Milestone completion rate | Whether milestones are met on schedule |
+| Developer progress | Task status of both human developers and Agents |
+| Bug trends | Distribution of new, fixed, reopened, and severity-graded bugs |
+| Token consumption | Broken down by project, member, Agent, task, and model |
+| Estimated completion time | ETA estimated from remaining tasks, throughput, and risk |
+| Risk alerts | Delays, budget overruns, bug spikes, approval blockages |
+| Quality trends | Test pass rate, build success rate, change-failure rate |
 
-ETA 可先采用可解释公式：
+ETA can initially use an explainable formula:
 
 ```text
 T_ETA = ( W_remaining / V_effective ) + T_blocker + T_rework + T_approval
@@ -648,136 +648,136 @@ T_ETA = ( W_remaining / V_effective ) + T_blocker + T_rework + T_approval
 
 ---
 
-## 14. 安全治理要求
+## 14. Security governance requirements
 
-### 14.1 最小权限
+### 14.1 Least privilege
 
-每个 Agent 只能访问完成当前任务所需资源。
+Each Agent can only access resources needed for the current task.
 
-必须满足：
+Must satisfy:
 
-- 有 Resource Binding。
-- 有 Resource Grant。
-- 有 allowed actions。
-- 有 constraints。
-- 有 TTL 或撤销机制。
+- Has a Resource Binding.
+- Has a Resource Grant.
+- Has allowed actions.
+- Has constraints.
+- Has a TTL or revocation mechanism.
 
-### 14.2 高危审批
+### 14.2 High-risk approval
 
-以下操作必须审批：
+The following operations must be approved:
 
-- 生产部署。
-- 数据库写入或迁移。
-- 云资源创建、删除、扩缩容。
-- 访问生产密钥。
-- 大额 token 或预算消耗。
+- Production deployment.
+- Database write or migration.
+- Creating, deleting, or scaling cloud resources.
+- Access to production secrets.
+- Large token or budget consumption.
 
-审批必须记录：
+Approval must record:
 
-- 审批人。
-- 审批时间。
-- 风险等级。
-- 资源范围。
-- TTL。
-- 对应任务。
-- 对应 deployment。
+- Approver.
+- Approval time.
+- Risk level.
+- Resource scope.
+- TTL.
+- Corresponding task.
+- Corresponding deployment.
 
-### 14.3 密钥安全
+### 14.3 Secret security
 
-禁止：
+Prohibited:
 
-- 明文密钥进入 Git。
-- 明文密钥进入 Markdown。
-- 明文密钥进入普通日志。
-- 明文密钥进入前端响应。
-- 长期密钥进入子 Agent 长期状态。
+- Plaintext secrets entering Git.
+- Plaintext secrets entering Markdown.
+- Plaintext secrets entering ordinary logs.
+- Plaintext secrets entering frontend responses.
+- Long-lived secrets entering a sub-agent's long-lived state.
 
-允许：
+Allowed:
 
-- `secret_ref` 进入 manifest。
-- 短期 credential lease 进入 Runtime。
-- 审批通过后按 TTL 派生短期凭证。
+- `secret_ref` entering the manifest.
+- Short-lived credential leases entering the runtime.
+- Deriving short-lived credentials by TTL once approval passes.
 
 ---
 
-## 15. 标准输出格式
+## 15. Standard output format
 
-每次评测应输出一份标准报告。
+Every evaluation should output a standard report.
 
 ```text
 Agent Swarm Evaluation Report
 
-1. 基本信息
-   - 任务 ID
-   - 项目 ID
-   - 代码版本
-   - 模型版本
-   - Agent 配置
+1. Basic information
+   - Task ID
+   - Project ID
+   - Code version
+   - Model version
+   - Agent configuration
 
-2. 任务结果
-   - 是否完成
-   - 测试结果
-   - 构建结果
-   - 部署结果
+2. Task result
+   - Whether completed
+   - Test results
+   - Build results
+   - Deployment results
 
-3. 分数
-   - 任务完成能力
-   - 能力增益
-   - 协作效率
-   - 通信质量
-   - 成本效率
-   - 鲁棒性
-   - 安全治理与可审计性
-   - 总分
+3. Scores
+   - Task completion capability
+   - Capability gain
+   - Collaboration efficiency
+   - Communication quality
+   - Cost efficiency
+   - Robustness
+   - Security governance and auditability
+   - Total score
 
-4. 蜂群能力等级
+4. Swarm capability level
    - L0-L5
-   - 是否触发强制降级
+   - Whether a mandatory downgrade was triggered
 
-5. 成本
-   - token
-   - 时间
-   - 基础设施资源
-   - 人工介入次数
+5. Cost
+   - Tokens
+   - Time
+   - Infrastructure resources
+   - Number of human interventions
 
-6. 审计
-   - 资源访问
-   - 审批记录
-   - credential lease
-   - artifact provenance
+6. Audit
+   - Resource access
+   - Approval records
+   - Credential lease
+   - Artifact provenance
 
-7. 结论
-   - 是否优于 baseline
-   - 主要收益
-   - 主要风险
-   - 下一步优化建议
+7. Conclusion
+   - Whether it outperforms the baseline
+   - Main benefits
+   - Main risks
+   - Next optimization suggestions
 ```
 
 ---
 
-## 16. 标准应用流程
+## 16. Standard application process
 
-### 16.1 评测流程
+### 16.1 Evaluation process
 
 ```text
-选择任务集
--> 设定 baseline
--> 配置 Agent 蜂群
--> 执行任务
--> 采集事件和 trace
--> 运行测试和验证
--> 计算指标
--> 判定蜂群能力等级
--> 生成评测报告
+Select the task set
+-> Set the baseline
+-> Configure the Agent Swarm
+-> Execute the task
+-> Collect events and trace
+-> Run tests and verification
+-> Compute metrics
+-> Determine the Swarm capability level
+-> Generate the evaluation report
 ```
 
 
 
 ---
 
-## . 附录：简化公式汇总
+## Appendix: Simplified formula summary
 
-###  动作选择概率
+### Action-selection probability
 
 ```text
                         [τ(s,a_j,r_k)]^α · [η(s,a_j,r_k)]^β
@@ -785,19 +785,19 @@ P_(s,a_j)^(r_k)  =  ────────────────────
                      Σ ( a_l ∈ A(s,r_k) )  [τ(s,a_l,r_k)]^α · [η(s,a_l,r_k)]^β
 ```
 
-### 能力增益
+### Capability gain
 
 ```text
 G_E = Q_swarm − Q_base
 ```
 
-###  成本归一化能力增益
+### Cost-normalized capability gain
 
 ```text
 G_{E,c} = (Q_swarm / C_swarm) − (Q_base / C_base)
 ```
 
-### 总分
+### Total score
 
 ```text
 S_swarm =  0.25·S_completion + 0.20·S_gain + 0.15·S_collaboration

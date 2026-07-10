@@ -1,89 +1,89 @@
 ---
-title: "成员角色和权限"
+title: "Member Roles and Permissions"
 ---
 
-# 成员角色和权限
+# Member Roles and Permissions
 
-<Callout type="warn" title="当前状态说明">
-  组织、成员邀请、角色分配目前仍在规划/后端阶段，尚无独立的团队管理界面，本页描述的组织角色和成员加入方式是后端已定义的数据模型，暂时不能通过界面直接操作。密钥托管、审批和审计机制是已经在单任务/单 Agent 场景下真实运行的能力。
+<Callout type="warn" title="Current Status Notice">
+  Organizations, member invitations, and role assignment are still in the planning/backend stage, and there is no dedicated team management interface yet. The organization roles and member-joining approach described on this page are data models already defined on the backend, which currently cannot be operated directly through an interface. Secret custody, approval, and auditing mechanisms are capabilities that already run in real, single-task/single-Agent scenarios.
 </Callout>
 
-团队权限的目标是让成员和 Agent 都只访问自己需要的资源。
+The goal of team permissions is to let both members and Agents access only the resources they need.
 
-## 组织角色
+## Organization roles
 
-Heicode 组织当前的真实角色只有 4 个：
+Currently there are only 4 real roles in a Heicode organization:
 
-| 角色 | 主要职责 | 建议权限 |
+| Role | Main responsibility | Suggested permissions |
 |---|---|---|
-| Owner | 组织、套餐、账务、最终授权 | 全局管理、账务、成员、资源、审计 |
-| Admin | 日常管理 | 成员、资源、任务、审计 |
-| Member | 参与任务的普通成员 | 创建任务、使用授权资源、查看结果 |
-| Auditor | 只读查看审计 | 查看审计记录 |
+| Owner | Organization, plan/subscription, billing, final authorization | Global administration, billing, members, resources, audit |
+| Admin | Day-to-day management | Members, resources, tasks, audit |
+| Member | Ordinary member participating in tasks | Create tasks, use authorized resources, view results |
+| Auditor | Read-only access to audit | View audit records |
 
-没有 "Tech Lead / Product Lead / Developer / Reviewer / Ops / Security / Billing" 这样的细分组织角色；技术、需求、运维、安全等职责目前只能通过团队内部约定来划分，不是平台可选择的角色。
+There are no finer-grained organization roles such as "Tech Lead / Product Lead / Developer / Reviewer / Ops / Security / Billing"; responsibilities such as technical, requirement, operations, and security work can currently only be divided through internal team agreement, not roles that can be selected on the platform.
 
-规划中的未来角色模型（尚未上线，仅供参考）：`Primary Owner / Owner / Admin / Member / Auditor / Custom`，届时可能支持更细的自定义角色，但目前不能选择或配置。
+A planned future role model (not yet launched, for reference only): `Primary Owner / Owner / Admin / Member / Auditor / Custom`, which may support more granular custom roles in the future, but cannot currently be selected or configured.
 
-## Agent 角色
+## Agent roles
 
-Agent 角色是独立于组织角色的另一套体系，真实的 Agent 角色目录共 6 种：
+The Agent role is a separate system independent from organization roles. There are 6 real Agent roles in the catalog:
 
-| Agent | 适合做什么 |
+| Agent | Suitable for |
 |---|---|
-| Product Agent | 需求、用户故事、验收标准 |
-| Architect Agent | 架构、模块边界、技术方案 |
-| Frontend Agent | 页面、组件、交互 |
-| Backend Agent | API、数据库、服务逻辑 |
-| Reviewer Agent | 代码审查、风险检查 |
-| Ops Agent | 构建、部署、监控 |
+| Product Agent | Requirements, user stories, acceptance criteria |
+| Architect Agent | Architecture, module boundaries, technical solutions |
+| Frontend Agent | Pages, components, interactions |
+| Backend Agent | APIs, databases, service logic |
+| Reviewer Agent | Code review, risk checks |
+| Ops Agent | Build, deployment, monitoring |
 
-## 权限原则
+## Permission principles
 
-- 每个成员使用自己的账号。
-- 每个成员只拥有完成职责所需的权限。
-- 每个 Agent 只拥有当前任务所需的权限。
-- 生产资源默认不开放。
-- 高危操作必须审批。
-- 权限变化必须有记录。
+- Each member uses their own account.
+- Each member only has the permissions needed to fulfill their responsibilities.
+- Each Agent only has the permissions needed for the current task.
+- Production resources are not open by default.
+- High-risk operations must be approved.
+- Permission changes must be recorded.
 
-## 成员加入
+## Member onboarding
 
-真实的成员邀请流程很简单：选定一个用户，为其分配 Owner / Admin / Member / Auditor 中的一个角色即可。邀请信息包含成员邮箱、所属团队和组织角色。
+The real member invitation process is simple: select a user and assign them one of the roles Owner / Admin / Member / Auditor. The invitation information includes the member's email, the team they belong to, and their organization role.
 
-"是否可创建任务 / 是否可连接资源 / 是否可审批 / 是否可查看用量 / 是否可查看审计"这类逐项权限勾选，目前不是真实的邀请流程，只是一种规划中的更细粒度权限设想，尚未实现。
+Item-by-item permission checkboxes such as "can create tasks / can connect resources / can approve / can view usage / can view audit" are not currently part of the real invitation process — they are only a planned idea for finer-grained permissions that has not yet been implemented.
 
-## 成员离开
+## Member offboarding
 
-成员离职、转岗或不再参与项目时：
+When a member leaves, changes roles, or no longer participates in a project:
 
-1. 移除组织权限。
-2. 撤销会话。
-3. 撤销个人 token。
-4. 转移其负责的任务。
-5. 检查其审批权限。
-6. 检查其连接过的资源。
-7. 必要时轮换密钥。
-8. 保留审计记录。
+1. Remove organization permissions.
+2. Revoke sessions.
+3. Revoke personal tokens.
+4. Transfer tasks they were responsible for.
+5. Check their approval permissions.
+6. Check resources they have connected to.
+7. Rotate secrets if necessary.
+8. Retain audit records.
 
-## 权限复查
+## Permission review
 
-建议：
+Recommended:
 
-- 每周检查待审批任务。
-- 每月检查成员权限。
-- 每月检查资源授权。
-- 每月检查模型消耗。
-- 每季度检查密钥和审计策略。
+- Check pending approval tasks weekly.
+- Check member permissions monthly.
+- Check resource authorizations monthly.
+- Check model consumption monthly.
+- Check secret and audit policies quarterly.
 
-## 共享账号风险
+## Risks of shared accounts
 
-共享账号会导致：
+Shared accounts lead to:
 
-- 无法判断谁批准了高危操作。
-- 无法追踪谁连接了资源。
-- 无法正确撤销离职成员权限。
-- 容易造成密钥泄漏。
-- 审计记录失效。
+- Inability to determine who approved a high-risk operation.
+- Inability to track who connected a resource.
+- Inability to correctly revoke the permissions of a departed member.
+- Higher risk of secret leaks.
+- Invalidated audit records.
 
-团队必须避免共享账号。
+Teams must avoid shared accounts.

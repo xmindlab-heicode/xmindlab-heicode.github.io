@@ -7,6 +7,14 @@
   },
   "navigationFallback": {
     "rewrite": "/index.html",
-    "exclude": ["/images/*", "/*.{png,jpg,jpeg,gif,svg,ico,css,js}"]
+    "exclude": [
+      "/images/*",
+      "/*.{png,jpg,jpeg,gif,svg,ico,css,js}"
+    ]
+  },
+  "responseOverrides": {
+    "404": {
+      "rewrite": "/404.html"
+    }
   }
 }

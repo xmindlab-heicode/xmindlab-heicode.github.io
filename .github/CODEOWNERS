@@ -1,0 +1,17 @@
+# Public documentation ownership
+# Default owner for documentation changes
+* @Fasthei
+
+# Product-sensitive documentation
+/content/docs/security/ @Fasthei
+/content/docs/billing/ @Fasthei
+/content/docs/privacy/ @Fasthei
+
+# Client / CLI related docs
+/content/docs/cli/ @Fasthei
+
+# Agent and Swarm documentation
+/content/docs/agent-building/ @Fasthei
+
+# Infrastructure and deployment documentation
+.github/ @Fasthei

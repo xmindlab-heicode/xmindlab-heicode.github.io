@@ -1,0 +1,140 @@
+---
+title: "快速开始"
+---
+
+# 快速开始
+
+本页用一个最短路径说明如何在 Heicode 中启动一个 Agent 任务。你不需要提前配置模型供应商，也不需要接触密钥保管器后台。
+
+## 开始前你需要准备
+
+- 一个 Heicode 账号。
+- 已安装或可下载 Heicode 客户端。
+- 一个要完成的目标，例如修复 bug、开发功能、生成文档或部署项目。
+- 如果任务需要代码，准备一个 Git 仓库。
+- 如果任务需要部署，准备一个云账号或可授权的云资源。
+
+## 第一步：登录 Heicode
+
+1. 打开 Heicode Manager。
+2. 使用你的账号登录。
+3. 确认首页能看到任务、资源、模型用量和客户端下载入口。![31f865c364999514ec5299004425768c.png](https://doc.xinghanlab.com/static-file/440dd0a0-c899-4c1c-acdd-bc6e4e351e89/24bc570b-0408-4631-b903-2efb5b458708.png)
+## 第二步： 资源绑定
+点击左侧资源绑定，Git资源是基础，sub和swarm蜂群模式都以git资源绑定后才能使用。
+常见资源包括：
+- Git 仓库。
+- 产品文档。
+- SK 技能库。
+- 云账号。
+- 云资源，例如数据库、静态站点、Kubernetes、对象存储。
+![2a669e9121f0e93b8d4cd8b139fc6de0.png](https://doc.xinghanlab.com/static-file/7eeb8e6a-2586-4f9d-973d-97caeb113add/4fb3e640-ecc8-4725-b123-912306c724a7.png)
+连接资源后，Heicode 会展示脱敏状态和资源范围。长期密钥会进入密钥保管器，页面只展示引用和状态。
+
+
+## 第三步：部署Sub  Agent
+在页面左侧点击部署Sub  Agent，可以选择单Agent以及开发者团队，部署好了之后在页面下方同步显示部署的Agent（目前版本最多安装5个Agent）。![8e97aca64a191270b2569c4e3584d388.png](https://doc.xinghanlab.com/static-file/9cd9f9b5-05b3-459e-a016-91b442a2c4ec/02f406e6-129c-42cf-93ff-2204322eeb83.png)![4cbf20e9f399e8e0a1b2502d9c3da294.png](https://doc.xinghanlab.com/static-file/ef3f664c-cbf3-40e6-9242-7feab4b0721f/8bb57126-c2e2-4a11-9fa1-0fc0538aed57.png)更换Agent以及删除已经部署好的Agent都在这个位置。![595d9d915c1e665d3fe3ad82e0f46ba5.png](https://doc.xinghanlab.com/static-file/30058170-1606-4b93-b29b-b6415c202c90/fa4747c9-dbf8-407b-ab60-61ee443b6ff4.png)
+## 第四步：下载安装Heicode客户端
+在页面左侧点击Heicode桌面客户端，下载对应系统客户端并打开。![87ca1f402d1c30dc21b096fccfa3a4dc.png](https://doc.xinghanlab.com/static-file/40a5993a-44aa-4f50-926c-5481e49ee522/78c3f2e4-e868-4de6-a926-452ced275a22.png)
+
+## 第五步：调用部署的Sub  Agent
+在客户端中完成登录。点击客户端主页面中的Agents，可以看见并选择您刚在Heicode Manager中部署的Agent，勾选即可开始使用。![4e61204890ef30f44bf432a88758f49c.png](https://doc.xinghanlab.com/static-file/095bf576-d6e9-4aad-8d85-f27888a8b1c3/90d6e0bf-3aaf-447e-9b1b-2653a57f47e0.png)
+
+用户主要在客户端里输入任务和处理审批。Manager 用于资源准备、启动 Agent、查看状态、用量和审计。
+
+## 第六步：输入一个目标
+
+在客户端输入你要完成的事情。
+
+推荐格式：
+
+```text
+我要做什么：
+已有代码或文档：
+希望部署到哪里：
+哪些操作必须先问我：
+验收标准：
+```
+
+示例：
+
+```text
+我要为现有官网增加一个资源中心页面。
+已有 docs/product-package 资料。
+资源中心要写成站内文档，不要跳转到 Git。
+构建通过后部署到 Azure Static Web Apps。
+部署前需要我确认。
+```
+
+Heicode 会根据目标生成需求摘要、任务计划、资源建议和推荐 Agent 角色。你只需要按清单补齐缺失项，不需要填写底层部署参数。
+## 第七步：确认 Agent 推荐摘要
+
+Heicode 会生成一个你能看懂的摘要。
+
+示例：
+
+```text
+本任务建议启动：
+- Product Agent：整理需求和验收标准
+- Frontend Agent：实现页面
+- Reviewer Agent：检查改动
+- Ops Agent：准备部署
+
+将使用：
+- 仓库：website
+- 文档：docs/product-package
+- 云资源：Azure Static Web Apps
+
+需要审批：
+- 生产部署
+- 大额模型消耗
+- 访问生产密钥
+```
+![aa52eb774210b84cc7cdaa855f1493e3.png](https://doc.xinghanlab.com/static-file/ec97f3d1-53e1-4c2d-b6ee-698531e00b0b/73dbdb4e-8d44-4fea-bd65-4f718aa0c420.png)
+
+确认摘要后，点击启动 Agent。
+
+## 第八步：观察任务状态
+
+任务启动后，你会看到任务视图。
+
+常见状态：
+
+| 状态 | 你应该做什么 |
+|---|---|
+| 准备中 | 等待平台整理资源和上下文 |
+| 运行中 | 等待 Agent 执行 |
+| 需要输入 | 打开任务，回答问题或补充信息 |
+| 等待审批 | 查看风险后批准或拒绝 |
+| 已完成 | 查看交付物和审计 |
+| 失败 | 查看失败原因并重试或调整资源 |
+| 已停止 | 任务被你或平台停止 |
+
+## 第九步：处理需要你介入的事项
+
+Agent 可能会在这些情况下需要你：
+
+- 需求不清楚。
+- 资源没有连接。
+- 权限不足。
+- 预算不足。
+- 需要生产部署。
+- 需要访问生产密钥。
+- 需要你确认实现方向。
+![761778426bec6c7808f2fc35593e82c2.png](https://doc.xinghanlab.com/static-file/69637c3f-d600-4645-bcda-ecb4c02189c7/fdd1a199-14d5-4cda-bca7-8ed5eb0e738a.png)
+
+你可以在任务视图中回复、审批、拒绝、暂停或停止任务。
+
+## 第十步：查看结果
+
+任务完成后，检查：
+
+- 交付物。
+- 代码 diff。
+- 测试结果。
+- 构建结果。
+- 部署结果。
+- 模型用量。
+- 审批记录。
+- 审计记录。
+![ffb31c1ec3f1008c1097730aed75b3f7.png](https://doc.xinghanlab.com/static-file/6e17f673-1d57-46a9-a3fb-2b5fa1dc729c/f2daa1b8-e160-48e5-bb91-a611e2265198.png)
+如果结果不完整，可以继续在客户端补充要求，让 Agent 进入下一轮迭代。

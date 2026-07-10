@@ -1,0 +1,13 @@
+{
+  "pages": [
+    "index",
+    "introduction",
+    "platform-guide",
+    "security-credentials",
+    "agent-building",
+    "team-usage",
+    "billing",
+    "privacy-and-legal",
+    "changelog"
+  ]
+}

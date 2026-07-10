@@ -8,7 +8,7 @@ export const revalidate = false;
 
 export async function GET(_req: Request, { params }: RouteContext<'/og/docs/[...slug]'>) {
   const { slug } = await params;
-  const page = source.getPage(slug.slice(0, -1));
+  const page = source.getPage(slug.slice(0, -1), 'en');
   if (!page) notFound();
 
   return new ImageResponse(
@@ -20,9 +20,10 @@ export async function GET(_req: Request, { params }: RouteContext<'/og/docs/[...
   );
 }
 
+// English only — the Chinese page set shares the same slugs, which would
+// collide with these paths since this route has no locale segment.
 export function generateStaticParams() {
-  return source.getPages().map((page) => ({
-    lang: page.locale,
+  return source.getPages('en').map((page) => ({
     slug: getPageImage(page).segments,
   }));
 }

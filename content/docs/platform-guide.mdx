@@ -1,199 +1,200 @@
 ---
-title: "登录平台和使用平台指南"
+title: "Login & Platform Guide"
 ---
 
-# 登录平台和使用平台指南
+# Login & Platform Guide
 
-## 面向用户
+## For Users
 
-本文面向第一次使用 Heicode 的普通用户，说明如何登录、连接资源、下载客户端、启动 Agent 和查看结果。
+This guide is for people using Heicode for the first time. It covers how to log in, connect resources, download the client, start an Agent, and view results.
 
-## 访问入口
+## Access
 
-平台入口：
+Platform URL:
 
 ```
 https://code.heicode.cc/
 ```
 
-用户只需要登录 Heicode。普通用户不需要登录 CodeGW 后台，也不需要登录 OpenBao。
+Users only need to log into Heicode. Ordinary users don't need to log into the CodeGW backend or OpenBao.
 
-## 第一步：登录 Heicode
+## Step 1: Log into Heicode
 
-1. 打开 `https://code.heicode.cc/`。
-2. 输入账号和密码，或使用平台支持的登录方式。
-3. 登录成功后进入 Heicode 控制台。
-4. 进入首页，查看资源、模型、任务和客户端下载状态。
+1. Open `https://code.heicode.cc/`.
+2. Enter your account and password, or use a supported login method.
+3. After logging in, you'll land in the Heicode console.
+4. On the home page, check your resources, models, tasks, and client download status.
 
-登录后平台会读取：
+After login, the platform reads:
 
-- 用户 ID。
-- 用户邮箱。
-- 用户角色。
-- `channelId`。
+- User ID.
+- User email.
+- User role.
+- `channelId`.
 
-这些信息用于用户身份、CodeGW 额度和用量映射。
+This information is used for identity, CodeGW quota, and usage mapping.
 
-## 第二步：下载客户端
+## Step 2: Download the Client
 
-1. 在 Heicode 控制台进入 `客户端下载`。
-2. 选择对应系统版本，例如 macOS 或 Windows。
-3. 下载并安装 Heicode 客户端。
-4. 打开客户端后，只需要登录 `https://code.heicode.cc/`。
+1. In the Heicode console, go to `Client Download`.
+2. Choose your OS, e.g. macOS or Windows.
+3. Download and install the Heicode client.
+4. Open the client and log into `https://code.heicode.cc/`.
 
-客户端不会要求选择模型提供方。客户端可用模型由 Heicode 提供。
+The client never asks you to choose a model provider — the models available in the client are provided by Heicode.
 
-macOS 提示说明：
+macOS notes:
 
-- 官方发布的安装包已经过 Apple Developer ID 签名、notarization 和 staple，正常安装不会有系统拦截提示。
-- 如果你看到安全提示，通常是安装包来源不对（比如非官方下载渠道）或本地开发构建（未签名），请确认下载地址是官方渠道后重新下载。
+- Official release builds are already signed with an Apple Developer ID, notarized, and stapled — a normal install shouldn't trigger any system warning.
+- If you do see a security prompt, it usually means the installer came from the wrong place (e.g. an unofficial download source) or it's a local dev build (unsigned). Confirm you downloaded from the official channel and try again.
 
-## 第三步：在客户端输入想法
+## Step 3: Describe Your Idea in the Client
 
-主要在 Heicode 客户端输入要做的事情。Manager 负责下载、资源准备清单、Agent 启动、状态和审计等辅助能力，不承担主开发对话。
+You mainly type what you want done in the Heicode client. Manager handles supporting tasks — downloads, the resource-readiness checklist, Agent startup, status, and audit — not the main dev conversation.
 
-例如：
-
-```
-我想做一个面向小团队的任务管理 SaaS，
-需要登录、项目、任务、评论、通知和后台管理，
-希望部署到 Azure。
-```
-
-这一步的需求拆解和角色/资源建议主要由客户端本地的主 Agent 完成，Manager 负责承接结果并准备：
-
-- 需要绑定的资源清单。
-- 高危操作提示。
-- 后续的资源授权和审批流程。
-
-## 第四步：按准备清单连接资源
-
-进入当前任务的 `准备清单`。这里不应该让用户面对大量参数，而是告诉用户还缺什么、下一步做什么。
-
-可连接资源：
-
-- 代码仓库。
-- SK 仓库或技能包。
-- 项目文档。
-- 云账号。
-- 云资源。
-
-推荐流程：
+For example:
 
 ```
-连接 Git
--> 连接项目文档或 SK
--> 连接云账号
--> 从云账号自动发现资源
--> 确认本任务允许使用的资源范围
+I want to build a task-management SaaS for small teams,
+with login, projects, tasks, comments, notifications, and an admin backend,
+deployed to Azure.
 ```
 
-用户不需要把密钥贴到文档里。真实凭证由 Heicode 写入密钥保管器，Heicode 只保存 `secret_ref`。
+At this step, requirement breakdown and role/resource suggestions are mainly handled by the main Agent running locally in the client. Manager picks up the result and prepares:
 
-## 第五步：确认系统推荐
+- The list of resources that need to be connected.
+- High-risk action prompts.
+- The resource-authorization and approval flow that follows.
 
-组建团队时可以从 Heicode 提供的角色目录里挑选，用户只需要确认最终组合是否合理。
+## Step 4: Connect Resources via the Readiness Checklist
 
-角色目录：
+Open the current task's `Readiness Checklist`. This shouldn't confront you with a wall of parameters — it should tell you what's still missing and what to do next.
 
-- Product Agent。
-- Architect Agent。
-- Frontend Agent。
-- Backend Agent。
-- Reviewer Agent。
-- Ops Agent。
+Resources you can connect:
 
-不是每个任务都需要用满 6 个角色，也不需要凑齐一整套；简单任务用 1-2 个即可。除了自由组合，Heicode 控制台也提供"敏捷"（产品+开发+评审，3 人）和"瀑布"（分析+架构+开发+测试+评审，5 人）两种一键部署的团队模板。
+- Code repositories.
+- SK repos or skill packs.
+- Project docs.
+- Cloud accounts.
+- Cloud resources.
 
-确认团队组合后还需要看到：
-
-- 建议使用的仓库、文档、SK 和云资源。
-- 高危操作规则。
-- 预计模型预算。
-
-用户看到的是这种表达：
+Recommended flow:
 
 ```
-本任务将使用 repo-main 和 aks-test。
-生产部署、生产数据库访问、删除云资源需要客户端审批。
-长期密钥不会下发给 Agent。
+Connect Git
+-> Connect project docs or SK
+-> Connect a cloud account
+-> Auto-discover resources from the cloud account
+-> Confirm the resource scope allowed for this task
 ```
 
-用户不需要查看完整后台授权、运行策略或模型参数。这些由 Heicode 在后台生成，并进入审计记录。
+You never need to paste credentials into a doc. Real credentials are written by Heicode into the credential vault — Heicode only stores the `secret_ref`.
 
-## 第六步：确认高危操作
+## Step 5: Confirm the System Recommendation
 
-高危操作会在客户端审批。
+When assembling a team, you can pick from Heicode's role catalog — you just need to confirm the final combination makes sense.
 
-常见高危操作：
+Role catalog:
 
-- 生产部署。
-- 修改数据库。
-- 创建或删除云资源。
-- 访问生产密钥。
-- 大额模型预算消耗。
+- Product Agent.
+- Architect Agent.
+- Frontend Agent.
+- Backend Agent.
+- Reviewer Agent.
+- Ops Agent.
 
-用户确认后，平台才会为子 Agent 派生短期凭证。
+Not every task needs all 6 roles, and you don't need a full set — a simple task might only need 1-2. Besides freely combining roles yourself, the Heicode console also offers two one-click team templates: "Agile" (Product + Dev + Review, 3 people) and "Waterfall" (Analysis + Architecture + Dev + QA + Review, 5 people).
 
-## 第七步：启动 Agent
+After confirming the team composition, you'll also see:
 
-用户确认摘要后，点击 `启动 Agent`。
+- Recommended repos, docs, SK, and cloud resources to use.
+- High-risk action rules.
+- Estimated model budget.
 
-Heicode 会在后台生成执行所需对象，包括子 Agent 角色、资源上下文、运行策略、模型预算和审批策略。
-
-这些内容不作为普通用户步骤展示。Heicode 将它们提交给 Agent 平台执行，用户只看到启动结果、当前状态和需要处理的审批。
-
-## 第八步：在客户端持续推进
-
-任务开始后，主流程回到客户端。
-
-闭环应理解为：
+What you see looks like this:
 
 ```
-客户端继续补充要求
--> Heicode 生成下一步子任务
--> Agent 执行需求/开发/测试/修复/部署中的当前环节
--> Agent 按权限调用需要的 SK 工具
--> 中间结果和失败原因回到客户端
--> 用户继续修正或审批
--> 最终返回交付物和部署结果
+This task will use repo-main and aks-test.
+Production deployment, production DB access, and deleting cloud resources
+require client-side approval.
+Long-lived credentials are never handed to the Agent.
 ```
 
-## 第九步：查看执行结果
+You don't need to look at the full backend authorization, runtime policy, or model parameters — Heicode generates those in the background and logs them to the audit trail.
 
-用户可以在 Heicode 查看：
+## Step 6: Confirm High-Risk Actions
 
-- 当前任务状态。
-- 子 Agent 活动状态。
-- 运行日志。
-- 失败原因。
-- 模型用量。
-- 资源访问记录。
-- 高危审批记录。
-- 部署结果。
+High-risk actions are approved in the client.
 
-## 第十步：维护和升级
+Common high-risk actions:
 
-上线后，用户可以继续输入：
+- Production deployment.
+- Modifying a database.
+- Creating or deleting cloud resources.
+- Accessing production credentials.
+- Large model-budget consumption.
 
-- 修复 bug。
-- 增加功能。
-- 优化性能。
-- 升级依赖。
-- 调整部署资源。
+Only after you confirm does the platform issue a short-lived credential to the sub-Agent.
 
-Heicode 会复用已有项目上下文、资源连接和审计信息。
+## Step 7: Start the Agent
 
-## 用户注意事项
+After confirming the summary, click `Start Agent`.
 
-1. 不要把密钥写入需求、Markdown、聊天内容或 Git。
-2. 授权云资源时先从测试环境开始。
-3. 生产部署必须仔细确认审批内容。
-4. 如果不确定某个资源是否应该授权，选择只读或暂不授权。
-5. CodeGW 后台不是普通用户入口，模型和余额在 Heicode 中查看。
+Heicode generates everything execution needs in the background, including sub-Agent roles, resource context, runtime policy, model budget, and approval policy.
 
-## 操作视频
+None of this is shown as a step for ordinary users. Heicode hands it off to the Agent platform to execute — you only see the start result, current status, and any approvals that need your attention.
+
+## Step 8: Keep Driving the Task from the Client
+
+Once the task starts, the main flow moves back to the client.
+
+Think of the loop like this:
+
+```
+Client keeps adding requirements
+-> Heicode generates the next sub-task
+-> Agent works the current stage — requirements/dev/test/fix/deploy
+-> Agent calls authorized SK tools as needed
+-> Intermediate results and failure reasons come back to the client
+-> User keeps correcting or approving
+-> Final deliverables and deployment results come back
+```
+
+## Step 9: View Execution Results
+
+In Heicode you can view:
+
+- Current task status.
+- Sub-Agent activity status.
+- Runtime logs.
+- Failure reasons.
+- Model usage.
+- Resource access records.
+- High-risk approval records.
+- Deployment results.
+
+## Step 10: Maintain and Upgrade
+
+After going live, you can keep typing:
+
+- Fix a bug.
+- Add a feature.
+- Improve performance.
+- Upgrade dependencies.
+- Adjust deployed resources.
+
+Heicode reuses the existing project context, resource connections, and audit trail.
+
+## Things to Keep in Mind
+
+1. Don't put credentials in requirements, Markdown, chat content, or Git.
+2. Start with a test environment before authorizing cloud resources.
+3. Read approval content carefully before a production deployment.
+4. If you're unsure whether a resource should be authorized, choose read-only or don't authorize it yet.
+5. The CodeGW backend isn't an ordinary-user entry point — check models and balance in Heicode instead.
+
+## Walkthrough Video
 
 <video src="https://doc.xinghanlab.com/static-file/8a311963-ef58-43ad-9224-821783934a9a/0f996a1d-f74c-4619-9d27-1175d0dc0432.mp4" controls width="100%" style={{ maxWidth: '800px' }}>
-您的浏览器不支持内嵌视频，<a href="https://doc.xinghanlab.com/static-file/8a311963-ef58-43ad-9224-821783934a9a/0f996a1d-f74c-4619-9d27-1175d0dc0432.mp4">点击下载观看操作视频</a>。
+Your browser doesn't support embedded video. <a href="https://doc.xinghanlab.com/static-file/8a311963-ef58-43ad-9224-821783934a9a/0f996a1d-f74c-4619-9d27-1175d0dc0432.mp4">Click to download and watch the walkthrough video</a>.
 </video>

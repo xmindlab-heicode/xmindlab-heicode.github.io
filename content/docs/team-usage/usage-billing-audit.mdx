@@ -1,92 +1,92 @@
 ---
-title: "模型用量、账务和审计"
-description: "团队如何查看模型消耗、预算、账务、资源访问和审计记录。"
+title: "Model Usage, Billing, and Audit"
+description: "How a team can view model consumption, budget, billing, resource access, and audit records."
 ---
 
-本文说明团队如何查看模型消耗、预算、账务、资源访问记录和审计信息。
+This page explains how a team can view model consumption, budget, billing, resource access records, and audit information.
 
-Heicode 会把模型调用、资源访问、高危审批和交付结果纳入同一个任务视角，方便团队控制成本和风险。
+Heicode brings model invocation, resource access, high-risk approval, and delivery results together into the same task-level view, making it easier for the team to control cost and risk.
 
-## 团队应关注的用量
+## Usage the team should watch
 
-- 总余额。
-- 单任务消耗。
-- 子 Agent 消耗。
-- 高成本模型调用。
-- 失败重试消耗。
-- 大额消耗审批。
+- Total balance.
+- Per-task consumption.
+- Sub-agent consumption.
+- High-cost model invocations.
+- Consumption from failed retries.
+- Approval for large-scale consumption.
 
-按日/按周的消耗趋势目前还没有独立看板，只能看到累计余额和单条记录的消耗，需要自己按时间筛选原始记录来估算。
+There is currently no independent dashboard for daily/weekly consumption trends — only the cumulative balance and the consumption of individual records can be seen, requiring you to filter raw records by time yourself to estimate trends.
 
-## 预算策略
+## Budget strategy
 
-| 任务类型 | 建议预算策略 |
+| Task type | Suggested budget strategy |
 | --- | --- |
-| 小修复 | 小预算，超出暂停 |
-| 中等功能 | 中预算，长时间运行提醒 |
-| MVP 构建 | 分阶段预算，阶段验收后继续 |
-| 生产部署 | 小预算，重点审批 |
-| 文档任务 | 低预算，限制工具调用 |
+| Small fix | Small budget, pause when exceeded |
+| Medium feature | Medium budget, alert on long running time |
+| MVP build | Phased budget, continue after phase acceptance |
+| Production deployment | Small budget, focus on approval |
+| Documentation task | Low budget, limit tool invocations |
 
-## 成本异常处理
+## Handling abnormal cost
 
-如果模型消耗异常：
+If model consumption is abnormal:
 
-1. 暂停任务。
-2. 查看子 Agent 消耗。
-3. 查看失败重试。
-4. 检查任务是否过大。
-5. 缩小范围或拆分任务。
-6. 调整模型策略。
-7. 设置更严格的预算阈值。
+1. Pause the task.
+2. Check sub-agent consumption.
+3. Check failed retries.
+4. Check whether the task is too large.
+5. Narrow the scope or split the task.
+6. Adjust the model strategy.
+7. Set stricter budget thresholds.
 
-## 审计记录
+## Audit records
 
-审计事件能回答：
+Audit events can answer:
 
 ```text
-谁发起了操作
-哪个 Agent 使用了资源
-谁批准了高危操作（Decision: allow/deny/ask）
-操作发生的时间和来源 IP
+Who initiated the operation
+Which Agent used the resource
+Who approved the high-risk operation (Decision: allow/deny/ask)
+When and from which source IP the operation occurred
 ```
 
-消耗了多少额度需要在计费记录里单独核对，审计事件本身不直接带额度字段。是否部署到了生产目前也不是一个单独可查询的标记，需要结合任务描述和交付记录人工判断。
+How much quota was consumed needs to be verified separately in the billing records — audit events do not directly carry a quota field. Whether something was deployed to production is also currently not a separately queryable flag — it needs to be judged manually by combining the task description and delivery records.
 
-## 资源访问记录
+## Resource access records
 
-团队应能查看：
+The team should be able to view:
 
-- 访问时间。
-- 访问用户。
-- 访问 Agent。
-- 资源类型。
-- 权限范围。
-- 是否使用短期凭证。
-- 是否经过审批。
-- 操作结果。
+- Access time.
+- Accessing user.
+- Accessing Agent.
+- Resource type.
+- Permission scope.
+- Whether short-lived credentials were used.
+- Whether it was approved.
+- Operation result.
 
-## 日志安全
+## Log security
 
-日志会对常见的敏感信息做自动脱敏，包括：
+Logs automatically redact common sensitive information, including:
 
-- 明文 token（如 `sk-` 开头的密钥）。
-- `Bearer` 鉴权头。
-- URL 参数里的密钥。
-- JSON 字段中的 `password`/`token`/`access_key`/`private_key` 等常见命名。
+- Plaintext tokens (such as secrets starting with `sk-`).
+- `Bearer` authorization headers.
+- Secrets in URL parameters.
+- Common field names such as `password`/`token`/`access_key`/`private_key` in JSON.
 
-脱敏基于通用规则匹配，不是针对"CodeGW key"“Azure Key Vault token”这类具体名称单独识别的白名单——如果发现某类密钥没有被正确脱敏，应立即停止任务并通知安全负责人，同时反馈给平台补充规则。
+Redaction is based on generic rule matching, not a whitelist that individually recognizes specific names such as "CodeGW key" or "Azure Key Vault token" — if you find that a particular type of secret was not correctly redacted, you should immediately stop the task, notify the security owner, and report it back to the platform so the rules can be extended.
 
-## 月度复盘
+## Monthly retrospective
 
-建议每月复盘：
+It is recommended to review monthly:
 
-- 哪些任务消耗最高。
-- 哪些任务失败最多。
-- 哪些审批等待最长。
-- 哪些资源访问最多。
-- 哪些成员权限过大。
-- 哪些密钥需要轮换。
-- 是否需要调整套餐或预算。
+- Which tasks consumed the most.
+- Which tasks failed the most.
+- Which approvals waited the longest.
+- Which resources were accessed the most.
+- Which members have excessive permissions.
+- Which secrets need to be rotated.
+- Whether the plan/subscription or budget needs adjustment.
 
-以上复盘目前需要人工从原始记录里整理，尚无自动生成的月度报表。
+The above retrospective currently needs to be compiled manually from raw records; there is no automatically generated monthly report yet.

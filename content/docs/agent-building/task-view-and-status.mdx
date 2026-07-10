@@ -1,180 +1,180 @@
 ---
-title: "理解任务视图和状态"
+title: "Understanding the Task View and Statuses"
 ---
 
-# 理解任务视图和状态
+# Understanding the Task View and Statuses
 
-Agent 任务视图用于集中查看多个 Agent 任务。它的目标是让你一眼知道：哪些任务正在工作，哪些任务需要你输入，哪些任务已经完成，哪些任务失败了。
+The Agent task view is used to get a consolidated look at multiple Agent tasks. Its goal is to let you tell at a glance which tasks are working, which need your input, which have finished, and which have failed.
 
-这类任务视图的设计参考了 Claude Code Agent View 的客户体验：先让用户看到状态，再在需要时打开详情、回复、审批或接管。
+The design of this task view draws on the customer experience of Claude Code's Agent View: let the user see status first, then open details, reply, approve, or take over only when needed.
 
-## 任务视图显示什么
+## What the task view shows
 
-每个任务行通常包含：
+Each task row typically includes:
 
-- 任务名称。
-- 工作模式。
-- 当前状态。
-- 当前正在做什么。
-- 最后更新时间。
-- 负责的 Agent 角色。
-- 是否需要用户输入。
-- 是否有待审批操作。
-- 是否有交付结果。
-- 是否有失败原因。
-- 模型消耗和预算状态。
+- Task name.
+- Working mode.
+- Current status.
+- What it's currently doing.
+- Last update time.
+- The Agent role responsible.
+- Whether user input is needed.
+- Whether there's a pending approval.
+- Whether there are deliverables.
+- Whether there's a failure reason.
+- Model consumption and budget status.
 
-## 工作模式会影响你看到什么
+## The working mode affects what you see
 
-不同工作模式下，任务视图展示重点不同。
+Different working modes emphasize different things in the task view.
 
-| 模式 | 任务视图重点 | 用户最常处理的动作 |
+| Mode | Task view focus | Most common user actions |
 |---|---|---|
-| Sub 模式 | 子 Agent 状态、阻塞项、显式交接、结果聚合 | 停止跑偏子任务、补充上下文、审批高危动作 |
-| 蜂群模式 | lead 的任务拆解情况、各 worker 的领取和执行状态、结果聚合 | 处理阻塞的 worker、调整预算或接管 |
-| 瀑布模式（5 角色固定模板） | 当前阶段、阶段输出、阶段确认、发布审批 | 确认阶段结果、退回上一阶段、批准发布 |
-| 敏捷模式（3 角色固定模板） | 本轮目标、本轮交付、反馈项、下一轮建议 | 验收增量、调整优先级、开始下一轮 |
+| Sub mode | Sub-agent status, blockers, explicit handoffs, result aggregation | Stop a sub-agent that's off track, add context, approve high-risk actions |
+| Swarm mode | The lead's task decomposition, each worker's claim/execution status, result aggregation | Handle a blocked worker, adjust budget, or take over |
+| Waterfall mode (fixed 5-role template) | Current stage, stage output, stage confirmation, release approval | Confirm stage results, roll back to the previous stage, approve release |
+| Agile mode (fixed 3-role template) | This round's goal, this round's deliverables, feedback items, suggestions for the next round | Accept an increment, adjust priorities, start the next round |
 
-## 常见状态
+## Common statuses
 
-任务（deployment）本身只有四种真实状态：
+A task (deployment) itself only has four real statuses:
 
-| 状态 | 含义 | 用户动作 |
+| Status | Meaning | User action |
 |---|---|---|
-| pending（准备中） | Heicode 正在整理资源和上下文 | 等待 |
-| running（运行中） | Agent 正在执行任务 | 可查看进度 |
-| stopped（已停止 / 已完成） | 用户或平台停止任务，包括正常跑完的情况 | 查看结果、重启或复制任务 |
-| failed（已失败） | 任务因错误停止 | 查看失败原因 |
+| pending (preparing) | Heicode is organizing resources and context | Wait |
+| running (in progress) | The Agent is executing the task | You can watch progress |
+| stopped (stopped / completed) | The user or the platform stopped the task, including normal completion | Review results, restart, or duplicate the task |
+| failed | The task stopped due to an error | Check the failure reason |
 
-“需要输入”“等待审批”“可验收”“已阻塞”不是独立的顶层任务状态，而是任务处于 running 时的具体情况，通常对应下面这些真实信号：
+"Needs input," "awaiting approval," "ready to review," and "blocked" are not separate top-level task statuses — they're specific situations while a task is running, and usually correspond to the following real signals:
 
-| 你在界面上看到的说法 | 对应的真实信号 | 用户动作 |
+| What you see in the UI | Corresponding real signal | User action |
 |---|---|---|
-| 需要输入 / 已阻塞 | 任务仍是 running，Agent 触发了 `task.blocked` 事件 | 打开任务并回复 |
-| 等待审批 | 任务仍是 running，存在一条状态为 pending 的审批请求 | 查看风险并批准或拒绝 |
-| 可验收 | 任务仍是 running 或刚变为 stopped，已经产出可检查的交付物 | 查看交付物 |
+| Needs input / blocked | The task is still running, and the Agent triggered a `task.blocked` event | Open the task and reply |
+| Awaiting approval | The task is still running, and there's an approval request in the pending state | Review the risk and approve or reject |
+| Ready to review | The task is still running or has just changed to stopped, and has already produced inspectable deliverables | Review the deliverables |
 
-审批请求是一个独立的对象，有自己的状态机：`pending`（待处理）、`approved`（已批准）、`rejected`（已拒绝）、`expired`（已过期），不属于任务状态本身。
+An approval request is a separate object with its own state machine: `pending`, `approved`, `rejected`, `expired` — it is not part of the task status itself.
 
-## 状态优先级
+## Status priority
 
-任务视图应优先展示：
+The task view should prioritize showing:
 
-1. 存在待处理审批请求的任务（俗称“等待审批”）。
-2. 触发 `task.blocked` 的任务（俗称“需要输入”）。
-3. 已产出交付物、等待你检查的任务（俗称“可验收”）。
-4. failed。
-5. running（其他情况）。
-6. stopped（正常完成）。
+1. Tasks with a pending approval request (commonly called "awaiting approval").
+2. Tasks that triggered `task.blocked` (commonly called "needs input").
+3. Tasks that have produced deliverables awaiting your review (commonly called "ready to review").
+4. failed.
+5. running (other cases).
+6. stopped (normal completion).
 
-这样用户不需要在大量日志中寻找需要处理的事项。
+This way, users don't need to dig through a mass of logs to find what needs handling.
 
-## 查看任务详情
+## Viewing task details
 
-打开任务后，你可以看到：
+Once you open a task, you can see:
 
-- 目标摘要。
-- 当前阶段。
-- Agent 角色。
-- 最近动作。
-- 关键日志。
-- 资源使用记录。
-- 模型消耗。
-- 待审批项。
-- 交付物。
-- 失败原因。
+- Goal summary.
+- Current stage.
+- Agent roles.
+- Recent actions.
+- Key logs.
+- Resource access records.
+- Model consumption.
+- Pending approvals.
+- Deliverables.
+- Failure reason.
 
-## 回复 Agent
+## Replying to the Agent
 
-当任务显示“需要输入”时，你可以回复：
+When a task shows "needs input," you can reply with:
 
-- 补充需求。
-- 修改优先级。
-- 选择方案。
-- 上传或连接更多文档。
-- 调整资源范围。
-- 要求先生成计划。
-- 要求停止某个方向。
+- Additional requirements.
+- Changed priorities.
+- A chosen approach.
+- More uploaded or connected documents.
+- Adjusted resource scope.
+- A request to generate a plan first.
+- A request to stop a certain direction.
 
-回复应尽量具体。
+Replies should be as specific as possible.
 
-不推荐：
+Not recommended:
 
 ```text
-继续。
-你看着办。
-快点。
+Keep going.
+Use your judgment.
+Hurry up.
 ```
 
-推荐：
+Recommended:
 
 ```text
-先只实现用户登录和项目列表，不要做通知模块。
-后端只改 api/projects 相关接口。
-不要访问生产数据库。
-完成后先给我测试结果，不要部署。
+For now, only implement user login and the project list; don't build the notifications module.
+On the backend, only change the api/projects-related endpoints.
+Don't access the production database.
+Give me the test results first when done — don't deploy.
 ```
 
-## 查看交付结果
+## Reviewing deliverables
 
-交付结果可能包括：
+Deliverables can include:
 
-- 需求文档。
-- 技术方案。
-- 代码 diff。
-- 测试结果。
-- 构建结果。
-- 部署日志。
-- 运行地址。
-- 审计记录。
-- 后续建议。
+- Requirements documentation.
+- Technical approach.
+- Code diff.
+- Test results.
+- Build results.
+- Deployment logs.
+- Runtime URL.
+- Audit records.
+- Follow-up suggestions.
 
-验收前不要只看最终一句话，应检查关键产物。
+Before accepting, don't just look at the final one-liner — check the key artifacts.
 
-## 接管任务
+## Taking over a task
 
-当任务复杂或需要人工判断时，可以接管。
+When a task is complex or needs human judgment, you can take it over.
 
-接管后你可以：
+After taking over, you can:
 
-- 查看完整上下文。
-- 直接回复更详细要求。
-- 调整资源授权。
-- 拆分任务。
-- 要求重新规划。
-- 停止当前执行。
+- View the full context.
+- Reply directly with more detailed requirements.
+- Adjust resource authorization.
+- Split the task.
+- Request re-planning.
+- Stop the current execution.
 
-接管不等于放弃任务。它只是让你从概览视图进入更详细的任务对话。
+Taking over doesn't mean giving up on the task. It just moves you from the overview view into a more detailed task conversation.
 
-## 停止任务
+## Stopping a task
 
-可以停止任务的情况：
+Situations where you might stop a task:
 
-- 目标写错。
-- 资源选错。
-- 预算异常。
-- Agent 方向明显错误。
-- 任务卡住。
-- 出现安全风险。
-- 不再需要执行。
+- The goal was written incorrectly.
+- The wrong resources were selected.
+- The budget is abnormal.
+- The Agent is clearly heading in the wrong direction.
+- The task is stuck.
+- A security risk has appeared.
+- Execution is no longer needed.
 
-停止任务后应检查：
+After stopping a task, you should check:
 
-- 是否有未提交代码。
-- 是否有临时资源。
-- 是否有未关闭部署。
-- 是否有仍有效的短期凭证。
-- 是否需要保留审计。
+- Whether there's uncommitted code.
+- Whether there are temporary resources.
+- Whether there's an unclosed deployment.
+- Whether there are still-valid short-lived credentials.
+- Whether the audit trail needs to be retained.
 
-## 重新运行任务
+## Re-running a task
 
-重新运行前建议先调整：
+Before re-running, it's recommended to adjust:
 
-- 目标描述。
-- 资源范围。
-- Agent 角色。
-- 预算。
-- 审批规则。
-- SK 技能。
+- The goal description.
+- Resource scope.
+- Agent roles.
+- Budget.
+- Approval rules.
+- SK skills.
 
-不要在同样错误条件下反复重试，否则会浪费模型预算。
+Don't repeatedly retry under the same failure conditions — it wastes model budget.

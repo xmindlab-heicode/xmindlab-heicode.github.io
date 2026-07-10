@@ -1,12 +1,18 @@
 import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
-import { appName, gitConfig } from './shared';
+import { appName } from './shared';
 
-export function baseOptions(): BaseLayoutProps {
+export function baseOptions(locale: 'en' | 'zh' = 'en'): BaseLayoutProps {
   return {
     nav: {
       // JSX supported
       title: appName,
+      url: locale === 'zh' ? '/zh' : '/',
     },
-    githubUrl: `https://github.com/${gitConfig.user}/${gitConfig.repo}`,
+    links: [
+      {
+        text: locale === 'zh' ? '文档' : 'Docs',
+        url: locale === 'zh' ? '/zh/docs' : '/docs',
+      },
+    ],
   };
 }

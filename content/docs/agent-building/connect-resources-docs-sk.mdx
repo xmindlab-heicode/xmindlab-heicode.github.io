@@ -1,147 +1,147 @@
 ---
-title: "连接资源、文档和 SK"
+title: "Connecting Resources, Documentation, and SK"
 ---
 
-# 连接资源、文档和 SK
+# Connecting Resources, Documentation, and SK
 
-Agent 只能使用你授权给当前任务的资源。连接资源的目标不是把所有权限交给平台，而是让 Heicode 为当前任务生成最小可用上下文。
+An Agent can only use resources you've authorized for the current task. The point of connecting resources isn't to hand all permissions over to the platform — it's to let Heicode generate the minimum usable context for the current task.
 
-## 资源类型
+## Resource types
 
-| 类型 | 例子 | 常见用途 |
+| Type | Examples | Common use |
 |---|---|---|
-| Git 仓库 | GitHub、Gitee、自建 Git | 读代码、写代码、创建 PR |
-| 文档 | PRD、API 文档、架构文档 | 理解需求和约束 |
-| SK 技能库 | 团队规范、工具技能 | 指导 Agent 按团队方式工作 |
-| 云账号 | Azure、AWS、GCP | 自动发现资源 |
-| 云资源 | VM、数据库、AKS、静态站点 | 部署和运行 |
-| 日志监控 | 日志服务、监控面板 | 排查问题 |
+| Git repository | GitHub, Gitee, self-hosted Git | Read code, write code, create PRs |
+| Documentation | PRDs, API docs, architecture docs | Understand requirements and constraints |
+| SK skill library | Team standards, tool skills | Guide the Agent to work the team's way |
+| Cloud account | Azure, AWS, GCP | Auto-discover resources |
+| Cloud resource | VM, database, AKS, static site | Deploy and run |
+| Log monitoring | Log services, monitoring dashboards | Troubleshoot issues |
 
-## 连接 Git
+## Connecting Git
 
-连接 Git 时需要确认：
+When connecting Git, you need to confirm:
 
-- 仓库。
-- 分支。
-- 允许读取的路径。
-- 允许写入的路径。
-- 是否允许创建分支。
-- 是否允许提交。
-- 是否允许创建 PR。
+- Repository.
+- Branch.
+- Paths allowed for reading.
+- Paths allowed for writing.
+- Whether creating branches is allowed.
+- Whether committing is allowed.
+- Whether creating PRs is allowed.
 
-建议从只读开始。如果 Agent 需要修改代码，再开放写权限。
+It's recommended to start read-only. Open up write access only once the Agent actually needs to modify code.
 
-## Git 权限建议
+## Recommended Git permissions
 
-| 任务 | 权限 |
+| Task | Permission |
 |---|---|
-| 代码理解 | 只读 |
-| 文档生成 | 读代码，写 docs |
-| Bug 修复 | 读写相关目录 |
-| 新功能 | 新分支读写，允许 PR |
-| 生产热修 | 审批后写入 |
+| Code understanding | Read-only |
+| Documentation generation | Read code, write docs |
+| Bug fix | Read/write on relevant directories |
+| New feature | Read/write on a new branch, PR allowed |
+| Production hotfix | Write after approval |
 
-## 连接文档
+## Connecting documentation
 
-文档用于减少 Agent 猜测。
+Documentation reduces how much the Agent needs to guess.
 
-建议连接：
+Recommended to connect:
 
-- 产品说明。
-- 用户流程。
-- 页面原型。
-- API 文档。
-- 数据库说明。
-- 部署说明。
-- 安全规则。
-- 法律和隐私说明。
+- Product descriptions.
+- User flows.
+- Page mockups.
+- API documentation.
+- Database descriptions.
+- Deployment descriptions.
+- Security rules.
+- Legal and privacy notices.
 
-文档权限默认只读。需要写文档时，应限制到 docs 路径。
+Documentation permission is read-only by default. When write access to documentation is needed, it should be restricted to the docs path.
 
-## 连接 SK
+## Connecting SK
 
-SK 是团队工作方式和工具能力的集合。
+SK is a collection of team working methods and tool capabilities.
 
-适合放入 SK 的内容：
+Content suitable for SK:
 
-- 编码规范。
-- 提交规范。
-- 测试规范。
-- 前端设计规范。
-- 后端接口规范。
-- 部署步骤。
-- 安全检查。
-- 文档模板。
+- Coding standards.
+- Commit standards.
+- Testing standards.
+- Frontend design standards.
+- Backend API standards.
+- Deployment steps.
+- Security checks.
+- Documentation templates.
 
-## SK 安全规则
+## SK security rules
 
-- 高危 SK 默认禁用。
-- 能运行 shell 的 SK 需要审批。
-- 能访问云资源的 SK 需要审批。
-- 能写数据库的 SK 需要审批。
-- 能部署生产的 SK 需要审批。
-- SK 应来自受控仓库或版本化包。
+- High-risk SKs are disabled by default.
+- SKs capable of running shell commands require approval.
+- SKs capable of accessing cloud resources require approval.
+- SKs capable of writing to databases require approval.
+- SKs capable of deploying to production require approval.
+- SKs should come from a controlled repository or versioned package.
 
-## 连接云账号
+## Connecting a cloud account
 
-连接云账号后，Heicode 应自动发现资源。
+Once a cloud account is connected, Heicode should auto-discover resources.
 
-用户只需要选择：
+The user only needs to choose:
 
-- 本任务允许使用哪些资源。
-- 哪些资源只读。
-- 哪些资源可写。
-- 哪些资源需要审批。
-- 授权有效期。
+- Which resources can be used for this task.
+- Which resources are read-only.
+- Which resources are writable.
+- Which resources require approval.
+- The authorization's validity period.
 
-不要手动把云 access key 写入文档或聊天内容。
+Don't manually paste cloud access keys into documentation or chat content.
 
-## 连接部署目标
+## Connecting a deployment target
 
-部署目标可能是：
+A deployment target might be:
 
-- Azure Static Web Apps。
-- AKS。
-- VM。
-- Container Apps。
-- 自建服务器。
-- 对象存储静态站点。
+- Azure Static Web Apps.
+- AKS.
+- VM.
+- Container Apps.
+- Self-hosted server.
+- Object storage static site.
 
-部署前应确认：
+Before deployment, confirm:
 
-- 环境。
-- 资源组。
-- 域名。
-- 环境变量。
-- 密钥来源。
-- 回滚方案。
-- 审批人。
+- Environment.
+- Resource group.
+- Domain.
+- Environment variables.
+- Secret source.
+- Rollback plan.
+- Approver.
 
-## 资源授权摘要
+## Resource grant summary
 
-启动前你会看到资源授权摘要。
+Before launching, you'll see a resource grant summary.
 
-示例：
+Example:
 
 ```text
-允许读取：
+Allowed to read:
 - website/**
 - docs/**
 
-允许写入：
+Allowed to write:
 - website/app/**
 - website/components/**
 - docs/legal/**
 
-禁止访问：
+Denied:
 - .env
 - secrets/**
 - production-database
 
-需要审批：
-- 生产部署
-- 生产密钥访问
-- 数据库写入
+Requires approval:
+- Production deployment
+- Production secret access
+- Database writes
 ```
 
-只有确认摘要后，Agent 才能使用这些资源。
+The Agent can only use these resources once the summary has been confirmed.

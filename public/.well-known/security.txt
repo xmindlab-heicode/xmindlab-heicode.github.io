@@ -1,5 +1,0 @@
-Contact: https://docs.heicode.cc/security
-Preferred-Languages: en, zh-CN
-Policy: https://docs.heicode.cc/security
-
-# Update this file with the official security reporting contact before GA release.

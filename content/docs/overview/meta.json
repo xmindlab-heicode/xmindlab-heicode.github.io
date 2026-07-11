@@ -1,0 +1,9 @@
+{
+  "title": "产品总览",
+  "pages": [
+    "index",
+    "first-success",
+    "agent-permissions",
+    "task-validation"
+  ]
+}

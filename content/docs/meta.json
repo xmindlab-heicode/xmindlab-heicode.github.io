@@ -1,6 +1,7 @@
 {
   "pages": [
     "index",
+    "overview",
     "introduction",
     "platform-guide",
     "security-credentials",

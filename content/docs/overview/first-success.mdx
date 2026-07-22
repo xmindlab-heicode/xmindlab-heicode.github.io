@@ -1,104 +1,104 @@
 ---
-title: 首次成功路径
-description: 从打开项目到完成第一个可验证开发任务。
+title: First Success Path
+description: From opening a project to completing your first verifiable development task.
 ---
 
-# 首次成功路径
+# First Success Path
 
-首次使用 Heicode 时，不要一开始就提交大型重构或多仓库任务。建议先完成一个边界清晰、可测试、可回滚的小任务，用来验证模型、权限、工具和工作区是否配置正确。
+When you use Heicode for the first time, don't start with a large refactor or a multi-repository task. Complete a small task with clear boundaries that is testable and reversible first — use it to verify that your model, permissions, tools, and workspace are configured correctly.
 
-## 1. 准备项目
+## 1. Prepare the Project
 
-选择一个可以本地运行测试的仓库，并确认工作区没有未保存的重要修改。首次任务建议使用独立分支。
+Choose a repository whose tests you can run locally, and make sure the workspace has no important unsaved changes. For a first task, use a dedicated branch.
 
-任务示例：
-
-```text
-修复用户注册接口在邮箱为空时返回 500 的问题；补充回归测试；不要修改公开 API。
-```
-
-一个合格的首次任务应包含：
-
-- 明确的问题现象；
-- 可定位的功能范围；
-- 明确的不允许修改项；
-- 可执行的验证方式。
-
-## 2. 配置模型
-
-确认模型端点、API Key、模型名称和最大输出长度均有效。执行一次最小对话或工具调用，确保模型不只返回思考内容，而能返回正常最终内容。
-
-对于结构化输出任务，应确认当前模型支持 Tool Calling 或 JSON 输出。某些模型启用思考模式后，可能把内容只放入 `reasoning_content`，导致执行器无法解析最终结果。
-
-## 3. 打开工作区
-
-让 Heicode 读取仓库后，先检查：
-
-- 项目根目录是否正确；
-- 关键源代码是否可见；
-- 测试命令能否执行；
-- Agent 是否拥有任务所需的文件权限；
-- 是否需要网络、MCP 或外部服务。
-
-若出现 `Workspace directory empty`，应先修复工作区挂载或仓库同步问题，不要继续执行任务。
-
-## 4. 提交任务
-
-任务描述应同时包含目标、范围、限制和验收条件。例如：
+Example task:
 
 ```text
-目标：修复空邮箱导致的 500 错误。
-范围：仅修改注册接口和相关测试。
-限制：不要变更数据库结构，不要调整其他接口。
-验收：相关单元测试通过；空邮箱返回 400；现有注册流程不回归。
+Fix the user registration endpoint returning 500 when the email is empty; add regression tests; do not modify the public API.
 ```
 
-## 5. 审批高风险操作
+A good first task should include:
 
-Agent 可能请求执行命令、安装依赖、访问网络或修改多个文件。审批前应检查：
+- A clear description of the symptom;
+- A scoped, locatable feature area;
+- Explicitly disallowed changes;
+- An executable way to verify the result.
 
-- 命令是否只作用于当前项目；
-- 是否会删除文件或重置 Git 状态；
-- 是否会读取密钥和环境变量；
-- 是否会向外部服务上传代码或日志；
-- 是否会产生明显费用。
+## 2. Configure the Model
 
-不要为了减少弹窗而长期启用无限制跳过权限。
+Confirm that the model endpoint, API key, model name, and max output length are all valid. Run a minimal conversation or tool call to make sure the model doesn't only return reasoning content but can return normal final content.
 
-## 6. 查看实际修改
+For structured-output tasks, confirm that the current model supports Tool Calling or JSON output. Some models, once thinking mode is enabled, may put content only in `reasoning_content`, leaving the executor unable to parse the final result.
 
-任务显示完成后，先看实际 Diff，而不是只看 Agent 的总结。至少确认：
+## 3. Open the Workspace
 
-- 修改文件与任务范围一致；
-- 没有无关格式化或大面积重写；
-- 没有硬编码密钥、测试结果或环境路径；
-- 新增测试确实验证了问题，而不是只验证实现细节。
+After Heicode reads the repository, check the following first:
 
-## 7. 运行验证
+- Whether the project root directory is correct;
+- Whether the key source code is visible;
+- Whether the test command can run;
+- Whether the Agent has the file permissions the task needs;
+- Whether network, MCP, or external services are required.
 
-最低验证顺序：
+If you see `Workspace directory empty`, fix the workspace mount or repository-sync problem first — don't keep executing the task.
 
-1. 运行与改动直接相关的测试；
-2. 运行受影响模块的测试；
-3. 执行构建、类型检查或静态检查；
-4. 必要时进行人工场景验证。
+## 4. Submit the Task
 
-Agent 报告“测试通过”不等于测试真实执行成功。应检查命令、退出码和输出摘要。
+The task description should include the goal, scope, constraints, and acceptance criteria together. For example:
 
-## 8. 接受、继续或回滚
+```text
+Goal: Fix the 500 error caused by an empty email.
+Scope: Only modify the registration endpoint and related tests.
+Constraints: Do not change the database schema, and do not touch other endpoints.
+Acceptance: Related unit tests pass; an empty email returns 400; the existing registration flow does not regress.
+```
 
-- 结果正确：接受修改并提交到独立分支；
-- 部分正确：基于现有 Diff 继续修正；
-- 方向错误：回滚工作区后重新描述任务；
-- 无法验证：将状态标记为需要人工复核，而不是直接发布。
+## 5. Approve High-Risk Actions
 
-## 首次成功标准
+An Agent may request to run commands, install dependencies, access the network, or modify multiple files. Before approving, check:
 
-第一次任务只有同时满足以下条件，才算真正成功：
+- Whether the command only affects the current project;
+- Whether it will delete files or reset Git state;
+- Whether it will read secrets and environment variables;
+- Whether it will upload code or logs to external services;
+- Whether it will incur obvious costs.
 
-- 工作区读取正确；
-- Agent 产生了真实代码修改；
-- 修改范围符合任务要求；
-- 验证命令确实执行；
-- 关键测试通过；
-- 用户能够理解并审查最终 Diff。
+Don't leave an unrestricted skip-permissions mode on long-term just to reduce prompts.
+
+## 6. Review the Actual Changes
+
+After the task shows as completed, look at the actual diff first, not just the Agent's summary. At minimum, confirm:
+
+- The changed files match the task scope;
+- There's no unrelated formatting or large-scale rewriting;
+- There are no hardcoded secrets, test results, or environment paths;
+- New tests actually verify the problem, rather than only verifying implementation details.
+
+## 7. Run Verification
+
+Minimum verification order:
+
+1. Run the tests directly related to the change;
+2. Run the tests for affected modules;
+3. Run the build, type check, or static analysis;
+4. Do manual scenario verification where necessary.
+
+An Agent reporting "tests passed" is not the same as the tests actually running successfully. Check the command, the exit code, and the output summary.
+
+## 8. Accept, Continue, or Roll Back
+
+- Correct result: accept the changes and commit them to a dedicated branch;
+- Partially correct: keep fixing on top of the existing diff;
+- Wrong direction: roll back the workspace and re-describe the task;
+- Cannot verify: mark the status as needing manual review rather than releasing it directly.
+
+## Definition of First Success
+
+A first task only counts as truly successful when all of the following are met at the same time:
+
+- The workspace was read correctly;
+- The Agent produced real code changes;
+- The change scope matches the task requirements;
+- The verification command actually ran;
+- Key tests passed;
+- The user can understand and review the final diff.

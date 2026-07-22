@@ -1,124 +1,124 @@
 ---
-title: Agent Swarm 执行机制
-description: 理解任务拆分、Agent 协作、评审、重试与结果聚合。
+title: Agent Swarm Execution Mechanics
+description: Understand task decomposition, Agent collaboration, review, retry, and result aggregation.
 ---
 
-# Agent Swarm 执行机制
+# Agent Swarm Execution Mechanics
 
-Agent Swarm 用多个 Agent 协作完成复杂任务。它适合可以拆分、需要并行探索或需要独立评审的工作，但会带来更高的成本、延迟和协调复杂度。
+Agent Swarm uses multiple Agents collaborating to complete complex tasks. It suits work that can be split up, needs parallel exploration, or requires independent review — but it brings higher cost, latency, and coordination complexity.
 
-## 基本流程
+## Basic Flow
 
 ```text
-用户任务
+User task
   ↓
-Orchestrator 接收与校验
+Orchestrator receives and validates
   ↓
-Seed / 初始分析
+Seed / initial analysis
   ↓
-Proposal / 子任务方案
+Proposal / sub-task plan
   ↓
-Agent 分配与并行执行
+Agent assignment and parallel execution
   ↓
-Review / 结果评审
+Review / result review
   ↓
-Retry 或 Reopen
+Retry or Reopen
   ↓
-Aggregation / 聚合
+Aggregation
   ↓
-Patch、测试证据与最终报告
+Patch, test evidence, and final report
 ```
 
-## 关键阶段
+## Key Stages
 
 ### Seed
 
-Seed 阶段用于建立任务的初始理解，包括目标、范围、仓库结构、约束、验收条件和潜在风险。Seed 不是最终方案，而是后续拆分的共同上下文。
+The Seed stage establishes an initial understanding of the task, including the goal, scope, repository structure, constraints, acceptance criteria, and potential risks. Seed is not the final plan — it's the shared context for the decomposition that follows.
 
 ### Proposal
 
-Proposal 将任务拆成可以独立执行或评审的子任务。好的拆分应减少文件冲突、明确输入输出，并为每个子任务指定验收条件。
+Proposal breaks the task into sub-tasks that can be executed or reviewed independently. A good decomposition reduces file conflicts, clarifies inputs and outputs, and assigns acceptance criteria to each sub-task.
 
-### Agent 执行
+### Agent Execution
 
-每个 Agent 根据分配的角色、模型、工具、工作区和预算执行任务。不同 Agent 是否共享工作区、上下文和 Secret，取决于具体部署配置。
+Each Agent executes its task according to its assigned role, model, tools, workspace, and budget. Whether different Agents share a workspace, context, and secrets depends on the specific deployment configuration.
 
 ### Review
 
-Review 应检查实际修改、测试证据、任务范围和潜在回归，而不是只评价自然语言总结。评审结果可以接受、要求重试、重新打开任务或升级人工处理。
+Review should examine the actual changes, test evidence, task scope, and potential regressions — not just evaluate a natural-language summary. A review can accept the result, require a retry, reopen the task, or escalate to manual handling.
 
 ### Aggregation
 
-Aggregation 将多个 Agent 的有效产出合并为最终结果。聚合器应处理重复结论、冲突修改、失败子任务和不完整证据。
+Aggregation merges the valid output of multiple Agents into a final result. The aggregator should handle duplicate conclusions, conflicting changes, failed sub-tasks, and incomplete evidence.
 
-## Team Lead 的作用
+## The Role of the Team Lead
 
-Team Lead 负责协调和决策，不应只是转发其他 Agent 的总结。典型职责包括：
+The Team Lead is responsible for coordination and decisions, and should not just forward other Agents' summaries. Typical responsibilities include:
 
-- 判断任务是否需要继续拆分；
-- 处理 Agent 之间的冲突；
-- 决定是否 retry 或 reopen；
-- 检查最终工作区与总结是否一致；
-- 标记无法验证的风险；
-- 在需要时请求用户审批。
+- Judging whether a task needs further decomposition;
+- Handling conflicts between Agents;
+- Deciding whether to retry or reopen;
+- Checking whether the final workspace and the summary are consistent;
+- Flagging risks that cannot be verified;
+- Requesting user approval when needed.
 
-Team Lead 的通过不等于代码已经经过独立 CI 或人工 Review。
+A Team Lead's approval does not mean the code has passed independent CI or manual review.
 
-## 状态含义
+## State Meanings
 
-| 状态 | 含义 |
+| State | Meaning |
 | --- | --- |
-| pending | 已创建，尚未开始执行 |
-| running | 正在执行或等待工具结果 |
-| waiting_approval | 等待用户或负责人审批 |
-| retrying | 当前尝试失败，准备重新执行 |
-| reopened | 已结束的任务因缺陷或证据不足重新打开 |
-| failed | 执行终止且没有满足完成条件 |
-| completed | 流程进入完成态，但仍需检查修改和验证证据 |
-| cancelled | 用户或系统主动终止 |
+| pending | Created, not yet started |
+| running | Executing or waiting for tool results |
+| waiting_approval | Waiting for user or owner approval |
+| retrying | The current attempt failed; preparing to re-execute |
+| reopened | A finished task reopened due to defects or insufficient evidence |
+| failed | Execution stopped without meeting the completion criteria |
+| completed | The flow reached a completed state, but changes and verification evidence still need checking |
+| cancelled | Terminated by the user or system |
 
-具体状态名称可能随版本变化，应以当前界面和 API 为准。
+The exact state names may change across versions — rely on the current UI and API.
 
-## Retry 与 Reopen
+## Retry & Reopen
 
-Retry 通常针对同一子任务的临时失败，例如模型超时、工具失败或结构化输出解析失败。Reopen 通常表示任务曾被认为完成，但后续发现结果不完整、测试失败或验收不通过。
+Retry usually targets a temporary failure of the same sub-task, such as a model timeout, a tool failure, or a structured-output parsing failure. Reopen usually means the task was once considered complete, but the result was later found incomplete, tests failed, or acceptance did not pass.
 
-无限重试会放大成本并重复相同错误。系统应设置最大次数、退避策略和失败分类。
+Unlimited retries amplify cost and repeat the same errors. The system should set a maximum count, a backoff strategy, and failure classification.
 
-## 工作区与冲突
+## Workspaces & Conflicts
 
-多 Agent 可以使用共享工作区、独立分支或独立 Sandbox。无论采用哪种方式，都应明确：
+Multiple Agents may use a shared workspace, separate branches, or separate Sandboxes. Whichever approach is used, make clear:
 
-- 修改何时对其他 Agent 可见；
-- 文件冲突如何检测；
-- 谁拥有最终合并权；
-- 失败 Agent 的修改是否保留；
-- 测试针对哪个最终状态运行。
+- When changes become visible to other Agents;
+- How file conflicts are detected;
+- Who holds the final merge authority;
+- Whether a failed Agent's changes are kept;
+- Which final state the tests run against.
 
-## 上下文与记忆
+## Context & Memory
 
-Agent 不应默认获得整个历史记录。为了降低上下文成本，系统可能只传递任务摘要、相关文件、工具结果和共享状态。摘要丢失关键限制时，Agent 可能重复工作或偏离目标。
+An Agent should not receive the entire history by default. To reduce context cost, the system may pass only the task summary, relevant files, tool results, and shared state. When a summary drops key constraints, an Agent may repeat work or drift from the goal.
 
-## 成本与预算
+## Cost & Budget
 
-Swarm 的总成本通常由以下因素共同决定：
+The total cost of a Swarm is usually determined jointly by:
 
-- Agent 数量；
-- 每个 Agent 使用的模型；
-- 上下文长度和输出长度；
-- 工具调用次数；
-- retry / reopen 次数；
-- Sandbox 或 VM 运行时间。
+- The number of Agents;
+- The model each Agent uses;
+- Context length and output length;
+- The number of tool calls;
+- The number of retries / reopens;
+- Sandbox or VM runtime.
 
-提交任务前应设置模型、并发、轮数、Token、时间和资源上限。
+Set limits on model, concurrency, rounds, tokens, time, and resources before submitting a task.
 
-## 完成标准
+## Completion Criteria
 
-一个 Swarm 任务不能只因为所有 Agent 停止运行就被视为成功。最终结果至少应包含：
+A Swarm task cannot be considered successful just because all Agents stopped running. The final result should include at least:
 
-- 完整的修改文件列表；
-- 冲突处理结果；
-- 实际执行的测试与退出码；
-- 未完成或失败的子任务；
-- 人工介入记录；
-- 最终可应用 Patch 或明确的无修改结论。
+- A complete list of changed files;
+- Conflict-resolution outcomes;
+- The tests actually run and their exit codes;
+- Unfinished or failed sub-tasks;
+- A record of manual intervention;
+- A final applicable patch or an explicit no-change conclusion.

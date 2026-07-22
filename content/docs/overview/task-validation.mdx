@@ -1,100 +1,100 @@
 ---
-title: 任务结果与验收
-description: 区分任务完成、测试通过和问题解决，并建立可验证的验收流程。
+title: Task Results & Acceptance
+description: Distinguish task completion, test passing, and problem resolution, and build a verifiable acceptance process.
 ---
 
-# 任务结果与验收
+# Task Results & Acceptance
 
-Heicode 中的 `completed` 只能表示执行流程已经结束，不能单独证明代码正确、测试通过或原始问题已经解决。
+In Heicode, `completed` can only indicate that the execution flow has ended. On its own it cannot prove that the code is correct, that tests passed, or that the original problem was solved.
 
-## 四种不同的成功
+## Four Different Kinds of Success
 
-| 状态 | 含义 |
+| State | Meaning |
 | --- | --- |
-| 执行完成 | Agent 不再继续运行，流程已进入终态 |
-| 产生修改 | 工作区中出现真实文件变更 |
-| 验证通过 | 指定测试、构建或检查命令成功执行 |
-| 问题解决 | 修改满足原始需求，并且没有不可接受的回归 |
+| Execution finished | The Agent is no longer running; the flow reached a terminal state |
+| Changes produced | Real file changes appeared in the workspace |
+| Verification passed | The specified test, build, or check command ran successfully |
+| Problem resolved | The changes meet the original requirement with no unacceptable regression |
 
-这四个状态不能互相替代。Agent 可以完成执行但没有修改文件，也可以修改代码但测试失败，还可能测试通过但没有覆盖真正的问题。
+These four states cannot substitute for one another. An Agent can finish executing without changing any files, can change code but have tests fail, or can have tests pass without covering the real problem.
 
-## 最低验收证据
+## Minimum Acceptance Evidence
 
-每个开发任务至少应提供以下证据：
+Every development task should provide at least the following evidence:
 
-- 修改文件列表；
-- 关键 Diff 摘要；
-- 实际执行的验证命令；
-- 命令退出码；
-- 测试通过、失败和跳过数量；
-- 未验证的平台或场景；
-- 人工介入记录；
-- 已知风险与回滚方式。
+- The list of changed files;
+- A summary of the key diff;
+- The verification commands actually run;
+- The command exit codes;
+- The number of tests passed, failed, and skipped;
+- Any platforms or scenarios not verified;
+- A record of manual intervention;
+- Known risks and the rollback method.
 
-## 推荐结果卡
+## Recommended Result Card
 
 ```text
-任务状态：已完成
-代码修改：7 个文件
-测试执行：42 项
-测试通过：40 项
-测试失败：2 项
-未验证内容：Windows 构建
-人工介入：1 次
-结论：需要复核，不应直接发布
+Task status: Completed
+Code changes: 7 files
+Tests run: 42
+Tests passed: 40
+Tests failed: 2
+Not verified: Windows build
+Manual intervention: 1
+Conclusion: Needs review, should not be released directly
 ```
 
-## 验收顺序
+## Acceptance Order
 
-### 1. 检查是否真的修改代码
+### 1. Check Whether Code Was Actually Changed
 
-确认工作区存在 Diff，并排除只生成报告、只修改注释、只更新锁文件或只输出建议但没有实际实现的情况。
+Confirm that a diff exists in the workspace, and rule out cases that only generate a report, only modify comments, only update the lock file, or only output suggestions without a real implementation.
 
-### 2. 检查修改范围
+### 2. Check the Change Scope
 
-将变更文件与任务范围逐一对照。若任务只要求修复一个接口，却修改了大量无关模块，应视为高风险结果。
+Compare the changed files against the task scope one by one. If a task only asked to fix one endpoint but a large number of unrelated modules were modified, treat it as a high-risk result.
 
-### 3. 检查测试是否真实执行
+### 3. Check Whether Tests Actually Ran
 
-不要只接受自然语言总结。应查看：
+Don't just accept a natural-language summary. Look at:
 
-- 完整命令；
-- 工作目录；
-- 开始和结束时间；
-- 退出码；
-- 标准输出和错误输出摘要。
+- The full command;
+- The working directory;
+- The start and end times;
+- The exit code;
+- A summary of stdout and stderr.
 
-若测试命令未找到、超时、被跳过或因环境错误中断，不能记为通过。
+If the test command was not found, timed out, was skipped, or was interrupted by an environment error, it cannot be recorded as passing.
 
-### 4. 检查测试是否覆盖原问题
+### 4. Check Whether Tests Cover the Original Problem
 
-新增测试应能够在修复前失败、修复后通过。只验证内部实现细节、固定返回值或模拟全部依赖的测试，可能无法证明真实问题已解决。
+New tests should fail before the fix and pass after it. Tests that only verify internal implementation details, fixed return values, or that mock out all dependencies may not prove the real problem is solved.
 
-### 5. 检查回归风险
+### 5. Check Regression Risk
 
-除目标测试外，还应执行受影响模块的测试、构建、类型检查、静态检查或人工场景验证。
+Beyond the target tests, also run tests, builds, type checks, static analysis, or manual scenario verification for affected modules.
 
-## 无测试仓库的处理
+## Handling Repositories With No Tests
 
-无自动化测试时，应至少记录：
+When there's no automated testing, record at least:
 
-- 使用了哪些人工验证步骤；
-- 验证了哪些输入与输出；
-- 哪些场景无法覆盖；
-- 为什么认为风险可接受。
+- Which manual verification steps were used;
+- Which inputs and outputs were verified;
+- Which scenarios cannot be covered;
+- Why the risk is considered acceptable.
 
-此类任务的结果应标记为“人工验证”或“需要复核”，不应伪装成自动测试通过。
+Results for such tasks should be marked "manually verified" or "needs review" — they should not be disguised as automated test passes.
 
-## Agent Swarm 的额外验收
+## Extra Acceptance for Agent Swarm
 
-多 Agent 场景还应检查：
+In multi-Agent scenarios, also check:
 
-- 各 Agent 是否重复修改同一文件；
-- 聚合结果是否遗漏某个 Agent 的有效修改；
-- 冲突是否被正确处理；
-- Team Lead 的总结是否与最终工作区一致；
-- 失败 Agent 的部分结果是否被误判为成功。
+- Whether the Agents repeatedly modified the same file;
+- Whether the aggregated result dropped a valid change from some Agent;
+- Whether conflicts were handled correctly;
+- Whether the Team Lead's summary is consistent with the final workspace;
+- Whether a failed Agent's partial results were mistaken for success.
 
-## 发布前要求
+## Pre-Release Requirements
 
-生产发布前，应由独立于执行 Agent 的人员或流程完成代码审查、测试和发布审批。Heicode 的任务状态不能替代团队现有的 CI、Review 和发布门禁。
+Before a production release, code review, testing, and release approval should be completed by people or processes independent of the executing Agent. Heicode's task status cannot replace your team's existing CI, review, and release gates.

@@ -1,94 +1,94 @@
 ---
-title: 可观测性与故障诊断
-description: 使用任务标识、日志、错误分类和诊断证据定位执行问题。
+title: Observability & Troubleshooting
+description: Use task identifiers, logs, error classification, and diagnostic evidence to locate execution problems.
 ---
 
-# 可观测性与故障诊断
+# Observability & Troubleshooting
 
-复杂 Agent 任务涉及前端、控制面、模型网关、Orchestrator、MCP、Sandbox、Redis、数据库和外部服务。只看最终错误提示，通常不足以定位问题。
+Complex Agent tasks involve the frontend, the control plane, the model gateway, the Orchestrator, MCP, the Sandbox, Redis, the database, and external services. Looking only at the final error message is usually not enough to locate the problem.
 
-## 关键标识
+## Key Identifiers
 
-诊断时应保留并关联以下标识：
+When diagnosing, keep and correlate the following identifiers:
 
-- Session ID：一次用户会话；
-- Swarm ID：一次多 Agent 执行；
-- Task ID：具体任务或子任务；
-- Agent ID：执行该任务的 Agent；
-- Model Request ID：模型提供方返回的请求标识；
-- Trace ID：跨服务调用链标识；
-- Workspace / Sandbox ID：实际执行环境。
+- Session ID: a single user session;
+- Swarm ID: a single multi-Agent execution;
+- Task ID: a specific task or sub-task;
+- Agent ID: the Agent executing that task;
+- Model Request ID: the request identifier returned by the model provider;
+- Trace ID: the cross-service call-chain identifier;
+- Workspace / Sandbox ID: the actual execution environment.
 
-界面、日志和工单系统应尽量使用同一组标识，避免只能依靠时间和文本猜测对应关系。
+The UI, logs, and ticketing system should use the same set of identifiers where possible, to avoid having to guess correspondences from time and text alone.
 
-## 分层排查
+## Layered Investigation
 
-### 1. 前端与连接层
+### 1. Frontend & Connection Layer
 
-检查连接地址、认证信息、WebSocket 或流式连接是否中断，以及界面状态是否与后端一致。
+Check the connection address, authentication information, whether the WebSocket or streaming connection dropped, and whether the UI state is consistent with the backend.
 
-### 2. Orchestrator 与队列
+### 2. Orchestrator & Queue
 
-检查任务是否入队、是否被 Worker 获取、状态是否持续更新，以及 retry / reopen 是否按预期触发。
+Check whether the task was enqueued, whether a worker picked it up, whether its state keeps updating, and whether retry / reopen triggers as expected.
 
-### 3. 模型调用
+### 3. Model Calls
 
-保存经过脱敏的请求参数、响应字段、HTTP 状态、错误码、Token 统计和耗时。重点区分：认证失败、限流、上下文超限、超时、空 `content`、非法工具调用和 JSON 解析失败。
+Save the masked request parameters, response fields, HTTP status, error code, token accounting, and latency. Focus on distinguishing: authentication failure, throttling, context overflow, timeout, empty `content`, invalid tool call, and JSON parsing failure.
 
-### 4. MCP 与工具
+### 4. MCP & Tools
 
-检查协议协商、认证 Header、工具 Schema、请求超时、返回值大小和传输方式。MCP Server 可连接不代表每个工具都能正常调用。
+Check protocol negotiation, authentication headers, tool schema, request timeout, response size, and transport method. An MCP Server being connectable doesn't mean every tool can be called correctly.
 
 ### 5. Workspace / Sandbox
 
-检查仓库是否挂载、当前目录是否正确、依赖是否存在、磁盘空间是否充足、网络策略是否允许，以及工作区是否被提前销毁。
+Check whether the repository is mounted, whether the current directory is correct, whether dependencies exist, whether there is enough disk space, whether the network policy allows access, and whether the workspace was destroyed prematurely.
 
-### 6. 结果聚合
+### 6. Result Aggregation
 
-检查最终报告是否基于实际工作区、测试日志和 Agent 结果生成，避免聚合器只总结自然语言而遗漏真实失败。
+Check whether the final report is generated from the actual workspace, test logs, and Agent results, to avoid an aggregator that only summarizes natural language while dropping real failures.
 
-## 常见故障分类
+## Common Failure Categories
 
-| 类别 | 示例 |
+| Category | Examples |
 | --- | --- |
-| MODEL | 认证、限流、上下文超限、空响应、JSON 解析失败 |
-| MCP | Server 无法连接、协议不兼容、工具参数错误 |
-| WORKSPACE | 目录为空、仓库未同步、文件权限不足 |
-| SANDBOX | VM 创建失败、网络不通、资源不足、超时销毁 |
-| SWARM | 子任务卡住、重复重试、状态不一致、聚合失败 |
-| NETWORK | DNS、代理、VNet、Subnet、NSG、Firewall 问题 |
-| STORAGE | Redis、数据库或对象存储不可用 |
-| UI | 前端缓存、流式事件丢失、状态展示滞后 |
+| MODEL | Authentication, throttling, context overflow, empty response, JSON parsing failure |
+| MCP | Server unreachable, protocol incompatibility, wrong tool arguments |
+| WORKSPACE | Empty directory, repo not synced, insufficient file permissions |
+| SANDBOX | VM creation failure, no network, insufficient resources, timeout destruction |
+| SWARM | Sub-task stuck, repeated retries, inconsistent state, aggregation failure |
+| NETWORK | DNS, proxy, VNet, Subnet, NSG, Firewall issues |
+| STORAGE | Redis, database, or object storage unavailable |
+| UI | Frontend cache, lost streaming events, lagging state display |
 
-## 建议错误码格式
+## Recommended Error-Code Format
 
 ```text
-HC-MODEL-1001  模型认证失败
-HC-MODEL-1203  结构化输出解析失败
-HC-SWARM-2104  Agent 执行超时
-HC-MCP-3102    MCP Server 无法连接
-HC-VM-4101     Sandbox 创建失败
-HC-NET-5103    Subnet 或 NSG 配置错误
+HC-MODEL-1001  Model authentication failed
+HC-MODEL-1203  Structured-output parsing failed
+HC-SWARM-2104  Agent execution timed out
+HC-MCP-3102    MCP Server unreachable
+HC-VM-4101     Sandbox creation failed
+HC-NET-5103    Subnet or NSG misconfiguration
 ```
 
-错误码应包含责任域、稳定编号、用户可读说明、建议动作和内部诊断字段。
+An error code should include the responsible domain, a stable number, a user-readable explanation, a suggested action, and internal diagnostic fields.
 
-## 诊断包
+## Diagnostic Bundle
 
-提交问题时，建议导出一个脱敏诊断包，包含：
+When reporting a problem, export a masked diagnostic bundle containing:
 
-- Heicode 版本和运行环境；
-- Session、Swarm、Task、Agent 标识；
-- 任务时间范围；
-- 状态变化时间线；
-- 模型和工具错误摘要；
-- 关键日志；
-- 修改文件列表；
-- 测试命令和退出码；
-- 网络和 Sandbox 基本状态。
+- The Heicode version and runtime environment;
+- The Session, Swarm, Task, and Agent identifiers;
+- The task time range;
+- A timeline of state changes;
+- A summary of model and tool errors;
+- Key logs;
+- The list of changed files;
+- The test commands and exit codes;
+- The basic status of the network and Sandbox.
 
-诊断包不应默认包含 API Key、Cookie、Authorization Header、SSH 私钥、完整环境变量或用户隐私数据。
+A diagnostic bundle should not include API keys, cookies, Authorization headers, SSH private keys, full environment variables, or user privacy data by default.
 
-## 状态不一致
+## State Inconsistency
 
-当 UI、Redis 和数据库显示不同状态时，应确定哪一个系统是最终状态源，并记录最近一次状态更新时间。不要仅通过手工改 Redis 来“修复”界面状态，否则可能破坏任务恢复和审计链路。
+When the UI, Redis, and the database show different states, determine which system is the source of truth for the final state, and record the timestamp of the most recent state update. Don't "fix" the UI state by manually editing Redis alone — doing so may break task recovery and the audit trail.

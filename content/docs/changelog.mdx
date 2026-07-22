@@ -733,3 +733,64 @@ Added a "Preview" badge to the title bar and "Settings → About"
 
 - Fixed request failures caused by a duplicated `/v1` when the third-party model's address already included it
 - Fixed the 128-limit error (tools array/tool_calls) triggered by too many tools in long tasks — conversations no longer get stuck mid-task and no longer require a restart
+
+## 2026.07.14 · v1.3.3
+
+A stability and experience release — we recommend updating soon.
+
+### 🚀 Improvements
+
+- Permission confirmation card: after you confirm, it auto-collapses into a compact bar and supports number keys 1 / 2 / 3 for quick selection (Reject / Always allow / Allow once)
+- Clearer authorization button wording: "Just this once" is now "Allow once"
+- Desktop notifications: after you confirm a permission in-app, the matching reminder in the notification center is cleared automatically (Windows)
+
+### 🐞 Fixes & Improvements
+
+- Fixed intermittent errors when calling GPT-family and some third-party models, for more stable conversations
+- Fixed upload failures when pasting / selecting images that were caused by incorrect format detection
+- On a gateway timeout (e.g. 504), the client no longer pops up a long English error page — it now shows a concise, clear message
+- Fixed a possible interruption when using an Agent in a non-Git directory; it now falls back to the current directory and continues automatically
+
+## 2026.07.20 · v1.4.0
+
+The biggest update since 1.3.x, focused on being smarter, steadier, and more worry-free.
+
+### ✨ New Features
+
+- "Auto" model in the main conversation: no need to agonize over which one to pick — it automatically chooses a suitable model based on your question (whether it includes an image, whether it needs deep thinking, and context length)
+- Built-in Agent browser: let the AI open web pages and look things up for you; the Preview panel shows in real time what it's browsing, and you can take over and click directly
+- Account menu: click your avatar to open settings or sign out
+- Automatic regional route selection: automatically picks the nearest mainland / overseas access point for faster, more stable connections
+- Enterprise managed policy: admins can centrally control the models / tools / network available to the team
+
+### 🛡️ Stability Improvements
+
+- Model glitches no longer freeze the app: automatic retry when the upstream is unstable; auto-abort with one-click retry when there's no response for a long time; and one-click switch-model-and-retry — no more being stuck forever on "Thinking"
+- Automatic reconnection: clear prompts on network fluctuations and safe resumption after recovery; a Swarm task's badge no longer gets stuck on "In progress" after it finishes
+- More understandable errors: clear prompts for no seat / organization suspended / signed into the wrong organization, instead of just "Invalid token"
+- More accurate balance: shown by available credit (wallet + subscription), so no more "you have credit but it says you're out of money"
+
+### 🐞 Fixes & Improvements
+
+- A batch of experience fixes: Ctrl+V to paste files directly, drag files into the input box, read Excel / Word / PPT, scroll within an extra-long input box, one-click scroll to bottom, permission-card number keys 1 / 2 / 3, and more
+
+## 2026.07.21 · v1.4.1
+
+A maintenance update after v1.4.0, adding one new panel plus a batch of experience improvements and fixes.
+
+### ✨ New Features
+
+- Code review panel: a structured GUI that presents review findings (comparable to Bugbot / Codex review), making issues clear at a glance
+- Inline diff line comments: select a line in the diff to start a comment; added session review; when the selected model has no available channel, it automatically switches to an available one (single hop, no manual action needed)
+- Update announcements now support both Chinese and English, shown by your client language; a language selector was added to settings
+
+### 🚀 Improvements
+
+- On startup, it goes straight to the new-session home page instead of automatically reopening the last session
+- The session list is sorted by time: an older session you re-open jumps to the top immediately
+- Region is now selected manually: mainland China / overseas (default mainland China); this only affects the chat access point and does not affect login
+- The stall watchdog was relaxed so it no longer misjudges tasks that are "slow but still running"
+
+### 🐞 Fixes & Improvements
+
+- The skip-permissions dialog now shows the real working directory (no longer a literal "~")

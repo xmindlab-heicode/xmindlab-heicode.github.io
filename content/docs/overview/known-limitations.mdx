@@ -1,88 +1,88 @@
 ---
-title: 已知限制与使用边界
-description: 了解当前 Agent 工作流中需要人工复核的能力限制与风险。
+title: Known Limitations & Usage Boundaries
+description: Understand the capability limits and risks in the current Agent workflow that require manual review.
 ---
 
-# 已知限制与使用边界
+# Known Limitations & Usage Boundaries
 
-AI Agent 可以显著提高开发效率，但仍受到模型能力、上下文、工具、工作区、网络和执行预算限制。文档应主动说明这些边界，避免把流程完成误解为结果可靠。
+AI Agents can significantly improve development efficiency, but they are still limited by model capability, context, tools, workspace, network, and execution budget. Documentation should state these boundaries proactively, to avoid mistaking flow completion for reliable results.
 
-## 大型仓库
+## Large Repositories
 
-大型仓库可能超过模型上下文或检索能力。Agent 可能只看到部分文件、遗漏跨模块依赖，或根据摘要做出错误判断。
+A large repository may exceed the model's context or retrieval capability. An Agent may see only some of the files, miss cross-module dependencies, or make wrong judgments based on a summary.
 
-建议：
+Recommendations:
 
-- 明确任务范围；
-- 提供入口文件和相关模块；
-- 先生成仓库结构摘要；
-- 分阶段执行和验收；
-- 对跨模块改动运行完整测试。
+- Define the task scope clearly;
+- Provide entry files and relevant modules;
+- Generate a repository-structure summary first;
+- Execute and accept in stages;
+- Run the full test suite for cross-module changes.
 
-## 结构化输出不稳定
+## Unstable Structured Output
 
-不同模型对 JSON、Tool Calling 和 Schema 的遵循程度不同。启用思考模式后，部分模型可能只返回 `reasoning_content`，而没有可解析的最终内容。
+Different models follow JSON, Tool Calling, and schemas to different degrees. With thinking mode enabled, some models may return only `reasoning_content` and no parseable final content.
 
-此类问题应通过模型配置、严格校验和有限重试处理，不能把思考文本直接当作结果。
+Handle such issues through model configuration, strict validation, and limited retries — don't treat reasoning text directly as the result.
 
-## 多 Agent 冲突
+## Multi-Agent Conflicts
 
-多个 Agent 同时修改相同文件时，可能出现覆盖、重复实现、冲突合并或测试针对错误版本运行的问题。
+When multiple Agents modify the same file at the same time, you may get overwrites, duplicate implementations, conflict merges, or tests running against the wrong version.
 
-使用 Swarm 前，应明确工作区模式、分支策略、合并责任人和最终测试对象。
+Before using a Swarm, define the workspace mode, branch strategy, merge owner, and final test target.
 
-## 长任务与恢复
+## Long Tasks & Recovery
 
-长任务可能因模型超时、网络断开、服务重启、Sandbox 回收或队列异常中断。系统是否能从中间状态恢复，取决于当前版本和部署配置。
+Long tasks may be interrupted by model timeouts, network drops, service restarts, Sandbox reclamation, or queue anomalies. Whether the system can recover from an intermediate state depends on the current version and deployment configuration.
 
-对于关键任务，应保留阶段性提交、状态快照和可重复执行的验证命令。
+For critical tasks, keep staged commits, state snapshots, and repeatable verification commands.
 
-## 本地与云端差异
+## Local vs. Cloud Differences
 
-同一个任务在本地和云端环境中可能得到不同结果，常见原因包括：
+The same task may produce different results in local and cloud environments. Common causes include:
 
-- 操作系统和架构差异；
-- 依赖版本不同；
-- 网络访问策略不同；
-- 环境变量和 Secret 不一致；
-- 文件权限和路径差异；
-- Docker、VM 或 Sandbox 限制。
+- Operating-system and architecture differences;
+- Different dependency versions;
+- Different network-access policies;
+- Inconsistent environment variables and secrets;
+- File-permission and path differences;
+- Docker, VM, or Sandbox restrictions.
 
-## MCP 兼容性
+## MCP Compatibility
 
-MCP Server 可以成功连接，但具体工具仍可能因为协议版本、Schema、认证、返回大小或传输方式而失败。
+An MCP Server can connect successfully, yet a specific tool may still fail due to protocol version, schema, authentication, response size, or transport method.
 
-接入第三方 MCP 时，应逐个验证工具，而不是只验证 Server 在线。
+When integrating a third-party MCP, verify tools one by one rather than only checking that the server is online.
 
-## 测试可信度
+## Test Trustworthiness
 
-Agent 可能误读测试输出、忽略跳过项、把环境失败当作代码失败，或把命令未执行误报为通过。
+An Agent may misread test output, ignore skipped items, treat an environment failure as a code failure, or report a command that never ran as passing.
 
-最终验收应检查真实命令、工作目录、退出码和测试统计。
+Final acceptance should check the real command, working directory, exit code, and test statistics.
 
-## 权限与安全
+## Permissions & Security
 
-Agent 获得的文件、Shell、网络和凭证权限越大，潜在影响范围越大。跳过审批并不会提高结果正确率，只会减少人工阻断。
+The more file, shell, network, and credential permissions an Agent holds, the larger its potential blast radius. Skipping approval does not improve result accuracy — it only removes manual blocking.
 
-高风险权限应仅在隔离环境中临时启用。
+High-risk permissions should be enabled only temporarily, in an isolated environment.
 
-## 成本不可完全预测
+## Cost Is Not Fully Predictable
 
-任务成本会受到上下文长度、Agent 数量、模型选择、工具调用、重试次数和执行环境时长影响。复杂任务可能显著超出初始估计。
+Task cost is affected by context length, the number of Agents, model choice, tool calls, the number of retries, and execution-environment runtime. Complex tasks may significantly exceed the initial estimate.
 
-应设置 Token、时间、并发、重试和云资源上限。
+Set limits on tokens, time, concurrency, retries, and cloud resources.
 
-## 结果需要人工复核
+## Results Require Manual Review
 
-以下任务不应仅依赖 Agent 自动完成：
+The following tasks should not rely on an Agent completing them automatically:
 
-- 生产数据库结构变更；
-- 身份认证、支付和权限系统修改；
-- 基础设施删除或大规模迁移；
-- 密钥、证书和安全策略变更；
-- 法律、合规和隐私结论；
-- 无法在目标环境中验证的发布任务。
+- Production database schema changes;
+- Changes to authentication, payment, and permission systems;
+- Infrastructure deletion or large-scale migration;
+- Changes to secrets, certificates, and security policies;
+- Legal, compliance, and privacy conclusions;
+- Release tasks that cannot be verified in the target environment.
 
-## 当前文档边界
+## Current Documentation Boundary
 
-本文描述的是通用风险与建议，不代表所有功能都已在当前 Heicode 版本中实现。具体支持情况应以当前版本、部署方式、界面和发布说明为准。
+This document describes general risks and recommendations; it does not mean that every feature is already implemented in the current Heicode version. For exact support, rely on the current version, deployment method, UI, and release notes.

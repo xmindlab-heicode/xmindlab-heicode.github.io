@@ -1,95 +1,95 @@
 ---
-title: 模型接入与兼容性
-description: 配置模型提供方，并理解思考模式、结构化输出与工具调用的兼容边界。
+title: Model Access & Compatibility
+description: Configure model providers and understand the compatibility boundaries of thinking mode, structured output, and tool calling.
 ---
 
-# 模型接入与兼容性
+# Model Access & Compatibility
 
-Heicode 可以连接不同模型提供方，但“接口可调用”不等于“所有 Agent 能力都可用”。开发任务通常还依赖工具调用、结构化输出、长上下文、稳定流式响应和可控超时。
+Heicode can connect to different model providers, but "the interface is callable" does not mean "all Agent capabilities are available." Development tasks usually also depend on tool calling, structured output, long context, stable streaming responses, and controllable timeouts.
 
-## 接入前检查
+## Pre-Integration Checks
 
-配置模型时，至少确认：
+When configuring a model, confirm at least:
 
-- API Base URL 与接口协议匹配；
-- API Key 有效且权限足够；
-- 模型名称与部署名称正确；
-- 最大上下文和最大输出长度满足任务；
-- 支持 Tool Calling 或结构化输出；
-- 超时、重试和并发限制已知；
-- 当前提供方是否返回 `content`、`reasoning_content` 或其他扩展字段。
+- The API Base URL matches the interface protocol;
+- The API key is valid and has sufficient permissions;
+- The model name and deployment name are correct;
+- The max context and max output length meet the task's needs;
+- Tool Calling or structured output is supported;
+- The timeout, retry, and concurrency limits are known;
+- Whether the current provider returns `content`, `reasoning_content`, or other extension fields.
 
-## 能力矩阵
+## Capability Matrix
 
-建议为每个模型记录：
+We recommend recording the following for each model:
 
-| 能力 | 需要验证的内容 |
+| Capability | What to Verify |
 | --- | --- |
-| 普通对话 | 能否稳定返回最终 `content` |
-| Tool Calling | 是否能生成合法工具名和参数 |
-| JSON 输出 | 是否严格遵守 Schema |
-| 长上下文 | 大仓库输入时是否截断或退化 |
-| 多轮工具调用 | 工具结果回传后是否继续正确执行 |
-| 流式输出 | 中断、重连和结束标记是否正常 |
-| 思考模式 | 是否影响最终内容或结构化输出 |
-| 并发 | 多 Agent 同时请求时是否限流 |
+| Plain conversation | Whether it reliably returns final `content` |
+| Tool Calling | Whether it can generate valid tool names and arguments |
+| JSON output | Whether it strictly follows the schema |
+| Long context | Whether large-repo input is truncated or degrades |
+| Multi-turn tool calls | Whether it continues correctly after tool results are returned |
+| Streaming | Whether interruption, reconnection, and end markers work |
+| Thinking mode | Whether it affects final content or structured output |
+| Concurrency | Whether it throttles when multiple Agents request simultaneously |
 
-## 思考模式与结构化输出
+## Thinking Mode & Structured Output
 
-部分模型启用思考模式后，会把大量内容放入 `reasoning_content`，而最终 `content` 为空、过短或没有合法 JSON。此时不应把思考文本直接当作结构化结果解析。
+Once thinking mode is enabled, some models put large amounts of content into `reasoning_content`, while the final `content` is empty, too short, or contains no valid JSON. In that case, you should not parse the reasoning text directly as a structured result.
 
-对于需要 Function Calling、JSON Schema 或完整文件输出的执行调用，建议：
+For execution calls that need Function Calling, a JSON Schema, or full file output, we recommend:
 
-- 使用模型官方推荐的结构化输出配置；
-- 必要时关闭思考模式；
-- 明确要求最终结果进入 `content`；
-- 对最终 JSON 进行严格校验；
-- 解析失败时保留原始响应，但不要把思考散文误判为有效结果。
+- Using the provider's officially recommended structured-output configuration;
+- Turning off thinking mode where necessary;
+- Explicitly requiring the final result to go into `content`;
+- Strictly validating the final JSON;
+- Keeping the raw response when parsing fails — but not mistaking reasoning prose for a valid result.
 
-Qwen 系列在结构化输出场景中，应重点检查 `enable_thinking` 配置。若执行链依赖严格 JSON，可将执行调用配置为：
+For the Qwen series in structured-output scenarios, pay particular attention to the `enable_thinking` setting. If the execution chain depends on strict JSON, you can configure the execution call as:
 
 ```python
 extra_body={"enable_thinking": False}
 ```
 
-是否支持该参数及其具体行为，应以当前模型提供方和部署版本为准。
+Whether this parameter is supported, and its exact behavior, depends on your current model provider and deployment version.
 
-## OpenAI-compatible 并非完全兼容
+## OpenAI-Compatible Is Not Fully Compatible
 
-不同提供方即使使用 OpenAI-compatible 接口，也可能在以下方面存在差异：
+Even when different providers use an OpenAI-compatible interface, they may still differ in:
 
-- 工具调用字段；
-- 流式事件格式；
-- `reasoning_content` 扩展字段；
-- JSON Schema 支持程度；
-- system message 限制；
-- Token 统计；
-- 错误码与重试头；
-- 模型部署名称与真实模型名称。
+- Tool-call fields;
+- Streaming event format;
+- The `reasoning_content` extension field;
+- The degree of JSON Schema support;
+- System-message restrictions;
+- Token accounting;
+- Error codes and retry headers;
+- The model deployment name versus the real model name.
 
-因此应对每个提供方执行最小兼容性测试，而不是只验证一次聊天请求。
+For that reason, run a minimal compatibility test against each provider rather than verifying just one chat request.
 
-## 推荐最小测试
+## Recommended Minimum Test
 
-1. 普通问答返回最终内容；
-2. 单次 Tool Calling 参数合法；
-3. 工具结果回传后能继续回答；
-4. 严格 JSON 输出可解析；
-5. 长输入不会静默截断关键指令；
-6. 超时和限流错误可识别；
-7. 多 Agent 并发时不会持续失败。
+1. Plain Q&A returns final content;
+2. A single Tool Calling call has valid arguments;
+3. It can keep answering after the tool result is returned;
+4. Strict JSON output is parseable;
+5. Long input does not silently truncate key instructions;
+6. Timeout and throttling errors are identifiable;
+7. It doesn't keep failing under multi-Agent concurrency.
 
-## 失败处理
+## Failure Handling
 
-模型请求失败时，应区分：
+When a model request fails, distinguish between:
 
-- 认证失败；
-- 模型或部署不存在；
-- 限流；
-- 上下文超限；
-- 工具调用不合法；
-- 结构化输出解析失败；
-- 只返回思考内容；
-- 网络或网关超时。
+- Authentication failure;
+- Model or deployment not found;
+- Throttling;
+- Context overflow;
+- Invalid tool call;
+- Structured-output parsing failure;
+- Only reasoning content returned;
+- Network or gateway timeout.
 
-不同原因应采用不同重试和降级策略，不能统一无限重试。
+Different causes call for different retry and fallback strategies — you can't apply the same unlimited retry to all of them.

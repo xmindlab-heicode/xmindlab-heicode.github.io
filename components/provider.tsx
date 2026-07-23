@@ -9,6 +9,20 @@ const locales = [
   { locale: 'zh', name: '中文' },
 ];
 
+// Chinese overrides for Fumadocs built-in UI labels (English is the default).
+// Keys are fumadocs-ui's composed translation keys (label + "(note)"); the
+// per-page "last updated" line uses "Last updated on(page footer)".
+const zhTranslations: Record<string, string> = {
+  'Last updated on(page footer)': '最后更新于',
+  'On this page(table of contents)': '本页内容',
+  'No Headings(table of contents)': '暂无标题',
+  'Search(search dialog)': '搜索',
+  'Search(search trigger)': '搜索',
+  'No results found(search dialog)': '没有找到结果',
+  'Next Page(pagination)': '下一页',
+  'Previous Page(pagination)': '上一页',
+};
+
 // English lives unprefixed (/docs/..., /), Chinese lives under /zh (/zh/docs/...,
 // /zh). These are two separate static route trees (see lib/i18n.ts), so
 // switching locale just maps the current pathname to its counterpart.
@@ -33,6 +47,7 @@ export function Provider({ children }: { children: ReactNode }) {
       i18n={{
         locale,
         locales,
+        translations: locale === 'zh' ? zhTranslations : undefined,
         onLocaleChange: (next) => {
           router.push(targetPathForLocale(pathname, next));
         },

@@ -9,19 +9,18 @@ const locales = [
   { locale: 'zh', name: '中文' },
 ];
 
-// Chinese UI strings for Fumadocs built-in labels (English is the default).
-// `lastUpdate` is the label shown by the per-page "last updated" line.
-const zhTranslations = {
-  search: '搜索',
-  searchNoResult: '没有找到结果',
-  toc: '本页内容',
-  tocNoHeadings: '本页暂无标题',
-  lastUpdate: '最后更新于',
-  chooseLanguage: '选择语言',
-  nextPage: '下一页',
-  previousPage: '上一页',
-  chooseTheme: '主题',
-  editOnGithub: '在 GitHub 上编辑',
+// Chinese overrides for Fumadocs built-in UI labels (English is the default).
+// Keys are fumadocs-ui's composed translation keys (label + "(note)"); the
+// per-page "last updated" line uses "Last updated on(page footer)".
+const zhTranslations: Record<string, string> = {
+  'Last updated on(page footer)': '最后更新于',
+  'On this page(table of contents)': '本页内容',
+  'No Headings(table of contents)': '暂无标题',
+  'Search(search dialog)': '搜索',
+  'Search(search trigger)': '搜索',
+  'No results found(search dialog)': '没有找到结果',
+  'Next Page(pagination)': '下一页',
+  'Previous Page(pagination)': '上一页',
 };
 
 // English lives unprefixed (/docs/..., /), Chinese lives under /zh (/zh/docs/...,

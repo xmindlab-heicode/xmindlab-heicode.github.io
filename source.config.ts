@@ -17,6 +17,9 @@ export const docs = defineDocs({
 });
 
 export default defineConfig({
+  // Populate `page.data.lastModified` from each file's latest git commit time.
+  // Requires full git history at build time (CI checkout uses fetch-depth: 0).
+  lastModifiedTime: 'git',
   mdxOptions: {
     // MDX options
   },

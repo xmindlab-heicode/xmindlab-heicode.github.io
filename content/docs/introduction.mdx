@@ -44,7 +44,7 @@ Users only need to register, log in, and describe their idea and constraints —
 | Heicode Manager / browser console | An auxiliary console — handles account & security, client downloads, the resource-preparation wizard, Agent startup, task status overview, model balance & usage, and audit/log viewing. |
 | Agent Platform | The execution layer — deploys and runs sub-Agents, carries requirements, coding, testing, fixes, delivery, and deployment forward during a task, and reports back logs, status, events, and metrics. |
 | CodeGW | The internal model gateway and billing service; ordinary users don't access its backend directly. |
-| Credential vault | Implemented on Azure Key Vault; stores long-lived credentials and issues short-lived credential leases based on approval and permissions. |
+| Credential vault | Implemented on OpenBao; stores long-lived credentials and issues short-lived credential leases based on approval and permissions. |
 
 Note: the Heicode client is the user's primary experience — users don't code in a browser. Heicode Manager is the auxiliary browser console, handling resource prep, Agent startup, status, balance, audit, and downloads. Manager shouldn't confront users with a full parameter surface — it should guide them through a task-readiness checklist toward the confirmations that actually matter. What actually keeps a task moving forward is the Agent execution loop that Heicode orchestrates; during execution, Agents can also call authorized SK tools and external capabilities, ultimately completing delivery and deployment and reporting results back to the client.
 

@@ -77,7 +77,7 @@ Logs automatically redact common sensitive information, including:
 - Secrets in URL parameters.
 - Common field names such as `password`/`token`/`access_key`/`private_key` in JSON.
 
-Redaction is based on generic rule matching, not a whitelist that individually recognizes specific names such as "CodeGW key" or "Azure Key Vault token" — if you find that a particular type of secret was not correctly redacted, you should immediately stop the task, notify the security owner, and report it back to the platform so the rules can be extended.
+Redaction is based on generic rule matching, not a whitelist that individually recognizes specific names such as "CodeGW key" or "OpenBao token" — if you find that a particular type of secret was not correctly redacted, you should immediately stop the task, notify the security owner, and report it back to the platform so the rules can be extended.
 
 ## Monthly retrospective
 

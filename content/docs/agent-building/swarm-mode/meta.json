@@ -3,7 +3,6 @@
   "pages": [
     "heicode-agent-swarm",
     "three-collaboration-modes",
-    "sub-mode-waterfall-agile",
-    "swarm-capability-standard"
+    "sub-mode-waterfall-agile"
   ]
 }

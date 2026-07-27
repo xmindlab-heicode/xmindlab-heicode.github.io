@@ -1,0 +1,397 @@
+---
+title: "Spec-Driven Development (SDD) Standard"
+description: "Turn a PRD into a reviewable, executable spec first, then let the Agent plan, break down, and execute: PRD → spec.md → plan.md → task.md → code."
+---
+
+# Spec-Driven Development (SDD) Standard
+
+**Spec-Driven Development · PRD → spec.md → plan.md → task.md → code**
+
+In the AI era, the tech lead first turns a PRD into a clear spec, and the Agent then plans, breaks down, and executes code based on that spec.
+
+> Version: v1.0 ｜ Date: 2026-06-01 ｜ Status: Draft / Reviewable
+
+## 1. Core Definition
+
+In this document, SDD means **Spec-Driven Development**, not the traditional Software Design Document. It emphasizes: convert requirements into a reviewable, executable spec first, then let the Agent generate the plan, tasks, and code according to that spec.
+
+The core of SDD is not "let the AI write code directly" — it's establishing a stable delivery chain:
+
+1. The product manager or business side provides the PRD / requirement input.
+2. The tech lead converts the PRD into `spec.md`, making clear what to do, why, the acceptance criteria, and the boundaries.
+3. The Agent generates `plan.md` from `spec.md`, filling in architecture, data, interfaces, exceptions, and risk plans.
+4. The Agent breaks `plan.md` into `task.md`, turning the plan into step-by-step executable tasks.
+5. The Agent executes automatically per `task.md`, while developers review, build, and release at key checkpoints.
+
+### 1.1 Role Boundaries
+
+| Role | Main Responsibilities | What They Should Not Do |
+|---|---|---|
+| Product manager / business side | Provide the PRD, business goals, user scenarios, acceptance criteria. | Not decide technical implementation details directly. |
+| Tech lead / developer | Turn the PRD into a spec; review spec.md, plan.md, task.md, and code; own final quality. | Not hand vague requirements straight to the Agent to write code. |
+| Agent | Research and understand context, draft specs, technical planning, task decomposition, execute code and tests. | Not expand scope on its own for tasks that haven't passed review. |
+| CI / build system | Run tests, build artifacts, verify quality gates. | Not replace human judgment on requirements and architecture. |
+
+## 2. The "Truth" Inversion in the AI Era
+
+The core idea: **the tech lead writes the spec from the PRD, and the Agent generates code from the spec.**
+
+![The "truth" inversion in the AI era: the PRD is turned into a spec first, then the Agent generates code](/screenshots/sdd-truth-inversion.png)
+
+### 2.1 Key Principles
+
+- The spec matters more than a one-off prompt. A prompt can trigger an action; the spec constrains the result.
+- Code is not the first artifact — `spec.md` / `plan.md` / `task.md` are the reviewable, reusable, traceable deliverables.
+- People own intent, boundaries, judgment, and acceptance; the Agent owns information gathering, plan generation, task decomposition, and repeated execution.
+- Every stage must have a review point. When a review fails, go back to the previous stage and fix the spec, rather than hacking the code.
+
+## 3. SDD Workflow
+
+![SDD workflow: developers initiate tasks and reviews; the Agent researches, drafts specs, and executes](/screenshots/sdd-workflow.png)
+
+### 3.1 Standard Flow
+
+| Step | Action | Owner | Output / Gate |
+|---|---|---|---|
+| 1 | Initiate the task, clarifying the requirement source, repo, branch, and goal. | Developer | Clear task entry. |
+| 2 | Research and understand the PRD, code context, historical design, and constraints. | Agent | Question list / context summary. |
+| 3 | Draft the spec, producing spec.md, plan.md, task.md. | Agent | Reviewable spec artifacts. |
+| 4 | Review the spec artifacts, confirming scope, technical plan, task order. | Developer | Proceed to execution after review passes. |
+| 5 | Execute development per task.md, completing code, tests, and docs item by item. | Agent | Code artifacts, test results. |
+| 6 | Review code and build. If issues are found, return to execution or planning. | Developer / CI | Build passes, quality gates pass. |
+| 7 | Release and record the version, changes, and rollback strategy. | Developer | Shippable artifact. |
+
+### 3.2 Loop Rules
+
+- Requirement unclear: return to intent definition, extend `spec.md`.
+- Plan unstable: return to technical planning, extend `plan.md`.
+- Task not executable: return to task decomposition, refine `task.md`.
+- Code doesn't meet expectations: return to automated execution, fix per task; if a design error is found, update `plan.md` in sync.
+- Anywhere implementation and docs diverge, the corresponding doc must be updated before merging.
+
+## 4. The Four SDD Stages
+
+![The four SDD stages: intent definition, technical planning, task decomposition, automated execution](/screenshots/sdd-four-phases.png)
+
+### 4.1 Stage Descriptions
+
+| Stage | Goal | Input | Core Activities | Output |
+|---|---|---|---|---|
+| Intent definition | Clarify "what to do" and "why". | Requirement PRD | Human–AI brainstorming to fill in background, boundaries, acceptance, and risks. | spec.md |
+| Technical planning | Decide "how to do it". | spec.md | The Agent analyzes technical options and designs architecture, interfaces, and data. | plan.md |
+| Task decomposition | Break down into "step-by-step how". | plan.md | The Agent analyzes the plan and splits it into executable tasks. | task.md |
+| Automated execution | Complete tasks and produce artifacts. | task.md | The Agent executes tasks one by one, runs tests, and outputs code. | Code |
+
+### 4.2 Definition of Done per Stage
+
+| Stage | Definition of Done |
+|---|---|
+| Intent definition | Goals, non-goals, user scenarios, acceptance criteria, constraints, and risks are all written clearly; no unverifiable phrasing like "maybe / roughly / it depends". |
+| Technical planning | Module boundaries, interfaces, data, exceptions, permissions, security, performance, migration, and rollback all have clear plans. |
+| Task decomposition | Each task can be executed and accepted independently; task order is clear; tests and rollback notes are included. |
+| Automated execution | Code, tests, build, and docs are completed in sync; the PR maps directly to spec.md / plan.md / task.md. |
+
+## 5. Artifact Standards
+
+Recommended unified directory:
+
+```text
+docs/sdd/<feature-name>/spec.md
+docs/sdd/<feature-name>/plan.md
+docs/sdd/<feature-name>/task.md
+docs/sdd/<feature-name>/review.md
+```
+
+### 5.1 spec.md: Intent Definition Doc
+
+Purpose: answer "what to do, why, and to what extent". `spec.md` is the single requirement basis for the later `plan.md` and `task.md`.
+
+- Must include: background, goals, non-goals, user scenarios, feature scope, acceptance criteria, constraints, risks, and open questions.
+- Must not include: unconfirmed implementation details, subjective descriptions without acceptance criteria, ad-hoc verbal agreements.
+- Quality bar: someone who didn't join the discussion can, after reading `spec.md`, judge whether the feature is built correctly.
+
+### 5.2 plan.md: Technical Planning Doc
+
+Purpose: answer "how to do it, why this way, and what to do on failure". `plan.md` is the design basis for task decomposition and code execution.
+
+- Must include: overall architecture, module boundaries, data design, interface design, state transitions, exception/degradation, security/permissions, performance/capacity, deployment config, compatibility/migration, and rollback plan.
+- Must state the reason for each technical choice — no empty phrases like "adopt an advanced architecture".
+- Quality bar: another developer can independently break down tasks after reading `plan.md`.
+
+### 5.3 task.md: Task Decomposition Doc
+
+Purpose: answer "step-by-step how". `task.md` must be small enough, clear enough, executable, and verifiable.
+
+- Each task achieves exactly one clear goal.
+- Each task must state its input, files to modify, execution steps, acceptance criteria, and test command.
+- Tasks must be ordered, and prerequisites must be written clearly.
+- If the plan turns out unreasonable during execution, pause and write back to `plan.md` rather than forcing code through.
+
+### 5.4 Code Artifacts: Execution Results
+
+- Code commits must be traceable to a task number in `task.md`.
+- Every PR must link spec.md, plan.md, task.md.
+- When implementation and docs diverge, update the docs first, then merge the code.
+- Must include the necessary tests, build results, and rollback notes.
+
+## 6. Review Gates
+
+| Gate | Review Target | Pass Criteria | On Failure |
+|---|---|---|---|
+| Gate 1 | spec.md | Requirement boundaries clear, acceptance criteria testable, risks recorded. | Return to intent definition; complete requirements and boundaries. |
+| Gate 2 | plan.md | Architecture, interfaces, data, exceptions, permissions, performance, and rollback plans are clear. | Return to technical planning; re-evaluate the plan. |
+| Gate 3 | task.md | Tasks are executable, acceptable, correctly ordered, and appropriately granular. | Return to task decomposition; split smaller or reorder. |
+| Gate 4 | Code / build | Code meets task requirements, tests pass, build passes, docs in sync. | Return to execution; if design is wrong, return to plan.md. |
+
+### 6.1 Hard Rules
+
+- No `spec.md`, no technical planning.
+- No `plan.md`, no splitting `task.md`.
+- No `task.md`, no automated code execution by the Agent.
+- Docs that haven't passed review cannot be input to a downstream stage.
+- Before going live, you must be able to trace code → task, task → plan, plan → requirement.
+
+## 7. Agent Collaboration Standard
+
+### 7.1 Input Package Requirements
+
+- Requirement input: PRD, issue, user story, screenshots, or acceptance criteria.
+- Code context: repo path, tech stack, key directories, existing interfaces, existing data structures.
+- Constraints: what must not change, compatibility requirements, performance requirements, security requirements, launch deadline.
+- Output requirement: this round outputs only one of spec.md / plan.md / task.md / code — no mixing across stages.
+
+### 7.2 Staged Prompt Templates
+
+```text
+# Stage 1: Generate spec.md
+Generate spec.md based on the following PRD.
+Requirement: clarify only "what to do" and "why"; do not write concrete code.
+Must include: background, goals, non-goals, user scenarios, acceptance criteria, constraints, risks, open questions.
+```
+
+```text
+# Stage 2: Generate plan.md
+Generate plan.md based on the confirmed spec.md.
+Requirement: explain how to implement it and justify the technical choices.
+Must include: architecture, modules, data, interfaces, state, exceptions, permissions, security, performance, deployment, rollback, test plan.
+```
+
+```text
+# Stage 3: Generate task.md
+Break down task.md based on the confirmed plan.md.
+Requirement: every task must be small, executable, and acceptable.
+Each task includes: id, goal, input, files to modify, execution steps, acceptance criteria, test command, rollback notes.
+```
+
+```text
+# Stage 4: Automated execution
+Execute top-to-bottom per task.md.
+Rules: run one task at a time; run the corresponding tests after each; if plan.md is unreasonable, pause and state which design points need updating.
+```
+
+### 7.3 Agent Output Constraints
+
+- On unclear requirements, ask first — never guess.
+- When generating `plan.md`, list alternatives and the rationale for the trade-off.
+- When generating `task.md`, avoid "mega-tasks" — e.g. "complete the entire backend" is not acceptable.
+- When executing code, update task status and keep test results.
+- Any automatic change must stay within the current task's scope; no incidental refactoring of unrelated modules.
+
+## 8. Team Adoption Standard
+
+### 8.1 Repository Layout
+
+```text
+docs/
+  sdd/
+    <feature-name>/
+      spec.md       # intent definition
+      plan.md       # technical planning
+      task.md       # task decomposition
+      review.md     # review record, optional
+src/
+  ...
+tests/
+  ...
+```
+
+### 8.2 Naming Conventions
+
+| Object | Naming Rule | Example |
+|---|---|---|
+| Feature directory | YYYYMMDD-feature-name | 20260601-conversation-history |
+| Doc files | Fixed file names | spec.md / plan.md / task.md |
+| Task id | T + two digits | T01 initialize data structures |
+| Commit message | `<task-id>: <summary>` | T03: add cursor pagination |
+| PR title | `[SDD][feature] summary` | [SDD][history] add conversation filter |
+
+### 8.3 State Transitions
+
+| State | Meaning | Entry Condition | Next Step |
+|---|---|---|---|
+| Draft | Document draft. | Agent or developer completes the first draft. | Submit for review. |
+| Reviewing | Under review. | Review initiated. | Revise or pass. |
+| Approved | Review passed. | Key stakeholders confirm. | Proceed to the next stage. |
+| Implementing | In execution. | task.md passed review. | Code execution and testing. |
+| Released | Released. | Build, test, and release completed. | Retrospective and knowledge capture. |
+
+### 8.4 PR Rules
+
+- The PR description must include the paths of the linked spec.md, plan.md, task.md.
+- The PR description must list the completed task numbers.
+- The PR must include the test commands and results.
+- Changes involving databases, permissions, billing, payments, updates, or state machines must add a rollback plan.
+
+## 9. SDD Review Checklist
+
+| Category | Check | Pass Criteria |
+|---|---|---|
+| Requirements | Are goals and non-goals clear? | You can clearly tell what is in scope and what isn't. |
+| Requirements | Are acceptance criteria testable? | Each criterion can become a test case. |
+| Architecture | Are module boundaries clear? | You know what each module is and isn't responsible for. |
+| Data | Any schema, index, or migration involved? | Concrete DDL / migration / rollback notes exist. |
+| Interfaces | Are requests, responses, and error codes complete? | Frontend and backend can develop and integrate independently. |
+| State | Any task or state transitions? | States, triggers, terminal states, and error states are clear. |
+| Security | Are permissions and privilege-escalation risks described? | Identity source, access boundaries, and audit records are clear. |
+| Exceptions | Are failures, timeouts, retries, and degradation described? | Every major failure has a handling strategy. |
+| Testing | Are unit, integration, regression, and build covered? | Runnable commands exist once a task is done. |
+| Launch | Are canary, monitoring, and rollback clear? | You know how to roll back when something goes wrong. |
+
+### 9.1 One-Sentence Pass Bar
+
+> A developer who didn't join the early discussion can, after reading `spec.md`, `plan.md`, and `task.md`, know why it's being done, how, in what order, how to test, how to launch, and how to roll back on failure.
+
+## Appendix A: Templates
+
+### A.1 spec.md Template
+
+```markdown
+# <feature-name> spec.md
+Status: Draft / Reviewing / Approved
+Author:
+Linked PRD / Issue:
+Created:
+Last updated:
+
+## 1. Background
+- Current problem:
+- Business impact:
+- Why now:
+
+## 2. Goals
+- Goal 1:
+- Goal 2:
+
+## 3. Non-Goals
+- Out of scope this cycle:
+
+## 4. User Scenarios
+- Scenario 1: As a <user>, I want <capability> so that <value>.
+
+## 5. Feature Scope
+- Features:
+- Boundaries:
+
+## 6. Acceptance Criteria
+- AC1:
+- AC2:
+
+## 7. Constraints & Risks
+- Constraints:
+- Risks:
+
+## 8. Open Questions
+- Q1:
+```
+
+### A.2 plan.md Template
+
+```markdown
+# <feature-name> plan.md
+Status: Draft / Reviewing / Approved
+Input: spec.md
+
+## 1. Overall Plan
+- Summary:
+- Tech choices:
+- Trade-off rationale:
+
+## 2. Architecture & Modules
+- Module A: responsibilities / not responsible for
+- Module B: responsibilities / not responsible for
+
+## 3. Data Design
+- Schema:
+- Indexes:
+- Migration:
+- Rollback:
+
+## 4. Interface Design
+- API:
+- Request params:
+- Response structure:
+- Error codes:
+
+## 5. State Transitions
+- State definitions:
+- State machine:
+
+## 6. Exceptions & Degradation
+- Timeout:
+- Retry:
+- Degradation:
+
+## 7. Security & Permissions
+- Identity source:
+- Permission rules:
+- Privilege-escalation risks:
+
+## 8. Test Plan
+- Unit tests:
+- Integration tests:
+- Regression tests:
+
+## 9. Launch & Rollback
+- Launch steps:
+- Monitoring metrics:
+- Rollback plan:
+```
+
+### A.3 task.md Template
+
+```markdown
+# <feature-name> task.md
+Status: Draft / Reviewing / Approved / Implementing / Done
+Input: plan.md
+
+## Execution Rules
+- Run one task at a time.
+- Run the corresponding tests after each task.
+- If the design is unreasonable, pause and write back to plan.md.
+
+## Task List
+
+### T01 <task-name>
+- Goal:
+- Prerequisites:
+- Input:
+- Files to modify:
+- Execution steps:
+  1.
+  2.
+- Acceptance criteria:
+- Test command:
+- Rollback notes:
+- Status: Todo / Doing / Done
+
+### T02 <task-name>
+- Goal:
+- Prerequisites:
+- Input:
+- Files to modify:
+- Execution steps:
+- Acceptance criteria:
+- Test command:
+- Rollback notes:
+- Status: Todo
+```

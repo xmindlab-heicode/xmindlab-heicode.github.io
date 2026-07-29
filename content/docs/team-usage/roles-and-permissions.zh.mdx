@@ -4,10 +4,6 @@ title: "成员角色和权限"
 
 # 成员角色和权限
 
-<Callout type="warn" title="当前状态说明">
-  组织、成员邀请、角色分配目前仍在规划/后端阶段，尚无独立的团队管理界面，本页描述的组织角色和成员加入方式是后端已定义的数据模型，暂时不能通过界面直接操作。密钥托管、审批和审计机制是已经在单任务/单 Agent 场景下真实运行的能力。
-</Callout>
-
 团队权限的目标是让成员和 Agent 都只访问自己需要的资源。
 
 ## 组织角色
@@ -27,16 +23,24 @@ Heicode 组织当前的真实角色只有 4 个：
 
 ## Agent 角色
 
-Agent 角色是独立于组织角色的另一套体系，真实的 Agent 角色目录共 6 种：
+Agent 角色是独立于组织角色的另一套体系，Heicode 提供 19 种角色模板，常用包括：
 
-| Agent | 适合做什么 |
+| Agent 模板 | 适合做什么 |
 |---|---|
-| Product Agent | 需求、用户故事、验收标准 |
-| Architect Agent | 架构、模块边界、技术方案 |
-| Frontend Agent | 页面、组件、交互 |
-| Backend Agent | API、数据库、服务逻辑 |
-| Reviewer Agent | 代码审查、风险检查 |
-| Ops Agent | 构建、部署、监控 |
+| analyst | 需求分析、业务梳理 |
+| architect | 架构、模块边界、技术方案 |
+| code-reviewer | 代码审查、风险检查 |
+| debugger | 问题排查、Bug 修复 |
+| designer | UI/UX 设计 |
+| document-specialist | 文档生成与整理 |
+| executor | 代码实现、功能开发 |
+| explorer | 探索性研究、部署准备 |
+| planner | 任务规划、需求拆解 |
+| qa-tester | 测试执行、质量验证 |
+| security-reviewer | 安全检查、权限审计 |
+| writer | 内容撰写、文档输出 |
+
+完整列表还包括 code-simplifier、critic、git-master、scientist、test-engineer、tracer、verifier 等角色模板。
 
 ## 权限原则
 

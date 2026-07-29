@@ -16,7 +16,7 @@ Heicode brings model invocation, resource access, high-risk approval, and delive
 - Consumption from failed retries.
 - Approval for large-scale consumption.
 
-There is currently no independent dashboard for daily/weekly consumption trends — only the cumulative balance and the consumption of individual records can be seen, requiring you to filter raw records by time yourself to estimate trends.
+Daily/weekly consumption trends can be viewed on the usage page.
 
 ![The usage log page in Heicode Manager, showing individual model-call and deployment records](/screenshots/usage-log.jpg)
 
@@ -24,7 +24,7 @@ There is currently no independent dashboard for daily/weekly consumption trends 
 
 | Task type | Suggested budget strategy |
 | --- | --- |
-| Small fix | Small budget, pause when exceeded |
+| Small fix | Small budget, stop when exceeded |
 | Medium feature | Medium budget, alert on long running time |
 | MVP build | Phased budget, continue after phase acceptance |
 | Production deployment | Small budget, focus on approval |
@@ -34,7 +34,7 @@ There is currently no independent dashboard for daily/weekly consumption trends 
 
 If model consumption is abnormal:
 
-1. Pause the task.
+1. Stop the task.
 2. Check sub-agent consumption.
 3. Check failed retries.
 4. Check whether the task is too large.
@@ -91,4 +91,4 @@ It is recommended to review monthly:
 - Which secrets need to be rotated.
 - Whether the plan/subscription or budget needs adjustment.
 
-The above retrospective currently needs to be compiled manually from raw records; there is no automatically generated monthly report yet.
+The above retrospective can be compiled by reviewing relevant records in Manager.

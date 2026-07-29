@@ -4,10 +4,6 @@ title: "Member Roles and Permissions"
 
 # Member Roles and Permissions
 
-<Callout type="warn" title="Current Status Notice">
-  Organizations, member invitations, and role assignment are still in the planning/backend stage, and there is no dedicated team management interface yet. The organization roles and member-joining approach described on this page are data models already defined on the backend, which currently cannot be operated directly through an interface. Secret custody, approval, and auditing mechanisms are capabilities that already run in real, single-task/single-Agent scenarios.
-</Callout>
-
 The goal of team permissions is to let both members and Agents access only the resources they need.
 
 ## Organization roles
@@ -27,16 +23,24 @@ A planned future role model (not yet launched, for reference only): `Primary Own
 
 ## Agent roles
 
-The Agent role is a separate system independent from organization roles. There are 6 real Agent roles in the catalog:
+The Agent role is a separate system independent from organization roles. Heicode provides 19 role templates, commonly including:
 
-| Agent | Suitable for |
+| Agent template | Suitable for |
 |---|---|
-| Product Agent | Requirements, user stories, acceptance criteria |
-| Architect Agent | Architecture, module boundaries, technical solutions |
-| Frontend Agent | Pages, components, interactions |
-| Backend Agent | APIs, databases, service logic |
-| Reviewer Agent | Code review, risk checks |
-| Ops Agent | Build, deployment, monitoring |
+| analyst | Requirements analysis, business梳理 |
+| architect | Architecture, module boundaries, technical solutions |
+| code-reviewer | Code review, risk checks |
+| debugger | Troubleshooting, bug fixes |
+| designer | UI/UX design |
+| document-specialist | Documentation generation and organization |
+| executor | Code implementation, feature development |
+| explorer | Exploratory research, deployment preparation |
+| planner | Task planning, requirement breakdown |
+| qa-tester | Test execution, quality verification |
+| security-reviewer | Security checks, permission audits |
+| writer | Content writing, documentation output |
+
+The full list also includes code-simplifier, critic, git-master, scientist, test-engineer, tracer, verifier, and other role templates.
 
 ## Permission principles
 

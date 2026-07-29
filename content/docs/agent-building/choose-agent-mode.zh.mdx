@@ -92,21 +92,21 @@ Sub 模式和 Heicode 的蜂群模式都属于"多 Agent 协作"，但控制方�
 
 子 Agent 数量按任务实际需要增减，没有固定档位，根据任务边界和职责划分来决定。
 
-常见角色组合（角色取自 Product、Architect、Frontend、Backend、Reviewer、Ops 六个角色目录）：
+常见角色组合（角色取自 Heicode 的 19 种角色模板，如 analyst、architect、code-reviewer、debugger、executor、planner、qa-tester 等）：
 
 | 场景 | 推荐组合 |
 |---|---|
-| 新功能 | Product、Frontend、Backend、Reviewer |
-| 复杂 bug | Backend、Reviewer |
-| 文档和资源中心 | Product、Reviewer |
-| 云部署 | Ops、Reviewer |
-| 大型重构 | Architect、Backend、Reviewer |
+| 新功能 | planner、executor、code-reviewer |
+| 复杂 bug | debugger、code-reviewer |
+| 文档和资源中心 | document-specialist、code-reviewer |
+| 云部署 | explorer、code-reviewer |
+| 大型重构 | architect、executor、code-reviewer |
 
 权限建议：
 
 - 每个子 Agent 只拿自己需要的资源。
-- Reviewer Agent 默认不负责直接修改生产资源。
-- Ops Agent 可以准备部署，但生产部署必须审批。
+- code-reviewer 默认不负责直接修改生产资源。
+- explorer 可以准备部署，但生产部署必须审批。
 - 子 Agent 之间共享的是任务状态和结果，不共享不必要的密钥。
 
 ## 蜂群模式
@@ -178,14 +178,11 @@ Sub 模式和 Heicode 的蜂群模式都属于"多 Agent 协作"，但控制方�
 - lead 打算如何拆解任务。
 - 每个 worker 可以访问哪些资源。
 - worker 数量上限（最多 8 个，默认 3 个，随套餐可调整）。
-- 最大运行时间和最大预算。
 - 哪些动作必须人工审批。
 
 推荐约束：
 
 - 按套餐确认 worker 数量上限，不超过 8 个。
-- 设置单个 worker 最大连续运行时间。
-- 设置总预算和单 worker 预算上限。
 - 生产操作必须退出蜂群自动流程，进入审批。
 
 ### 蜂群模式监控重点

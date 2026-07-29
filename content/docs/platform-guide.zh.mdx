@@ -64,15 +64,11 @@ macOS 提示说明：
 希望部署到 Azure。
 ```
 
-这一步的需求拆解和角色/资源建议主要由客户端本地的主 Agent 完成，Manager 负责承接结果并准备：
+这一步你只需要在客户端描述你的想法，Agent 会直接开始理解和执行。
 
-- 需要绑定的资源清单。
-- 高危操作提示。
-- 后续的资源授权和审批流程。
+## 第四步：连接资源
 
-## 第四步：按准备清单连接资源
-
-进入当前任务的 `准备清单`。这里不应该让用户面对大量参数，而是告诉用户还缺什么、下一步做什么。
+进入资源绑定页面，连接任务所需的资源。
 
 可连接资源：
 
@@ -102,18 +98,9 @@ macOS 提示说明：
 
 ## 第五步：确认系统推荐
 
-组建团队时可以从 Heicode 提供的角色目录里挑选，用户只需要确认最终组合是否合理。
+组建团队时可以从 Heicode 提供的 19 种角色模板中挑选，用户只需要确认最终组合是否合理。
 
-角色目录：
-
-- Product Agent。
-- Architect Agent。
-- Frontend Agent。
-- Backend Agent。
-- Reviewer Agent。
-- Ops Agent。
-
-不是每个任务都需要用满 6 个角色，也不需要凑齐一整套；简单任务用 1-2 个即可。
+常用角色模板包括：analyst、architect、code-reviewer、code-simplifier、critic、debugger、designer、document-specialist、executor、explore、git-master、planner、qa-tester、scientist、security-reviewer、test-engineer、tracer、verifier、writer。不是每个任务都需要用满所有角色，简单任务用 1-2 个即可。
 
 ![部署单个 Agent——可选择的角色目录](/screenshots/deploy-agent-single.jpg)
 
@@ -125,7 +112,6 @@ macOS 提示说明：
 
 - 建议使用的仓库、文档、SK 和云资源。
 - 高危操作规则。
-- 预计模型预算。
 
 用户看到的是这种表达：
 
@@ -187,6 +173,8 @@ Heicode 会在后台生成执行所需对象，包括子 Agent 角色、资源�
 - 资源访问记录。
 - 高危审批记录。
 - 部署结果。
+
+> **注意**：审计日志（/audit-logs）页面仅限组织的 Owner、Admin 和 Auditor 角色访问，普通 Member 和个人用户无法查看。
 
 ![Manager 概览面板——Agent 数量、运行状态、余额和常用操作](/screenshots/dashboard-overview.jpg)
 

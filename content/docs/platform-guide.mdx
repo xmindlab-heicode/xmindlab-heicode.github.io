@@ -64,15 +64,11 @@ with login, projects, tasks, comments, notifications, and an admin backend,
 deployed to Azure.
 ```
 
-At this step, requirement breakdown and role/resource suggestions are mainly handled by the main Agent running locally in the client. Manager picks up the result and prepares:
+At this step, you just describe your idea in the client, and the Agent starts understanding and executing directly.
 
-- The list of resources that need to be connected.
-- High-risk action prompts.
-- The resource-authorization and approval flow that follows.
+## Step 4: Connect Resources
 
-## Step 4: Connect Resources via the Readiness Checklist
-
-Open the current task's `Readiness Checklist`. This shouldn't confront you with a wall of parameters — it should tell you what's still missing and what to do next.
+Open the Resource Binding page and connect the resources your task needs.
 
 Resources you can connect:
 
@@ -102,18 +98,9 @@ Clicking "New Binding" shows every resource type you can connect:
 
 ## Step 5: Confirm the System Recommendation
 
-When assembling a team, you can pick from Heicode's role catalog — you just need to confirm the final combination makes sense.
+When assembling a team, you can pick from Heicode's 19 role templates — you just need to confirm the final combination makes sense.
 
-Role catalog:
-
-- Product Agent.
-- Architect Agent.
-- Frontend Agent.
-- Backend Agent.
-- Reviewer Agent.
-- Ops Agent.
-
-Not every task needs all 6 roles, and you don't need a full set — a simple task might only need 1-2.
+Common role templates include: analyst, architect, code-reviewer, code-simplifier, critic, debugger, designer, document-specialist, executor, explore, git-master, planner, qa-tester, scientist, security-reviewer, test-engineer, tracer, verifier, writer. Not every task needs all roles — a simple task might only need 1-2.
 
 ![Deploying a single Agent — the role catalog to pick from](/screenshots/deploy-agent-single.jpg)
 
@@ -125,7 +112,6 @@ After confirming the team composition, you'll also see:
 
 - Recommended repos, docs, SK, and cloud resources to use.
 - High-risk action rules.
-- Estimated model budget.
 
 What you see looks like this:
 
@@ -188,6 +174,8 @@ In Heicode you can view:
 - Resource access records.
 - High-risk approval records.
 - Deployment results.
+
+> **Note**: The Audit Logs page (/audit-logs) is only accessible to organization Owner, Admin, and Auditor roles. Regular Members and individual users cannot access it.
 
 ![Manager overview dashboard — Agent count, running status, balance, and quick actions](/screenshots/dashboard-overview.jpg)
 

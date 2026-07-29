@@ -92,21 +92,21 @@ Sub mode is not recommended when:
 
 The number of sub-agents should be adjusted based on actual task needs — there's no fixed tier; it depends on task boundaries and division of responsibility.
 
-Common role combinations (roles drawn from the six-role catalog: Product, Architect, Frontend, Backend, Reviewer, Ops):
+Common role combinations (roles drawn from Heicode's 19 role templates, such as analyst, architect, code-reviewer, debugger, executor, planner, qa-tester, etc.):
 
 | Scenario | Recommended combination |
 |---|---|
-| New feature | Product, Frontend, Backend, Reviewer |
-| Complex bug | Backend, Reviewer |
-| Documentation and resource center | Product, Reviewer |
-| Cloud deployment | Ops, Reviewer |
-| Large refactor | Architect, Backend, Reviewer |
+| New feature | planner, executor, code-reviewer |
+| Complex bug | debugger, code-reviewer |
+| Documentation and resource center | document-specialist, code-reviewer |
+| Cloud deployment | explorer, code-reviewer |
+| Large refactor | architect, executor, code-reviewer |
 
 Permission recommendations:
 
 - Each sub-agent only gets the resources it needs.
-- Reviewer Agents don't directly modify production resources by default.
-- Ops Agents can prepare deployments, but production deployment must be approved.
+- code-reviewer Agents don't directly modify production resources by default.
+- explorer Agents can prepare deployments, but production deployment must be approved.
 - What sub-agents share is task state and results, not unnecessary secrets.
 
 ## Swarm mode
@@ -178,14 +178,11 @@ Confirm before launching:
 - How the lead plans to break down the task.
 - What resources each worker can access.
 - The worker count cap (up to 8, 3 by default, adjustable by plan).
-- Maximum runtime and maximum budget.
 - Which actions must require human approval.
 
 Recommended constraints:
 
 - Confirm the worker count cap per plan, not exceeding 8.
-- Set a maximum continuous runtime per worker.
-- Set a total budget and a per-worker budget cap.
 - Production operations must exit the swarm's automatic flow and go through approval.
 
 ### Swarm mode monitoring focus

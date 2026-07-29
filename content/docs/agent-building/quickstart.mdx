@@ -65,54 +65,31 @@ Deploy to Azure Static Web Apps once the build passes.
 I need to confirm before deployment.
 ```
 
-Based on the goal, Heicode generates a requirements summary, task plan, resource recommendations, and recommended Agent roles. You only need to fill in the missing pieces on the checklist — you don't need to fill in low-level deployment parameters.
-## Step 7: Confirm the Agent recommendation summary
+After submitting the goal, the Agent starts executing. You can view the progress in the task view.
 
-Heicode generates a summary you can easily understand.
-
-Example:
-
-```text
-This task recommends launching:
-- Product Agent: organize requirements and acceptance criteria
-- Frontend Agent: implement the page
-- Reviewer Agent: check the changes
-- Ops Agent: prepare the deployment
-
-Will use:
-- Repository: website
-- Documentation: docs/product-package
-- Cloud resource: Azure Static Web Apps
-
-Requires approval:
-- Production deployment
-- Large model consumption
-- Access to production secrets
-```
-![aa52eb774210b84cc7cdaa855f1493e3.png](https://doc.xinghanlab.com/static-file/ec97f3d1-53e1-4c2d-b6ee-698531e00b0b/73dbdb4e-8d44-4fea-bd65-4f718aa0c420.png)
-
-After confirming the summary, click Launch Agent.
-
-## Step 8: Watch the task status
+## Step 7: Watch the task status
 
 Once the task launches, you'll see the task view.
 
-A task only has four real statuses:
+There are nine top-level task states:
 
-| Status | What you should do |
-|---|---|
-| pending (preparing) | Wait for the platform to organize resources and context |
-| running (in progress) | Wait for the Agent to execute; you can watch progress |
-| stopped | The task was stopped by you or by the platform |
-| failed | Check the failure reason and retry or adjust resources |
+| Status | Meaning | What you should do |
+|---|---|---|
+| created | Task created, not yet started preparing | Wait |
+| preparing | Platform is organizing resources and context | Wait |
+| running | Agent is executing the task | Monitor progress |
+| waiting_approval | A pending approval request exists | Review risk and approve or reject |
+| degraded | Some capabilities unavailable, task continues in limited mode | Monitor the degradation reason |
+| verifying | Agent is verifying deliverables | Wait for verification to complete |
+| completed | Task completed successfully | Review deliverables |
+| failed | Task stopped due to an error | Check failure reason and retry or adjust resources |
+| stopped | Task stopped by you or the platform | Review results, restart or duplicate the task |
 
-Beyond these four statuses, "needs input," "awaiting approval," and "ready to review" that appear in the task view are actually specific situations while a task is running, not separate top-level statuses:
+The following prompts may also appear in the task view, corresponding to specific signals under the running state:
 
-- Needs input: the Agent triggered a `task.blocked` event — it's missing information, resources, or permissions, and needs you to open the task and provide more.
-- Awaiting approval: a pending approval request has appeared (the approval request itself has its own state machine: pending / approved / rejected / expired), and needs you to review the risk and approve or reject it.
-- Ready to review: the task is still running, but has already produced deliverables you can inspect ahead of time.
-
-Once a task finishes successfully, its status changes to stopped (normal completion), along with a `task.completed` event and the deliverables. The UI usually displays this as "Completed," to distinguish it from a stopped state you triggered yourself.
+- **Needs input**: The Agent needs you to provide additional information, resources, or permissions — open the task and reply.
+- **Awaiting approval**: A pending approval request exists (the approval request itself has its own states: pending / approved / rejected / expired) — review the risk and approve or reject.
+- **Ready to review**: The task is still running, but has already produced deliverables you can inspect ahead of time.
 
 ## Step 9: Handle items that need your attention
 
@@ -127,7 +104,7 @@ The Agent may need you in these situations:
 - Confirmation of the implementation direction is needed.
 ![761778426bec6c7808f2fc35593e82c2.png](https://doc.xinghanlab.com/static-file/69637c3f-d600-4645-bcda-ecb4c02189c7/fdd1a199-14d5-4cda-bca7-8ed5eb0e738a.png)
 
-In the task view, you can reply, approve, reject, pause, or stop the task.
+In the task view, you can reply, approve, reject, or stop the task.
 
 ## Step 10: Review the results
 

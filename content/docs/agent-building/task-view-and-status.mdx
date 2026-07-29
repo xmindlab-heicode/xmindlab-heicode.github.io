@@ -37,22 +37,27 @@ Different working modes emphasize different things in the task view.
 
 ## Common statuses
 
-A task (deployment) itself only has four real statuses:
+There are nine top-level task states:
 
 | Status | Meaning | User action |
 |---|---|---|
-| pending (preparing) | Heicode is organizing resources and context | Wait |
-| running (in progress) | The Agent is executing the task | You can watch progress |
-| stopped (stopped / completed) | The user or the platform stopped the task, including normal completion | Review results, restart, or duplicate the task |
-| failed | The task stopped due to an error | Check the failure reason |
+| created | Task created, not yet started preparing | Wait |
+| preparing | Platform is organizing resources and context | Wait |
+| running | Agent is executing the task | Monitor progress |
+| waiting_approval | A pending approval request exists | Review risk and approve or reject |
+| degraded | Some capabilities unavailable, task continues in limited mode | Monitor the degradation reason |
+| verifying | Agent is verifying deliverables | Wait for verification to complete |
+| completed | Task completed successfully | Review deliverables |
+| failed | Task stopped due to an error | Check failure reason and retry or adjust resources |
+| stopped | Task stopped by you or the platform | Review results, restart or duplicate the task |
 
-"Needs input," "awaiting approval," "ready to review," and "blocked" are not separate top-level task statuses — they're specific situations while a task is running, and usually correspond to the following real signals:
+"Needs input," "awaiting approval," and "ready to review" are not separate top-level task statuses — they're specific situations while a task is running, and usually correspond to the following real signals:
 
 | What you see in the UI | Corresponding real signal | User action |
 |---|---|---|
-| Needs input / blocked | The task is still running, and the Agent triggered a `task.blocked` event | Open the task and reply |
+| Needs input | The task is still running, and the Agent needs you to provide additional information, resources, or permissions | Open the task and reply |
 | Awaiting approval | The task is still running, and there's an approval request in the pending state | Review the risk and approve or reject |
-| Ready to review | The task is still running or has just changed to stopped, and has already produced inspectable deliverables | Review the deliverables |
+| Ready to review | The task is still running or has just changed to completed, and has already produced inspectable deliverables | Review the deliverables |
 
 An approval request is a separate object with its own state machine: `pending`, `approved`, `rejected`, `expired` — it is not part of the task status itself.
 
@@ -60,12 +65,15 @@ An approval request is a separate object with its own state machine: `pending`, 
 
 The task view should prioritize showing:
 
-1. Tasks with a pending approval request (commonly called "awaiting approval").
-2. Tasks that triggered `task.blocked` (commonly called "needs input").
-3. Tasks that have produced deliverables awaiting your review (commonly called "ready to review").
+1. Tasks with a pending approval request (waiting_approval).
+2. Tasks that need you to provide additional information (running state, needs input).
+3. Tasks that have produced deliverables awaiting your review (ready to review).
 4. failed.
-5. running (other cases).
-6. stopped (normal completion).
+5. degraded.
+6. running (other cases).
+7. verifying.
+8. completed.
+9. stopped (normal completion).
 
 This way, users don't need to dig through a mass of logs to find what needs handling.
 

@@ -68,16 +68,14 @@ title: "创建第一个 Agent"
 
 | 任务类型 | 推荐角色 |
 |---|---|
-| 新产品 | Product、Architect、Frontend、Backend、Reviewer、Ops |
-| 功能迭代 | Product、Frontend、Backend、Reviewer |
-| Bug 修复 | Backend、Reviewer |
-| 文档 | Product、Reviewer |
-| 部署 | Ops、Reviewer |
-| 安全整改 | Architect、Reviewer、Ops |
+| 新产品 | planner, architect, executor, code-reviewer, qa-tester |
+| 功能迭代 | planner, executor, code-reviewer |
+| Bug 修复 | debugger, code-reviewer |
+| 文档 | document-specialist, code-reviewer |
+| 部署 | explorer, code-reviewer |
+| 安全整改 | security-reviewer, code-reviewer, architect |
 
-推荐角色来自 Heicode 的六角色目录：Product Agent、Architect Agent、Frontend Agent、Backend Agent、Reviewer Agent、Ops Agent。目前没有独立的 Debug、Docs 或 Security 角色，相关工作由上述角色承担。
-
-如果你不确定任务类型，可以让 Heicode 根据目标自动推荐。
+Heicode 提供 19 种 Agent 角色模板（如 analyst, architect, code-reviewer, debugger, designer, executor, planner, qa-tester, security-reviewer 等），你可以根据任务需要自由组合。如果你不确定任务类型，可以让 Heicode 根据目标自动推荐。
 
 ## 第三步：选择工作模式
 
@@ -115,13 +113,12 @@ Sub 模式和蜂群模式是两种协作方式：Sub 模式由主 Agent 拆分�
 
 操作步骤：
 
-1. 打开任务准备清单。
-2. 点击连接 Git。
-3. 选择仓库。
-4. 选择分支。
-5. 设置允许读取的路径。
-6. 设置允许写入的路径。
-7. 设置是否允许创建分支或 PR。
+1. 在资源绑定页面点击连接 Git。
+2. 选择仓库。
+3. 选择分支。
+4. 设置允许读取的路径。
+5. 设置允许写入的路径。
+6. 设置是否允许创建分支或 PR。
 
 推荐权限：
 
@@ -190,12 +187,12 @@ Heicode 会推荐子 Agent。
 
 示例：
 
-| 角色 | 本次职责 |
+| 角色模板 | 本次职责 |
 |---|---|
-| Product Agent | 整理需求和验收标准 |
-| Frontend Agent | 修改页面和交互 |
-| Reviewer Agent | 检查 diff 和风险 |
-| Ops Agent | 构建和部署 |
+| planner | 整理需求和验收标准 |
+| executor | 修改页面和交互 |
+| code-reviewer | 检查 diff 和风险 |
+| qa-tester | 构建和部署验证 |
 
 ![部署单个 Agent——Manager 控制台里的角色目录](/screenshots/deploy-agent-single.jpg)
 
@@ -205,64 +202,17 @@ Heicode 会推荐子 Agent。
 
 - Sub 模式可以增加多个职责明确的子 Agent。
 - 蜂群模式下角色体现为 lead 和 worker：lead 负责接收任务并拆解派发，worker 负责领取并执行子任务，worker 数量最多 8 个、默认 3 个（随套餐可调整）。
-- 瀑布模式使用固定的 5 角色模板（分析、架构、开发、测试、评审），一键部署即已包含全部角色。
-- 敏捷模式使用固定的 3 角色模板（产品、开发、评审）。
+- 瀑布模式使用固定的 5 角色模板（analyst、architect、executor、qa-tester、code-reviewer），一键部署即已包含全部角色。
+- 敏捷模式使用固定的 3 角色模板（planner、executor、code-reviewer）。
 - 不要创建没有明确职责的角色。
 - 不要让同一个 Agent 同时负责开发、审查和部署审批。
 - 不要给所有角色相同权限。
 
 ## 第九步：确认预算
 
-预算用于控制模型消耗。
+平台对单个 Agent 预算有硬性上限：最多 500,000 token、最多 200 美元成本、最长运行 24 小时，超出任一项都会被平台拒绝并返回 `BUDGET_EXCEEDED`。你无需在创建任务时手动设置预算参数。
 
-需要确认：
-
-- 最大 token。
-- 最大成本。
-- 最大执行时间。
-- 超额是否暂停。
-- 大额消耗是否审批。
-
-平台对单个 Agent 预算有硬性上限：最多 500,000 token、最多 200 美元成本、最长运行 24 小时，超出任一项都会被平台拒绝并返回 `BUDGET_EXCEEDED`。你设置的预算只能在这个上限以内。
-
-建议：
-
-| 任务 | 建议方式 |
-|---|---|
-| 小修复 | 小预算，超出暂停 |
-| 中等功能 | 分阶段预算 |
-| MVP | 阶段验收后继续 |
-| 文档 | 低预算，限制工具 |
-| 部署 | 小预算，高审批 |
-| Sub 模式 | 按子 Agent 设置预算，异常子任务可单独暂停 |
-| 蜂群模式 | 设置总预算和单个 worker 上限，worker 数量不超过 8 个（默认 3 个） |
-| 瀑布模式 | 按阶段设置预算，阶段完成后再释放下一段 |
-| 敏捷模式 | 按迭代设置预算，每轮验收后再继续 |
-
-## 第十步：确认审批规则
-
-必须审批的操作：
-
-- 生产部署。
-- 生产数据库读写。
-- 访问生产密钥。
-- 删除云资源。
-- 扩缩容。
-- 外部发送敏感数据。
-- 合并到主分支。
-- 大额模型消耗。
-
-审批时你会看到：
-
-- 操作类型。
-- 请求的 Agent。
-- 要操作什么资源。
-- 风险等级。
-- 凭证有效期（TTL）。
-
-目标环境、预计影响、预算影响、是否可回滚等信息，视具体审批场景可能提供，不是每次审批都保证展示。
-
-## 第十一步：启动 Agent
+## 第十步：启动 Agent
 
 启动前确认：
 
@@ -271,8 +221,6 @@ Heicode 会推荐子 Agent。
 - 资源已连接。
 - 角色合理。
 - 权限最小。
-- 预算已设置。
-- 审批规则已设置。
 - 验收标准明确。
 
 点击启动后，Agent 会进入任务视图。

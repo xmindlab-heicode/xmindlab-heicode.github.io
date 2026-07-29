@@ -68,16 +68,14 @@ Choosing a task type helps Heicode recommend roles.
 
 | Task type | Recommended roles |
 |---|---|
-| New product | Product, Architect, Frontend, Backend, Reviewer, Ops |
-| Feature iteration | Product, Frontend, Backend, Reviewer |
-| Bug fix | Backend, Reviewer |
-| Documentation | Product, Reviewer |
-| Deployment | Ops, Reviewer |
-| Security remediation | Architect, Reviewer, Ops |
+| New product | planner, architect, executor, code-reviewer, qa-tester |
+| Feature iteration | planner, executor, code-reviewer |
+| Bug fix | debugger, code-reviewer |
+| Documentation | document-specialist, code-reviewer |
+| Deployment | explorer, code-reviewer |
+| Security remediation | security-reviewer, code-reviewer, architect |
 
-The recommended roles come from Heicode's six-role catalog: Product Agent, Architect Agent, Frontend Agent, Backend Agent, Reviewer Agent, Ops Agent. There is currently no separate Debug, Docs, or Security role — that work is handled by the roles above.
-
-If you're not sure of the task type, you can let Heicode recommend one automatically based on the goal.
+Heicode provides 19 Agent role templates (such as analyst, architect, code-reviewer, debugger, designer, executor, planner, qa-tester, security-reviewer, etc.), and you can freely combine them based on the task's needs. If you're not sure of the task type, you can let Heicode recommend one automatically based on the goal.
 
 ## Step 3: Choose a working mode
 
@@ -115,13 +113,12 @@ If the task needs to read or write code, connect a Git repository.
 
 Steps:
 
-1. Open the task preparation checklist.
-2. Click Connect Git.
-3. Choose the repository.
-4. Choose the branch.
-5. Set the paths allowed for reading.
-6. Set the paths allowed for writing.
-7. Set whether branch or PR creation is allowed.
+1. On the Resource Binding page, click Connect Git.
+2. Choose the repository.
+3. Choose the branch.
+4. Set the paths allowed for reading.
+5. Set the paths allowed for writing.
+6. Set whether branch or PR creation is allowed.
 
 Recommended permissions:
 
@@ -190,12 +187,12 @@ Heicode will recommend sub-agents.
 
 Example:
 
-| Role | Responsibility for this task |
+| Role template | Responsibility for this task |
 |---|---|
-| Product Agent | Organize requirements and acceptance criteria |
-| Frontend Agent | Modify pages and interactions |
-| Reviewer Agent | Check diffs and risk |
-| Ops Agent | Build and deploy |
+| planner | Organize requirements and acceptance criteria |
+| executor | Modify pages and interactions |
+| code-reviewer | Check diffs and risk |
+| qa-tester | Build and deploy verification |
 
 ![Deploying a single Agent — the role catalog in the Manager console](/screenshots/deploy-agent-single.jpg)
 
@@ -205,64 +202,17 @@ Recommendations:
 
 - In Sub mode, you can add multiple sub-agents with clearly defined responsibilities.
 - In Swarm mode, roles show up as lead and worker: the lead is responsible for receiving the task and breaking it down for dispatch, workers are responsible for claiming and executing subtasks — up to 8 workers, 3 by default (adjustable by plan).
-- Waterfall mode uses a fixed 5-role template (Analysis, Architecture, Dev, QA, Review); one-click deployment already includes all the roles.
-- Agile mode uses a fixed 3-role template (Product, Dev, Review).
+- Waterfall mode uses a fixed 5-role template (analyst, architect, executor, qa-tester, code-reviewer); one-click deployment already includes all the roles.
+- Agile mode uses a fixed 3-role template (planner, executor, code-reviewer).
 - Don't create roles without clearly defined responsibilities.
 - Don't let the same Agent be responsible for development, review, and deployment approval at the same time.
 - Don't give all roles the same permissions.
 
 ## Step 9: Confirm the budget
 
-The budget controls model consumption.
+The platform enforces a hard cap on any single Agent's budget: at most 500,000 tokens, at most $200 in cost, and a maximum runtime of 24 hours — exceeding any one of these gets rejected by the platform and returns `BUDGET_EXCEEDED`. You do not need to manually configure budget parameters when creating a task.
 
-You need to confirm:
-
-- Maximum tokens.
-- Maximum cost.
-- Maximum execution time.
-- Whether to pause on overage.
-- Whether large consumption requires approval.
-
-The platform enforces a hard cap on any single Agent's budget: at most 500,000 tokens, at most $200 in cost, and a maximum runtime of 24 hours — exceeding any one of these gets rejected by the platform and returns `BUDGET_EXCEEDED`. The budget you set can only be within this cap.
-
-Recommendations:
-
-| Task | Recommended approach |
-|---|---|
-| Small fix | Small budget, pause on overage |
-| Medium feature | Staged budget |
-| MVP | Continue after stage acceptance |
-| Documentation | Low budget, restricted tools |
-| Deployment | Small budget, high approval bar |
-| Sub mode | Set a budget per sub-agent; an anomalous subtask can be paused individually |
-| Swarm mode | Set a total budget and a per-worker cap; the number of workers does not exceed 8 (3 by default) |
-| Waterfall mode | Set a budget per stage; release the next stage's budget only after the current stage is done |
-| Agile mode | Set a budget per iteration; continue only after each round's acceptance |
-
-## Step 10: Confirm approval rules
-
-Operations that must require approval:
-
-- Production deployment.
-- Production database read/write.
-- Access to production secrets.
-- Deleting cloud resources.
-- Scaling up or down.
-- Sending sensitive data externally.
-- Merging to the main branch.
-- Large model consumption.
-
-During approval you'll see:
-
-- Operation type.
-- Requesting Agent.
-- Which resource is targeted.
-- Risk level.
-- Credential TTL (time to live).
-
-Target environment, expected impact, budget impact, and rollback availability may be shown depending on the specific approval scenario — they aren't guaranteed to appear every time.
-
-## Step 11: Launch the Agent
+## Step 10: Launch the Agent
 
 Before launching, confirm:
 

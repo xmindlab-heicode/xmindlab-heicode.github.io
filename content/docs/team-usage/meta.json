@@ -1,14 +1,7 @@
 {
   "title": "Team Usage",
   "pages": [
-    "quickstart",
-    "task-collaboration-workflow",
-    "roles-and-permissions",
-    "approval-delivery-release",
-    "management-and-governance",
     "collaboration-sop",
-    "usage-billing-audit",
-    "spec-driven-development",
-    "faq-troubleshooting"
+    "spec-driven-development"
   ]
 }

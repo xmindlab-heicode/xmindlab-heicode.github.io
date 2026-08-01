@@ -2,6 +2,7 @@
   "title": "团队使用",
   "pages": [
     "collaboration-sop",
-    "spec-driven-development"
+    "spec-driven-development",
+    "enterprise-guide"
   ]
 }

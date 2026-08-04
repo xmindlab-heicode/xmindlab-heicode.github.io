@@ -3,6 +3,7 @@
   "pages": [
     "collaboration-sop",
     "spec-driven-development",
-    "enterprise-guide"
+    "enterprise-guide",
+    "repo-onboarding"
   ]
 }

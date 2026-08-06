@@ -1,95 +1,135 @@
 ---
-title: "MAK Marketplace"
+title: "MAK Marketplace Guide"
+description: "Current capabilities, acquisition and deployment workflows, governance boundaries, and troubleshooting for MAK Marketplace."
 ---
 
-# MAK Marketplace
+# MAK Marketplace Guide
 
-MAK Marketplace is the Heicode marketplace for skills and tools. You can browse and acquire **Skills** and **MCP tools** published by Heicode and third-party publishers, then bind them to a Sub Agent. You can also publish your own skills and tools as a publisher and earn revenue.
+MAK Marketplace (HeiCode Market) discovers, acquires, and delivers reusable AI capabilities. Marketplace owns listings, orders, entitlements, and the balance ledger. HeiCode Manager (HM) owns identity, organization policy, approval, and deployment. Agent Management (AM) and Swarm own installation, loading, invocation, and runtime health.
 
-*The capabilities described here ship with the first MAK Marketplace release, available from August 2026.*
+This page reflects implementation status on **August 5, 2026**. When the UI differs, trust the entries visible to the current account and the server-returned status.
 
-## What the marketplace offers
+## Availability
 
-The marketplace currently supports two product kinds:
-
-| Kind | Description | Delivery |
+| Capability | Status | Notes |
 |---|---|---|
-| **Skill** | A packaged capability, such as code review or documentation generation | Inline delivery (`inline_skill`) — the skill content ships with the entitlement manifest |
-| **MCP** | An external tool integration following the MCP protocol, such as code hosting or search tools | Declarative delivery — only the capability claim is delivered, never credentials |
+| Browse and filter Skills/MCP | Available | Anonymous users can view the published catalog and details |
+| HM sign-in | Available | Acquisition, checkout, and workspace actions require an HM session |
+| Free acquisition | Available | Creates an order and active entitlement without external payment |
+| Balance purchase | Controlled beta | Existing balance can be atomically debited; real top-up is not open |
+| Skill deployment | Controlled beta | Entitlement, governance, deployment, and runtime dispatch exist; accept only with `running` plus runtime evidence |
+| Credential-free MCP | Controlled beta | Organization binding and secure AM materialization exist; full production cross-repo E2E is still being accepted |
+| Credential-bearing MCP | Not open | Remains fail-closed until runtime secret aliases and short-lived credential leases are complete |
+| Real payment/refund/chargeback | Not open | The balance slice is not a complete payment system |
+| Versioned publishing/review/emergency revoke | In progress | A publishing route does not mean the full lifecycle is open |
+| Publisher settlement/withdrawal | Not open | Revenue sharing, settlement, and reconciliation are incomplete |
+| Agent template trading | Not open | Current product kinds are Skill and MCP only |
 
-*Note: Publishing and trading Agent templates is not yet available. This release supports Skill and MCP products only.*
+## Capability kinds
 
-## From purchase to taking effect in an Agent
+| Kind | Purpose | Delivery |
+|---|---|---|
+| **Skill** | Reusable methods, knowledge, and workflows | Digest-pinned skill content delivered after entitlement and policy checks |
+| **MCP** | External tools such as search, databases, browsers, and knowledge bases | Credential-free claims; organization connection settings and secrets are governed separately by HM |
 
-A purchased product does not appear in your Agent automatically. It travels through a fixed delivery chain. Understanding this chain helps you diagnose "I bought it but the Agent can't use it":
+MCP products never expose customer tokens, passwords, or connection settings in public details, entitlement lists, or ordinary deployment payloads. A credential-bearing MCP without the safe lease path remains `binding_required`; it does not fall back to plaintext or manual pre-provisioning.
 
-1. **Checkout grants an entitlement** — after checkout, the marketplace creates an active entitlement for the buyer.
-2. **Capability claim is delivered** — the marketplace exposes a catalog entry for that entitlement using stable governance identifiers such as `skill__code-review` or `mcp__github`.
-3. **Manager imports and filters by policy** — Manager imports the entry into the organization's tool catalog and applies the organization's allow/deny policy. Entries denied by policy are not delivered onward.
-4. **Delivered with the deployment** — when Manager sends the deployment payload to Agent Management, it includes the policy-approved skills and tools.
-5. **Runtime injection and reporting** — Agent Management injects the configuration into the runtime. The Sub Agent health response reports which items loaded, plus structured reasons for any load failure.
+## Sign-in and account scope
 
-In other words: **purchasing completes only step one. Whether a capability takes effect also depends on your organization's policy configuration.** If a purchased capability does not appear in your Agent, check the organization's tool catalog policy first.
+Marketplace does not maintain a second identity system. Sign-in redirects to HM and then returns to Marketplace. Never place an HM token in a URL.
 
-## Free versus paid products
+HM determines whether the session represents an individual or an enterprise member. Enterprise users may choose a personal or organization purchase scope, but the server always revalidates membership, policy permissions, approval, and connector bindings. Selecting an organization in the UI never grants administrative rights.
 
-| Pricing | Checkout behavior |
+## Acquire a free capability
+
+1. Open [MAK Marketplace](https://marketplace.heicode.cc/) and find a capability.
+2. Review its kind, version, risk, governance key, supported runtimes, delivery mode, and approval requirement.
+3. Select **Sign in to acquire** and complete HM sign-in.
+4. For enterprise accounts, choose personal or organization scope.
+5. Select **Free · Acquire now**.
+6. Open **Purchased & authorized** and confirm the entitlement is `active`.
+
+Checkout is idempotent. An order records the transaction; an entitlement records whether the capability can currently be used.
+
+## Purchase with balance
+
+Balance checkout is for accounts or organizations that already have usable balance. A successful operation atomically validates and debits the balance, appends an immutable ledger entry, marks the order paid, and grants exactly one entitlement.
+
+There is currently no public real top-up, card, or third-party payment flow and no complete refund/chargeback workflow. The test-credit endpoint is disabled in production and is not a product recharge feature.
+
+## Deploy to Sub Agent or Swarm
+
+After acquiring an active entitlement:
+
+1. Select **Deploy capability** on the listing detail page.
+2. Choose **Sub Agent (single Agent)** or **Swarm**.
+3. Confirm the HM organization ID and enter a real target ID.
+4. Review the governance key, delivery mode, and entitlement.
+5. Create the deployment and follow the returned state.
+
+```text
+Order/free acquisition
+  -> Marketplace entitlement and Capability Claim
+  -> HM entitlement, permission, and policy revalidation
+  -> HM Deployment and runtime adapter dispatch
+  -> AM or Swarm installation and loading
+  -> runtime callback: running or failed
+  -> disable/revoke prevents later invocation
+```
+
+| State | Meaning |
 |---|---|
-| **Free** | The entitlement is granted immediately at checkout, with no payment flow |
-| **Paid** | Checkout creates a pending order; the entitlement is granted after the payment provider confirms payment |
+| `binding_required` | Organization connector binding or safe credential delivery is missing |
+| `approval_required` | Waiting for organization approval; runtime has not been called |
+| `ready` | Governance passed, but runtime dispatch has not completed |
+| `dispatching` | HM is dispatching to AM or Swarm |
+| `running` | Runtime confirms the capability is active |
+| `failed` | Dispatch, installation, or loading failed |
+| `revoking` / `revoked` | Capability is being removed or has been removed |
 
-Payment results for paid orders are confirmed by provider webhooks. Webhooks are verified and idempotent, so a given order grants **exactly one entitlement** — repeated webhook calls never grant duplicates.
+Only `running`, runtime loaded-state evidence, and a real task prove that a capability works.
 
-## Credentials for MCP products
+## Runtime acceptance
 
-MCP product deliveries **never contain organization credentials**.
+For a Skill, run a task that demonstrates its instructions or workflow. For example, a code-review Skill should analyze a real diff for defects, regressions, and missing tests.
 
-When you purchase an MCP tool, you receive its capability claim and integration configuration. The credentials the tool needs to reach the external service (such as an access token) must be **bound separately by an organization administrator**. An MCP tool without bound credentials reports a load failure after runtime injection rather than silently proceeding with empty credentials.
+For MCP, invoke an actual tool. A public Reader MCP should retrieve a public URL and return its content. Seeing a server name or configuration record is not runtime proof.
 
-## Library and entitlements
+Credential-free MCP still requires an active organization binding, policy, audit, and revoke. Credential-bearing MCP remains unavailable until short-lived credential delivery is complete; never put a long-lived secret in a URL, header, environment variable, Git, log, or Agent memory.
 
-Purchase records and usable capabilities live in two separate places:
+## Workspace entries
 
-- **Orders** — transaction records and payment status, with per-order detail.
-- **Library** — the list of entitlements you hold, meaning the skills and tools you can currently bind to an Agent.
+Depending on the HM account type, the production navigation can include managed Skills/MCP, publishing, favorites, purchased entitlements, organization governance, balance and ledger, and orders.
 
-Entitlements and orders are distinct concepts: an order records *what you bought*, an entitlement records *what you can use now*. Refunds and delistings affect entitlement state without deleting historical orders.
+Publisher revenue, verification, API/connectors, and account settings are hidden until their backend workflows are complete. A routable page is not proof that a product feature is open. Favorites may explicitly report that the backend is not implemented.
 
-## Becoming a publisher
+## Disable and revoke
 
-Publishers can list their own Skill and MCP products. Listings go through review, and move through the following states:
+A complete revoke must stop the entitlement or organization authorization, HM deployability and installation/deployment, and the AM/Swarm runtime capability. Verify that the runtime no longer reports the item as loaded and that repeating the original task is denied rather than served from cached configuration.
 
-| Status | Meaning |
-|---|---|
-| **draft** | Created but not submitted for review; visible only to the publisher |
-| **pending** | Submitted and awaiting the platform's review decision |
-| **published** | Approved, publicly visible in the marketplace, and available for purchase |
+If no revoke entry is available, contact an organization administrator or platform support. Deleting a local file is not a server-side revoke.
 
-After submitting for review, wait for the review decision. A listing is not publicly visible while under review.
+## Troubleshooting
 
-Publishers can review revenue and settlement in the personal center.
+- **`marketplace origin is not allowed`**: open Marketplace from `https://marketplace.heicode.cc` and have an administrator verify the HM origin allowlist. Do not switch to a test domain or place a token in the URL.
+- **No entitlement after acquisition**: verify that the current HM identity and personal/organization purchase scope match, then inspect the order and `active` entitlement.
+- **Deployment remains `ready`**: inspect HM dispatch events, adapter configuration, target ID, and the AM/Swarm callback. `ready` is not running.
+- **MCP remains `binding_required`**: verify an active organization binding. Credential-bearing MCP intentionally remains fail-closed in this release.
+- **Deployment is `failed`**: collect the deployment ID, target, governance key, timestamp, `last_error`, runtime load failure, and audit event before retrying.
 
-## Personal and enterprise centers
+## Security and source-of-truth boundaries
 
-The marketplace provides two management entry points:
+- Marketplace exclusively writes Listing, SKU, Order, Payment, Entitlement, and Ledger data.
+- HM exclusively writes organization policy, Installation, Deployment, approval, and deployment audit data.
+- AM/Swarm exclusively write actual installation, loading, invocation, and RuntimeHealth data.
+- The web application consumes state and is not a source of truth.
+- Capability Claims contain no Skill body, MCP credential, customer connection address, payment data, or user token.
+- Long-lived MCP secrets stay in the vault and are referenced by `secret_ref`; ordinary responses, logs, and audits must not reveal plaintext.
+- Purchase is not authorization, authorization is not deployment, and `ready` is not running.
 
-- **Personal center** — account, assets, entitlements, favorites, keys, orders, publishing, and revenue.
-- **Enterprise center** — the organization-facing entry point for managing purchases and authorization across the organization.
+## API and support
 
-## FAQ
+- OpenAPI: [https://marketplace-api.heicode.cc/openapi.json](https://marketplace-api.heicode.cc/openapi.json)
+- Health: [https://marketplace-api.heicode.cc/health](https://marketplace-api.heicode.cc/health)
 
-**I bought a skill, but it does not take effect in my Sub Agent.**
-
-Work through the five-step chain in "From purchase to taking effect in an Agent" above. The most common cause is that the organization's tool catalog policy does not allow the entry.
-
-**An MCP tool reports a load failure.**
-
-First confirm that an organization administrator has bound credentials for that tool. Marketplace delivery excludes credentials by design — this is a security boundary, not a defect.
-
-**Can a single order be charged twice or grant duplicate entitlements?**
-
-No. Payment webhooks are idempotent, and a given order grants exactly one entitlement.
-
-**Can I publish Agent templates?**
-
-Not in this release. The marketplace supports Skill and MCP products only.
+For support, provide redacted account type, organization ID, listing/entitlement/deployment IDs, target kind, state, timestamp, and error code. Never send passwords, bearer tokens, API keys, full connection strings, or customer task content.

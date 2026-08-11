@@ -103,11 +103,35 @@ If your account type or organization looks wrong after signing in, check your or
 
 ## Enabling a Capability
 
-1. Open the [MAK Marketplace](https://marketplace.heicode.cc/) and find a capability using search, type, or tags.
-2. Open the capability details and review its type, version, risk level, supported runtimes, and approval requirements.
-3. Click to enable it, sign in through HM, and return to the marketplace.
-4. For an enterprise account, choose the scope: **personal** or **organization**.
-5. Wait for the entitlement to be created; the capability then syncs to the corresponding HM capability catalog.
+**1. Find a capability**
+
+Open the [MAK Marketplace](https://marketplace.heicode.cc/) and filter by search, type, or tags.
+
+![Browsing and filtering Skills and MCP tools in the marketplace](/screenshots/mak-browse-catalog.png)
+
+**2. Review the details**
+
+Open the capability details and review its type, version, risk level, supported runtimes, and approval requirements.
+
+![Capability detail page showing the description, version, and scope](/screenshots/mak-capability-detail.png)
+
+**3. Sign in**
+
+Selecting enable redirects you to HM to sign in, then returns you to the marketplace.
+
+![Signing in through HeiCode Manager](/screenshots/mak-signin.png)
+
+**4. Choose the scope**
+
+An enterprise account can enable the capability at **personal** or **organization** scope.
+
+![Choosing personal or organization scope](/screenshots/mak-select-scope.png)
+
+**5. Complete enablement**
+
+Free capabilities can be enabled directly. Once the entitlement is created, the capability syncs to the corresponding HM capability catalog.
+
+![The enable action for a free capability](/screenshots/mak-enable-free.png)
 
 Submitting twice does not issue a duplicate entitlement. An entitlement records "whether this can be used at all" — which is separate from "whether it is selected for this particular run".
 
@@ -118,6 +142,8 @@ Once a capability is in the HM organization catalog, select what you need for th
 - Single Agent
 - Agent Team
 - Swarm
+
+![Selecting capabilities and the target type at startup](/screenshots/mak-select-at-startup.png)
 
 Which capabilities are actually available in a given runtime depends on what the HM startup page shows and on the final governance result.
 

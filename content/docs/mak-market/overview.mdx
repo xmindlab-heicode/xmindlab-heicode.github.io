@@ -1,13 +1,28 @@
 ---
-title: "MAK Marketplace Guide"
+title: "MAK Product & Usage Guide"
 description: "Discover and enable Skills and MCP tools in MAK Marketplace, then select them at Agent startup after HeiCode Manager governance."
 ---
 
-# MAK Marketplace Guide
+# MAK Product & Usage Guide
 
-MAK Marketplace (HeiCode Market) provides a unified experience for discovering, enabling, and managing Skills and MCP tools, so teams can equip their Agents with authorized expertise and external tools.
+MAK Marketplace (HeiCode Market) is a capability catalog and delivery platform for the AI Agent ecosystem. It provides a unified experience for discovering, enabling, and managing Skills and MCP tools, so teams can equip their Agents with authorized expertise and external tools.
 
 Marketplace: [https://marketplace.heicode.cc/](https://marketplace.heicode.cc/)
+
+MAK Marketplace does more than help you find AI capabilities — it also governs how those capabilities are authorized, checked, and verified before they reach real tasks.
+
+## What MAK Marketplace Solves
+
+As AI applications move from single models to capability systems made of knowledge, tools, and Agents, organizations typically run into:
+
+- Capabilities scattered across places, hard to discover and compare;
+- Complex installation, configuration, and upgrade processes;
+- A gap between what was purchased and what can actually be used;
+- Unclear access permissions and security boundaries for external tools;
+- Little visibility into whether a capability was enabled successfully or is running correctly;
+- No unified mechanism for authorization, disabling, and auditing.
+
+MAK Marketplace addresses these with a unified capability catalog, entitlement management, a governed delivery flow, and security controls.
 
 ## What You Can Do
 
@@ -17,6 +32,32 @@ Marketplace: [https://marketplace.heicode.cc/](https://marketplace.heicode.cc/)
 - Manage the organization's available capabilities centrally in HeiCode Manager (HM)
 - Select the capabilities you need when starting an Agent, Agent Team, or Swarm
 - See whether a capability is authorized, awaiting approval, or waiting on credential binding
+
+## Value by Role
+
+### For capability users
+
+- Discover and compare AI capabilities in one marketplace;
+- Review capability descriptions, versions, use cases, and compatibility;
+- Enable capabilities authorized for you or your organization;
+- Select the capabilities you need when starting an Agent, Agent Team, or Swarm;
+- See capability state and any failure details;
+- Manage enabled capabilities within your authorized scope.
+
+### For enterprises and teams
+
+- Build a unified AI capability catalog;
+- Centrally manage what the organization can use;
+- Set governance policy and approval rules to match your requirements;
+- Reduce the risk of external tools reaching sensitive resources;
+- Keep the records you need for key operations;
+- Disable or revoke capabilities to control further use.
+
+### For developers and publishers
+
+- Publish and showcase Skills and MCP tools;
+- Manage capability descriptions, versions, and compatibility information;
+- Follow the platform process for testing, updates, and removal.
 
 ## Capability Types
 
@@ -121,6 +162,26 @@ These are managed by the platform runtime and are not affected by marketplace ca
 
 ## Security and Governance
 
+### Governance principles
+
+MAK Marketplace manages obtaining a capability separately from actually using it. Obtaining a capability does not let it bypass enterprise rules to reach runtimes or sensitive resources.
+
+The platform provides security and governance controls across these stages:
+
+| Stage | Description |
+|---|---|
+| Capability review | Capability information and versions are managed under platform rules |
+| Authorization check | Confirms whether the person or organization holds the entitlement |
+| Organization governance | Decides usability based on the configured governance policy |
+| Configuration protection | Protects connection settings and sensitive credentials from ordinary pages |
+| Runtime verification | Reports processing results and any failure details back to the user |
+| Records | Retains the records needed for enablement, usage, and policy changes |
+| Disabling | Restricts further use when permissions or capability state change |
+
+Which security features are available depends on your version, deployment mode, and configuration.
+
+### Governance essentials
+
 - Every capability is authorized within a personal or organization scope.
 - Organization policy is **deny-first**: when both an allow and a deny rule match, deny wins.
 - MCP credentials are bound securely in HM; the marketplace never handles credentials in plaintext.
@@ -128,7 +189,7 @@ These are managed by the platform runtime and are not affected by marketplace ca
 - Capabilities that are unauthorized, disabled, or missing a binding are never delivered to a runtime.
 - Long-lived credentials are kept in the credential vault and used by reference only; ordinary responses, logs, and audit records never echo plaintext credentials.
 
-Obtaining a capability does not let it bypass enterprise rules to reach runtimes or sensitive resources. Enablement, authorization, and actual use are three separately governed steps.
+Enablement, authorization, and actual use are three separately governed steps.
 
 ## Disabling and Revoking
 
@@ -160,6 +221,34 @@ Check whether the organization has completed connector binding. If the MCP requi
 
 Record the capability name, target type, time, and the failure details returned by the runtime. Fix the cause before retrying, and avoid repeating the same operation over and over.
 
-## Getting Help
+## FAQ
 
-When reporting an issue, provide the redacted account type, organization identifier, capability identifier, target type, state, time, and error message. Never send passwords, access tokens, API keys, full connection strings, or task content.
+### Can I use a capability immediately after enabling it?
+
+That depends on the capability type, current authorization, target environment compatibility, organization rules, and any required configuration. Enabling only creates the entitlement and syncs it to the capability catalog; it takes effect once you select the capability at Agent startup and the runtime finishes loading it. Rely on the actual state shown in the product.
+
+### Are MCP connection details and credentials shown on the page?
+
+No. Pages for ordinary users never display secrets or access tokens. Long-lived credentials are kept in the credential vault and used by reference only. How connections and credentials are managed depends on your organization's configuration.
+
+### Can I make a capability available to my whole team?
+
+An enterprise account can enable a capability at organization scope. Organization authorization and member availability depend on your product version and organization configuration. Enterprise customers can confirm purchasing, member scope, and management requirements during solution review.
+
+### What information should I provide when reporting a problem?
+
+Provide the redacted account type, organization identifier, capability identifier, target type, state, time, and error message. **Never send passwords, access tokens, API keys, full connection strings, or task content.**
+
+## Before You Purchase
+
+Before purchasing or rolling out, we recommend confirming the following with the HeiCode team:
+
+- Which features are available in the current version;
+- Supported capability types and runtime environments;
+- The authorization scope for individuals or the organization;
+- Enterprise governance and audit requirements;
+- Rollout plan, scope of service, and acceptance criteria.
+
+## Note
+
+This page describes the product positioning and usage of MAK Marketplace. Product features, interface names, availability, and terms of service are governed by the official release and the delivery documents both parties confirm.

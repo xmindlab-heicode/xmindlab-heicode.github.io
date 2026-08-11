@@ -1,135 +1,296 @@
 ---
-title: "MAK Marketplace Guide"
-description: "Current capabilities, acquisition and deployment workflows, governance boundaries, and troubleshooting for MAK Marketplace."
+title: "MAK Product & Usage Guide"
+description: "Discover and enable Skills and MCP tools in MAK Marketplace, then select them at Agent startup after HeiCode Manager governance."
 ---
 
-# MAK Marketplace Guide
+# MAK Product & Usage Guide
 
-MAK Marketplace (HeiCode Market) discovers, acquires, and delivers reusable AI capabilities. Marketplace owns listings, orders, entitlements, and the balance ledger. HeiCode Manager (HM) owns identity, organization policy, approval, and deployment. Agent Management (AM) and Swarm own installation, loading, invocation, and runtime health.
+MAK Marketplace (HeiCode Market) is a capability catalog and delivery platform for the AI Agent ecosystem. It provides a unified experience for discovering, enabling, and managing Skills and MCP tools, so teams can equip their Agents with authorized expertise and external tools.
 
-This page reflects implementation status on **August 5, 2026**. When the UI differs, trust the entries visible to the current account and the server-returned status.
+Marketplace: [https://marketplace.heicode.cc/](https://marketplace.heicode.cc/)
 
-## Availability
+MAK Marketplace does more than help you find AI capabilities — it also governs how those capabilities are authorized, checked, and verified before they reach real tasks.
 
-| Capability | Status | Notes |
-|---|---|---|
-| Browse and filter Skills/MCP | Available | Anonymous users can view the published catalog and details |
-| HM sign-in | Available | Acquisition, checkout, and workspace actions require an HM session |
-| Free acquisition | Available | Creates an order and active entitlement without external payment |
-| Balance purchase | Controlled beta | Existing balance can be atomically debited; real top-up is not open |
-| Skill deployment | Controlled beta | Entitlement, governance, deployment, and runtime dispatch exist; accept only with `running` plus runtime evidence |
-| Credential-free MCP | Controlled beta | Organization binding and secure AM materialization exist; full production cross-repo E2E is still being accepted |
-| Credential-bearing MCP | Not open | Remains fail-closed until runtime secret aliases and short-lived credential leases are complete |
-| Real payment/refund/chargeback | Not open | The balance slice is not a complete payment system |
-| Versioned publishing/review/emergency revoke | In progress | A publishing route does not mean the full lifecycle is open |
-| Publisher settlement/withdrawal | Not open | Revenue sharing, settlement, and reconciliation are incomplete |
-| Agent template trading | Not open | Current product kinds are Skill and MCP only |
+## What MAK Marketplace Solves
 
-## Capability kinds
+As AI applications move from single models to capability systems made of knowledge, tools, and Agents, organizations typically run into:
 
-| Kind | Purpose | Delivery |
-|---|---|---|
-| **Skill** | Reusable methods, knowledge, and workflows | Digest-pinned skill content delivered after entitlement and policy checks |
-| **MCP** | External tools such as search, databases, browsers, and knowledge bases | Credential-free claims; organization connection settings and secrets are governed separately by HM |
+- Capabilities scattered across places, hard to discover and compare;
+- Complex installation, configuration, and upgrade processes;
+- A gap between what was purchased and what can actually be used;
+- Unclear access permissions and security boundaries for external tools;
+- Little visibility into whether a capability was enabled successfully or is running correctly;
+- No unified mechanism for authorization, disabling, and auditing.
 
-MCP products never expose customer tokens, passwords, or connection settings in public details, entitlement lists, or ordinary deployment payloads. A credential-bearing MCP without the safe lease path remains `binding_required`; it does not fall back to plaintext or manual pre-provisioning.
+MAK Marketplace addresses these with a unified capability catalog, entitlement management, a governed delivery flow, and security controls.
 
-## Sign-in and account scope
+## What You Can Do
 
-Marketplace does not maintain a second identity system. Sign-in redirects to HM and then returns to Marketplace. Never place an HM token in a URL.
+- Browse a curated catalog of Skills and MCP tools
+- Review capability descriptions, versions, risk levels, and supported runtimes
+- Enable a capability for yourself or for an enterprise organization
+- Manage the organization's available capabilities centrally in HeiCode Manager (HM)
+- Select the capabilities you need when starting an Agent, Agent Team, or Swarm
+- See whether a capability is authorized, awaiting approval, or waiting on credential binding
 
-HM determines whether the session represents an individual or an enterprise member. Enterprise users may choose a personal or organization purchase scope, but the server always revalidates membership, policy permissions, approval, and connector bindings. Selecting an organization in the UI never grants administrative rights.
+## Value by Role
 
-## Acquire a free capability
+### For capability users
 
-1. Open [MAK Marketplace](https://marketplace.heicode.cc/) and find a capability.
-2. Review its kind, version, risk, governance key, supported runtimes, delivery mode, and approval requirement.
-3. Select **Sign in to acquire** and complete HM sign-in.
-4. For enterprise accounts, choose personal or organization scope.
-5. Select **Free · Acquire now**.
-6. Open **Purchased & authorized** and confirm the entitlement is `active`.
+- Discover and compare AI capabilities in one marketplace;
+- Review capability descriptions, versions, use cases, and compatibility;
+- Enable capabilities authorized for you or your organization;
+- Select the capabilities you need when starting an Agent, Agent Team, or Swarm;
+- See capability state and any failure details;
+- Manage enabled capabilities within your authorized scope.
 
-Checkout is idempotent. An order records the transaction; an entitlement records whether the capability can currently be used.
+### For enterprises and teams
 
-## Purchase with balance
+- Build a unified AI capability catalog;
+- Centrally manage what the organization can use;
+- Set governance policy and approval rules to match your requirements;
+- Reduce the risk of external tools reaching sensitive resources;
+- Keep the records you need for key operations;
+- Disable or revoke capabilities to control further use.
 
-Balance checkout is for accounts or organizations that already have usable balance. A successful operation atomically validates and debits the balance, appends an immutable ledger entry, marks the order paid, and grants exactly one entitlement.
+### For developers and publishers
 
-There is currently no public real top-up, card, or third-party payment flow and no complete refund/chargeback workflow. The test-credit endpoint is disabled in production and is not a product recharge feature.
+- Publish and showcase Skills and MCP tools;
+- Manage capability descriptions, versions, and compatibility information;
+- Follow the platform process for testing, updates, and removal.
 
-## Deploy to Sub Agent or Swarm
+## Capability Types
 
-After acquiring an active entitlement:
+### Skill
 
-1. Select **Deploy capability** on the listing detail page.
-2. Choose **Sub Agent (single Agent)** or **Swarm**.
-3. Confirm the HM organization ID and enter a real target ID.
-4. Review the governance key, delivery mode, and entitlement.
-5. Create the deployment and follow the returned state.
+A Skill gives an Agent domain knowledge, task standards, and workflows — for example code review standards, testing strategies, industry analysis methods, or documentation workflows.
+
+Once enabled, the Skill enters your organization capability catalog in HM. When you start a supported Agent, you can select which Skills to load for that run.
+
+### MCP
+
+MCP gives an Agent external capabilities such as search, code repositories, databases, browsers, and cloud tools.
+
+Some MCP tools require an enterprise admin to complete connector and credential binding in HM first. The marketplace neither stores nor accesses your organization's credentials in plaintext; an MCP that hasn't completed secure binding stays in a waiting state rather than falling back to plaintext configuration.
+
+## How It Works
+
+1. Browse Skills or MCP tools in the marketplace.
+2. Enable the capability you need.
+3. The capability syncs to your personal or organization capability catalog in HM.
+4. HM enforces organization policy, approvals, and credential checks.
+5. Select the capabilities you need when starting an Agent.
+6. HM securely delivers the approved capabilities to the corresponding runtime.
 
 ```text
-Order/free acquisition
-  -> Marketplace entitlement and Capability Claim
-  -> HM entitlement, permission, and policy revalidation
-  -> HM Deployment and runtime adapter dispatch
-  -> AM or Swarm installation and loading
-  -> runtime callback: running or failed
-  -> disable/revoke prevents later invocation
+Marketplace: browse and enable a capability
+  -> Sync to the personal / organization capability catalog in HM
+  -> HM enforces organization policy, approvals, and credential checks
+  -> Select the capabilities needed for this run at Agent startup
+  -> HM delivers them to the runtime, which loads them and reports status
 ```
 
-| State | Meaning |
+## Sign-in and Account Types
+
+The marketplace does not maintain a second account system. When you sign in, the browser redirects to HM for authentication and then returns to the marketplace. The HM token never appears in the URL and never needs to be pasted manually.
+
+- **Personal account**: enable capabilities for yourself and review your own entitlements.
+- **Enterprise account**: choose whether to enable a capability for yourself or for the organization.
+- Organization-scoped enablement and usage are re-validated server-side against membership, governance permissions, and approval requirements.
+- Selecting an organization in the UI does not grant admin rights and cannot bypass organization policy.
+
+If your account type or organization looks wrong after signing in, check your organization membership in HM first.
+
+## Enabling a Capability
+
+**1. Find a capability**
+
+Open the [MAK Marketplace](https://marketplace.heicode.cc/) and filter by search, type, or tags.
+
+![Browsing and filtering Skills and MCP tools in the marketplace](/screenshots/mak-browse-catalog.png)
+
+**2. Review the details**
+
+Open the capability details and review its type, version, risk level, supported runtimes, and approval requirements.
+
+![Capability detail page showing the description, version, and scope](/screenshots/mak-capability-detail.png)
+
+**3. Sign in**
+
+Selecting enable redirects you to HM to sign in, then returns you to the marketplace.
+
+![Signing in through HeiCode Manager](/screenshots/mak-signin.png)
+
+**4. Choose the scope**
+
+An enterprise account can enable the capability at **personal** or **organization** scope.
+
+![Choosing personal or organization scope](/screenshots/mak-select-scope.png)
+
+**5. Complete enablement**
+
+Free capabilities can be enabled directly. Once the entitlement is created, the capability syncs to the corresponding HM capability catalog.
+
+![The enable action for a free capability](/screenshots/mak-enable-free.png)
+
+Submitting twice does not issue a duplicate entitlement. An entitlement records "whether this can be used at all" — which is separate from "whether it is selected for this particular run".
+
+## Selecting Capabilities at Agent Startup
+
+Once a capability is in the HM organization catalog, select what you need for the run when starting it in HM. Supported target types:
+
+- Single Agent
+- Agent Team
+- Swarm
+
+![Selecting capabilities and the target type at startup](/screenshots/mak-select-at-startup.png)
+
+Which capabilities are actually available in a given runtime depends on what the HM startup page shows and on the final governance result.
+
+### Capability States
+
+| State | Meaning | What to do |
+|---|---|---|
+| Authorized | Enabled and cleared by organization policy; selectable at startup | Select it on the startup page |
+| Approval required | Organization policy requires admin approval before use | Wait for an authorized admin |
+| Awaiting credential binding | An MCP connector or credential binding isn't complete yet | An organization admin completes binding in HM |
+| Disabled | Entitlement revoked, disabled by the organization, or blocked by a policy change | It won't be delivered to the runtime |
+
+After a capability is selected and delivered, the runtime loads it and reports the result. If loading fails, troubleshoot using the failure details the runtime returns.
+
+## Verifying a Capability
+
+After enabling and selecting a capability, verify it with a real task rather than relying on status indicators alone.
+
+- **Skill**: run a task that exercises the Skill's rules or workflow. A code review Skill, for example, should surface risks, behavioral regressions, and missing tests for an actual change — not just return generic conclusions.
+- **MCP**: perform a real tool call. A content-reading MCP, for example, should fetch a public URL and return the page content; seeing the MCP name or a configuration record does not prove the tool works.
+
+## Product Boundaries
+
+| System | Responsible for |
 |---|---|
-| `binding_required` | Organization connector binding or safe credential delivery is missing |
-| `approval_required` | Waiting for organization approval; runtime has not been called |
-| `ready` | Governance passed, but runtime dispatch has not completed |
-| `dispatching` | HM is dispatching to AM or Swarm |
-| `running` | Runtime confirms the capability is active |
-| `failed` | Dispatch, installation, or loading failed |
-| `revoking` / `revoked` | Capability is being removed or has been removed |
+| **Marketplace** | Capability discovery, capability descriptions and version management, entitlements and authorization, syncing capability information to HM |
+| **HeiCode Manager (HM)** | The organization capability catalog, capability selection at startup, allow/deny policy, risk approval, MCP credential binding, delivering capabilities to runtimes |
+| **Agent Management and Swarm** | Loading the selected capabilities, enforcing runtime permissions, reporting load success or failure |
 
-Only `running`, runtime loaded-state evidence, and a real task prove that a capability works.
+The marketplace does not start Agents, does not create runtime resources, and does not store MCP credentials in plaintext.
 
-## Runtime acceptance
+## Built-in Swarm Capabilities
 
-For a Skill, run a task that demonstrates its instructions or workflow. For example, a code-review Skill should analyze a real diff for defects, regressions, and missing tests.
+A Swarm runtime may also provide these platform built-in capabilities:
 
-For MCP, invoke an actual tool. A public Reader MCP should retrieve a public URL and return its content. Seeing a server name or configuration record is not runtime proof.
+- Agent Swarm collaboration tools
+- Context Mode context management
+- Daytona cloud sandbox
+- Jina search and content retrieval
 
-Credential-free MCP still requires an active organization binding, policy, audit, and revoke. Credential-bearing MCP remains unavailable until short-lived credential delivery is complete; never put a long-lived secret in a URL, header, environment variable, Git, log, or Agent memory.
+These are managed by the platform runtime and are not affected by marketplace capability selection.
 
-## Workspace entries
+## Security and Governance
 
-Depending on the HM account type, the production navigation can include managed Skills/MCP, publishing, favorites, purchased entitlements, organization governance, balance and ledger, and orders.
+### Governance principles
 
-Publisher revenue, verification, API/connectors, and account settings are hidden until their backend workflows are complete. A routable page is not proof that a product feature is open. Favorites may explicitly report that the backend is not implemented.
+MAK Marketplace manages obtaining a capability separately from actually using it. Obtaining a capability does not let it bypass enterprise rules to reach runtimes or sensitive resources.
 
-## Disable and revoke
+The platform provides security and governance controls across these stages:
 
-A complete revoke must stop the entitlement or organization authorization, HM deployability and installation/deployment, and the AM/Swarm runtime capability. Verify that the runtime no longer reports the item as loaded and that repeating the original task is denied rather than served from cached configuration.
+| Stage | Description |
+|---|---|
+| Capability review | Capability information and versions are managed under platform rules |
+| Authorization check | Confirms whether the person or organization holds the entitlement |
+| Organization governance | Decides usability based on the configured governance policy |
+| Configuration protection | Protects connection settings and sensitive credentials from ordinary pages |
+| Runtime verification | Reports processing results and any failure details back to the user |
+| Records | Retains the records needed for enablement, usage, and policy changes |
+| Disabling | Restricts further use when permissions or capability state change |
 
-If no revoke entry is available, contact an organization administrator or platform support. Deleting a local file is not a server-side revoke.
+Which security features are available depends on your version, deployment mode, and configuration.
+
+### Governance essentials
+
+- Every capability is authorized within a personal or organization scope.
+- Organization policy is **deny-first**: when both an allow and a deny rule match, deny wins.
+- MCP credentials are bound securely in HM; the marketplace never handles credentials in plaintext.
+- HM re-validates capability state at startup.
+- Capabilities that are unauthorized, disabled, or missing a binding are never delivered to a runtime.
+- Long-lived credentials are kept in the credential vault and used by reference only; ordinary responses, logs, and audit records never echo plaintext credentials.
+
+Enablement, authorization, and actual use are three separately governed steps.
+
+## Personal and Enterprise Workspace
+
+After signing in, you can manage your capability assets in the workspace. Which entries you see depends on the account type returned by HM:
+
+| Entry | Purpose | Visible to |
+|---|---|---|
+| My Skills / MCP | Review the capability assets you manage | All accounts |
+| Publish a capability | Open the publishing workspace to submit a Skill or MCP | All accounts |
+| My favorites | Review the capabilities you saved | All accounts |
+| Enabled & authorized | Review your current active entitlements | All accounts |
+| Organization governance | Review organization availability and policy impact | Enterprise accounts only |
+
+## Disabling and Revoking
+
+Revoking is not just hiding a marketplace card. A complete revocation stops the entitlement or organization authorization, the availability in the HM catalog, and the capability already loaded in the runtime.
+
+After revoking, confirm that:
+
+1. The capability no longer appears in the selectable list at startup;
+2. The runtime no longer reports it as loaded;
+3. Running the original task again is rejected rather than continuing on cached configuration.
+
+If the page offers no revoke entry point, contact your organization admin or platform support. Deleting local files is not a substitute for server-side revocation.
 
 ## Troubleshooting
 
-- **`marketplace origin is not allowed`**: open Marketplace from `https://marketplace.heicode.cc` and have an administrator verify the HM origin allowlist. Do not switch to a test domain or place a token in the URL.
-- **No entitlement after acquisition**: verify that the current HM identity and personal/organization purchase scope match, then inspect the order and `active` entitlement.
-- **Deployment remains `ready`**: inspect HM dispatch events, adapter configuration, target ID, and the AM/Swarm callback. `ready` is not running.
-- **MCP remains `binding_required`**: verify an active organization binding. Credential-bearing MCP intentionally remains fail-closed in this release.
-- **Deployment is `failed`**: collect the deployment ID, target, governance key, timestamp, `last_error`, runtime load failure, and audit event before retrying.
+### The marketplace origin is reported as not allowed
 
-## Security and source-of-truth boundaries
+Confirm that you opened the marketplace from [https://marketplace.heicode.cc](https://marketplace.heicode.cc). If the address is correct and the message persists, contact your organization admin or platform support to check the configuration. Don't switch to another domain, and never put sign-in credentials in the address bar.
 
-- Marketplace exclusively writes Listing, SKU, Order, Payment, Entitlement, and Ledger data.
-- HM exclusively writes organization policy, Installation, Deployment, approval, and deployment audit data.
-- AM/Swarm exclusively write actual installation, loading, invocation, and RuntimeHealth data.
-- The web application consumes state and is not a source of truth.
-- Capability Claims contain no Skill body, MCP credential, customer connection address, payment data, or user token.
-- Long-lived MCP secrets stay in the vault and are referenced by `secret_ref`; ordinary responses, logs, and audits must not reveal plaintext.
-- Purchase is not authorization, authorization is not deployment, and `ready` is not running.
+### Enabled, but not visible in the capability catalog
 
-## API and support
+Confirm that your current HM identity matches the scope you enabled it for. A personal entitlement does not become an organization entitlement, and an organization entitlement won't appear under a different organization.
 
-- OpenAPI: [https://marketplace-api.heicode.cc/openapi.json](https://marketplace-api.heicode.cc/openapi.json)
-- Health: [https://marketplace-api.heicode.cc/health](https://marketplace-api.heicode.cc/health)
+### A capability isn't selectable at startup
 
-For support, provide redacted account type, organization ID, listing/entitlement/deployment IDs, target kind, state, timestamp, and error code. Never send passwords, bearer tokens, API keys, full connection strings, or customer task content.
+Check whether it has cleared organization policy, whether it requires admin approval, and whether the current runtime is within its supported scope. Policy is deny-first, so denied capabilities don't appear in the selectable list.
+
+### An MCP stays in "awaiting credential binding"
+
+Check whether the organization has completed connector binding. If the MCP requires an access token or other credential, it stays unavailable until secure binding is complete — entering plaintext will not bypass this.
+
+### A capability fails to load
+
+Record the capability name, target type, time, and the failure details returned by the runtime. Fix the cause before retrying, and avoid repeating the same operation over and over.
+
+## FAQ
+
+### Can I use a capability immediately after enabling it?
+
+That depends on the capability type, current authorization, target environment compatibility, organization rules, and any required configuration. Enabling only creates the entitlement and syncs it to the capability catalog; it takes effect once you select the capability at Agent startup and the runtime finishes loading it. Rely on the actual state shown in the product.
+
+### Are MCP connection details and credentials shown on the page?
+
+No. Pages for ordinary users never display secrets or access tokens. Long-lived credentials are kept in the credential vault and used by reference only. How connections and credentials are managed depends on your organization's configuration.
+
+### Can I make a capability available to my whole team?
+
+An enterprise account can enable a capability at organization scope. Organization authorization and member availability depend on your product version and organization configuration. Enterprise customers can confirm purchasing, member scope, and management requirements during solution review.
+
+### What information should I provide when reporting a problem?
+
+Provide the redacted account type, organization identifier, capability identifier, target type, state, time, and error message. **Never send passwords, access tokens, API keys, full connection strings, or task content.**
+
+## Before You Purchase
+
+Before purchasing or rolling out, we recommend confirming the following with the HeiCode team:
+
+- Which features are available in the current version;
+- Supported capability types and runtime environments;
+- The authorization scope for individuals or the organization;
+- Enterprise governance and audit requirements;
+- Rollout plan, scope of service, and acceptance criteria.
+
+## Note
+
+This page describes the product positioning and usage of MAK Marketplace. Product features, interface names, availability, and terms of service are governed by the official release and the delivery documents both parties confirm.

@@ -217,6 +217,18 @@ Which security features are available depends on your version, deployment mode, 
 
 Enablement, authorization, and actual use are three separately governed steps.
 
+## Personal and Enterprise Workspace
+
+After signing in, you can manage your capability assets in the workspace. Which entries you see depends on the account type returned by HM:
+
+| Entry | Purpose | Visible to |
+|---|---|---|
+| My Skills / MCP | Review the capability assets you manage | All accounts |
+| Publish a capability | Open the publishing workspace to submit a Skill or MCP | All accounts |
+| My favorites | Review the capabilities you saved | All accounts |
+| Enabled & authorized | Review your current active entitlements | All accounts |
+| Organization governance | Review organization availability and policy impact | Enterprise accounts only |
+
 ## Disabling and Revoking
 
 Revoking is not just hiding a marketplace card. A complete revocation stops the entitlement or organization authorization, the availability in the HM catalog, and the capability already loaded in the runtime.
@@ -230,6 +242,10 @@ After revoking, confirm that:
 If the page offers no revoke entry point, contact your organization admin or platform support. Deleting local files is not a substitute for server-side revocation.
 
 ## Troubleshooting
+
+### The marketplace origin is reported as not allowed
+
+Confirm that you opened the marketplace from [https://marketplace.heicode.cc](https://marketplace.heicode.cc). If the address is correct and the message persists, contact your organization admin or platform support to check the configuration. Don't switch to another domain, and never put sign-in credentials in the address bar.
 
 ### Enabled, but not visible in the capability catalog
 

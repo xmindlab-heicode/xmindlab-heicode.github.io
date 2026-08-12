@@ -842,3 +842,31 @@ This release focuses on never losing content to an interruption or an error, and
 - Fixed mid-stream upstream errors being swallowed as a blank answer, and truncated response streams leaving the turn stuck on "thinking"
 - Fixed inflated +/- line counts on diff cards (a new file could show -1); "Copy path" now copies the plain path
 - Fixed the task panel picking up another session's tasks when switching quickly; the model list cache is cleared on logout so a different account can't briefly see the previous one's models
+
+## 2026.08.12 · v1.4.5
+
+This release is about runaway tool loops actually stopping and screenshots actually reaching you, plus solid Computer Use and error reporting.
+
+### 🚀 Improvements
+
+- Rewrote the runaway-tool-call breaker: loops that rotate arguments on retry, or interleave other tool calls, are now caught too (it previously only covered strictly consecutive identical calls — the rarest shape a real loop takes)
+- Screenshots are visible and savable: images in tool results render inline, open full-screen, and can be saved to disk
+- Computer Use: system apps such as Finder / System Events are no longer reported as "not installed", and the authorization dialog no longer offers a button that has no effect when approved
+- Preview serves local pages over a local static server, so same-directory CSS / JS load correctly; the address stops working the moment the panel closes
+- "Retry with another model" hands the choice back to you instead of picking one and resending
+- Organization announcements and organization-level CLAUDE.md standards: bilingual with severity levels; injected standards merge with your own file instead of replacing it, and the UI names a contact when a standard is truncated
+- Longer prompt-cache retention, cutting rewrite cost substantially
+
+### 🐞 Fixes & Improvements
+
+- Fixed hitting the turn limit being reported as an error: it is now a quiet notice, with no red error bubble, no useless "Retry" button, and no stacked notices across consecutive turns
+- Fixed sync failures showing only an error count: causes are now grouped and explained
+- Fixed upstream rate limits (429) delivered inside an HTTP 200 stream being shown as a generic failure
+- Fixed the synthetic "No response requested." placeholder appearing as an empty bubble, and session message counts disagreeing with the actual content
+- Fixed Opus 4.6 / 4.7 / 4.8 output limits being capped at 32k (the official limit is 128k), which truncated long answers
+- Fixed conversation context menus and floating layers being clipped at the bottom of the window; the queued-message list no longer pushes the conversation out of view
+- Fixed resumed sessions losing their attachments, leaving the model unable to see images / files it had sent
+- Fixed live token counts reflecting a single request instead of the whole turn; fixed context compaction receiving only part of the available space, and interrupt handling occasionally killing a freshly started turn
+- Fixed the "Retry with another model" button never having appeared at all (the model list it read was always empty)
+- macOS: fixed encrypted requests still using the legacy plaintext protocol on the chat-proxy and provider-test paths, which broke chat for some models (GLM / Qwen / DeepSeek / Grok)
+- macOS: fixed the Computer Use permission probe running in a virtual-env python subprocess, so permissions granted in System Settings still showed as missing

@@ -794,3 +794,51 @@ A maintenance update after v1.4.0, adding one new panel plus a batch of experien
 ### 🐞 Fixes & Improvements
 
 - The skip-permissions dialog now shows the real working directory (no longer a literal "~")
+
+## 2026.07.23 · v1.4.2
+
+This release brings the desktop settings page, team / personal account switching, and a batch of model and preview fixes.
+
+### ✨ New Features
+
+- Desktop settings page: a system-tray toggle and run-on-startup; branded installer, with run-on-startup on by default for new installs
+- Team / personal account switcher: switch context from the account menu; billing and available models follow the active context
+
+### 🚀 Improvements
+
+- Context window shows its real size instantly (million-token models no longer flash 200k then jump)
+- "No available channel" errors now auto-switch to an available model (including in streaming) instead of showing raw JSON
+- When a site's anti-bot wall blocks WebFetch, the client suggests browser mode instead of failing silently
+- The model picker hides embedding models (not usable for chat)
+- Region-aware update source (China mainland via 21Vianet) for more reliable updates
+
+### 🐞 Fixes & Improvements
+
+- Browse-preview fixes: an actionable hint when there's no session, correct per-session launch, and no more infinite spinner
+- Fixed request failures caused by the Opus-series thinking parameter
+- macOS: fixed chat request errors for some models (GLM / Qwen / DeepSeek / Grok)
+- UI cleanup: removed tool/agent card status icons; fixed model-name overflow in the toolbar when the right dock is open
+
+## 2026.07.23 · v1.4.3
+
+### 🐞 Fixes & Improvements
+
+- Hardened Content-Type handling for encrypted requests so a malformed header can't cause model chat failures (Windows was not affected — a preventive fix aligned with the macOS root-cause fix)
+
+## 2026.07.28 · v1.4.4
+
+This release focuses on never losing content to an interruption or an error, and completes the built-in browser and managed-policy work.
+
+### 🚀 Improvements
+
+- Stop no longer discards what the model already produced; Retry keeps the interrupted answer (marked as such) and appends the new one below
+- Built-in browser polish: connect without a manual download, a settings toggle, per-session isolation, and no more accidental external-browser launches; switching to another browse-enabled session re-prepares its browser
+- Quitting now cleans up the sidecar process tree and leftover browser instances (no orphan processes or held ports), with no console flash or hang
+- The team/personal switcher is hidden when only one context is available
+- Managed policy: closed the outbound-domain gap while the policy is still loading; orgs can require high-risk operations to be refused when the policy is unavailable; auto mode / bypass-permissions mode can now be disabled centrally
+
+### 🐞 Fixes & Improvements
+
+- Fixed mid-stream upstream errors being swallowed as a blank answer, and truncated response streams leaving the turn stuck on "thinking"
+- Fixed inflated +/- line counts on diff cards (a new file could show -1); "Copy path" now copies the plain path
+- Fixed the task panel picking up another session's tasks when switching quickly; the model list cache is cleared on logout so a different account can't briefly see the previous one's models

@@ -1,0 +1,156 @@
+---
+title: "Heicode CLI"
+description: 在终端里安装、登录并使用 Heicode,包括在脚本和 CI 中的非交互用法。
+---
+
+# Heicode CLI
+
+Heicode CLI 是独立的终端客户端。它登录的是与桌面客户端同一个 Heicode 账号,使用你的账号被授权的模型,既可以作为交互式会话运行,也可以作为一次性的非交互命令用在脚本和 CI 里。
+
+<Callout type="info">
+  适用于 Heicode CLI **1.0.2**。与版本相关的行为会单独标注 —— 如果你当前是 1.0.1 或更早的版本,请特别留意[更新](#更新)一节。
+</Callout>
+
+## 安装
+
+### Windows
+
+```powershell
+irm https://update.heicode.cc/cli/install.ps1 | iex
+```
+
+脚本会自行解析当前版本、用已发布的校验和验证下载内容、安装到你的用户目录,并把 `heicode` 加入 `PATH`。不需要管理员权限。
+
+确认安装成功:
+
+```powershell
+heicode --version
+```
+
+### macOS 与 Linux
+
+这两个平台目前还没有安装脚本。请下载对应架构的二进制文件,赋予可执行权限,再放到 `PATH` 上的某个目录:
+
+| 平台 | 下载地址 |
+| --- | --- |
+| macOS(Apple Silicon) | `https://update.heicode.cc/cli/1.0.2/heicode-macos-arm64` |
+| macOS(Intel) | `https://update.heicode.cc/cli/1.0.2/heicode-macos-x64` |
+| Linux(x64) | `https://update.heicode.cc/cli/1.0.2/heicode-linux-x64` |
+
+```bash
+chmod +x heicode-macos-arm64
+mv heicode-macos-arm64 /usr/local/bin/heicode
+```
+
+<Callout type="warn">
+  每次发布都会完整走查的是 Windows 版本。macOS 与 Linux 的二进制已发布并通过校验和验证,但尚未纳入这套逐版本验证流程。请将它们视为「可用但未经验证」,遇到异常请反馈。
+</Callout>
+
+## 登录
+
+```bash
+heicode login
+```
+
+它会打印一串短码和一个网址。在任意浏览器打开该网址、输入短码并确认,终端就会自动继续 —— 全程不需要在终端里输入密码,因此也适用于 SSH 环境。
+
+登录同时会把这台机器作为设备与你的账号配对。随时可以查看结果:
+
+```bash
+heicode whoami
+```
+
+`whoami` 会显示账号以及这台设备是否已配对。加 `--json` 可得到机器可读的输出;未登录时它以非零码退出,因此可以直接用作脚本里的前置判断。
+
+登出并解除设备配对:
+
+```bash
+heicode logout
+```
+
+如果设备已经配对,再次运行 `heicode login` 不会做任何事并正常退出,所以放在部署脚本里是安全的。确实需要重新配对时用 `heicode login --force`。
+
+<Callout type="info">
+  在交互式会话里,`/login` 走的是同一套设备码流程。首次运行的引导也会提供这一步,可以按 `Esc` 跳过,之后再登录。
+</Callout>
+
+## 交互式使用
+
+不带参数运行 `heicode`,即在当前目录开启一个会话。
+
+常用参数:
+
+| 参数 | 作用 |
+| --- | --- |
+| `--model <model>` | 本次会话使用的模型 —— 可以是 `sonnet`、`opus` 这类别名,也可以是完整模型名。可用模型由你的 Heicode 账号决定,运行 `/model` 查看列表。 |
+| `-c`、`--continue` | 继续当前目录下最近的一次对话 |
+| `--resume <id>` | 恢复指定会话 |
+| `--fork-session` | 恢复会话时新建一个会话,而不是写回原会话 |
+| `--add-dir <dirs...>` | 允许工具访问当前目录之外的目录 |
+
+## 非交互式使用
+
+`-p`(即 `--print`)只跑一轮就退出,这是脚本、hook 和 CI 里应当使用的形式:
+
+```bash
+heicode -p "总结一下已暂存的改动"
+```
+
+```bash
+echo "$DIFF" | heicode -p "评审这段 diff"
+```
+
+输出形态由 `--output-format` 控制:
+
+| 取值 | 输出 |
+| --- | --- |
+| `text`(默认) | 纯文本回复 |
+| `json` | 整个结果一个 JSON 对象 |
+| `stream-json` | 事件到达即以 JSON 输出 |
+
+在据此编写脚本之前,有两条行为值得先了解:
+
+- **`text` 模式下失败不会写入 stdout。** 错误会报在 stderr 上,退出码非零,因此 `RESULT=$(heicode -p …)` 不会把错误信息当成答案静默捕获。而使用 `--output-format json` 时错误**会**出现在 stdout —— 因为那个 JSON 结果对象本身就是协议的一部分。
+- **空 prompt 会被拒绝。** 空白或仅含空格的 prompt 会以非零码退出并说明原因,而不是等待输入。所以 `VAR` 为空时的 `echo "$VAR" | heicode` 会快速失败,不会挂住。
+
+## 更新
+
+```bash
+heicode update
+```
+
+<Callout type="warn">
+  **从 1.0.1 或更早版本升级需要重新安装 —— `heicode update` 在那些版本上不可用。**
+
+  1.0.1 及更早的构建会把自己误判为开发版本而拒绝更新,报 `Cannot update development build`。该缺陷已在 1.0.2 修复,但修复存在于新的二进制里,无法修好一个已经装好的旧版本。
+
+  请按上面的[安装](#安装)步骤装好 1.0.2。从 1.0.2 起,`heicode update` 正常工作。
+</Callout>
+
+检查安装的健康状况:
+
+```bash
+heicode doctor
+```
+
+## 其他命令
+
+| 命令 | 用途 |
+| --- | --- |
+| `heicode mcp` | 配置和管理 MCP 服务器 |
+| `heicode agents` | 列出已配置的 agent |
+| `heicode plugin` | 管理插件 |
+| `heicode install [target]` | 安装指定版本(`stable`、`latest` 或确切版本号) |
+| `heicode share` | 处理加密的对话分享 |
+
+任何命令都可以用 `heicode <command> --help` 查看完整参数。
+
+## 配置文件位置
+
+配置、会话和凭据都存放在 `~/.heicode` 下。设置 `HEICODE_CONFIG_DIR` 可以指向别处 —— 适合隔离出一个临时环境:
+
+```bash
+HEICODE_CONFIG_DIR=/tmp/heicode-test heicode whoami
+```
+
+凭据保存在操作系统的凭据存储中(Windows 用 DPAPI,macOS 用 Keychain),不会以明文形式留在配置目录里。

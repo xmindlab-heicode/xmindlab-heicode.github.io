@@ -1,0 +1,156 @@
+---
+title: "Heicode CLI"
+description: Install, sign in, and use Heicode from a terminal — including non-interactive use in scripts and CI.
+---
+
+# Heicode CLI
+
+Heicode CLI is a standalone terminal client. It signs in to the same Heicode account as the desktop client, uses the models your account is authorised for, and runs either as an interactive session or as a single non-interactive command for scripts and CI.
+
+<Callout type="info">
+  Applies to Heicode CLI **1.0.2**. Version-specific behaviour is called out where it matters — see [Updating](#updating) in particular if you are on 1.0.1 or earlier.
+</Callout>
+
+## Install
+
+### Windows
+
+```powershell
+irm https://update.heicode.cc/cli/install.ps1 | iex
+```
+
+The script resolves the current version itself, verifies the download against a published checksum, installs into your user directory, and puts `heicode` on your `PATH`. No administrator rights are needed.
+
+Confirm it worked:
+
+```powershell
+heicode --version
+```
+
+### macOS and Linux
+
+There is no install script for these platforms yet. Download the binary for your architecture, mark it executable, and place it somewhere on your `PATH`:
+
+| Platform | Download |
+| --- | --- |
+| macOS (Apple Silicon) | `https://update.heicode.cc/cli/1.0.2/heicode-macos-arm64` |
+| macOS (Intel) | `https://update.heicode.cc/cli/1.0.2/heicode-macos-x64` |
+| Linux (x64) | `https://update.heicode.cc/cli/1.0.2/heicode-linux-x64` |
+
+```bash
+chmod +x heicode-macos-arm64
+mv heicode-macos-arm64 /usr/local/bin/heicode
+```
+
+<Callout type="warn">
+  The Windows build is the one exercised end to end each release. The macOS and Linux binaries are published and checksum-verified, but are not yet part of that per-release verification. Treat them as usable-but-unverified and report anything that misbehaves.
+</Callout>
+
+## Sign in
+
+```bash
+heicode login
+```
+
+This prints a short code and a URL. Open the URL in any browser, enter the code, approve, and the terminal continues on its own — no password is typed into the terminal, and it works over SSH.
+
+Signing in also pairs the machine as a device on your account. Check the result at any time:
+
+```bash
+heicode whoami
+```
+
+`whoami` reports the account and whether this device is paired. Add `--json` for a machine-readable form; it exits non-zero when you are not signed in, which makes it usable as a guard in scripts.
+
+To sign out and unpair the device:
+
+```bash
+heicode logout
+```
+
+Running `heicode login` when the device is already paired does nothing and exits successfully, so it is safe in provisioning scripts. Use `heicode login --force` to deliberately pair again.
+
+<Callout type="info">
+  Inside an interactive session, `/login` runs this same device-code flow. First-run setup offers it too, and you can skip it with `Esc` and sign in later.
+</Callout>
+
+## Interactive use
+
+Run `heicode` with no arguments to start a session in the current directory.
+
+Useful flags:
+
+| Flag | Effect |
+| --- | --- |
+| `--model <model>` | Model for this session — an alias such as `sonnet` or `opus`, or a full model name. Which models are available is decided by your Heicode account; run `/model` to see the list. |
+| `-c`, `--continue` | Continue the most recent conversation in this directory |
+| `--resume <id>` | Resume a specific session |
+| `--fork-session` | When resuming, start a new session instead of writing into the original |
+| `--add-dir <dirs...>` | Allow tool access to directories outside the current one |
+
+## Non-interactive use
+
+`-p` (or `--print`) runs one turn and exits, which is the form to use in scripts, hooks, and CI:
+
+```bash
+heicode -p "summarise the staged changes"
+```
+
+```bash
+echo "$DIFF" | heicode -p "review this diff"
+```
+
+Output shape is controlled with `--output-format`:
+
+| Value | Output |
+| --- | --- |
+| `text` (default) | The reply as plain text |
+| `json` | One JSON object for the whole result |
+| `stream-json` | JSON events as they arrive |
+
+Two behaviours worth knowing before you script against it:
+
+- **Failures do not go to stdout in `text` mode.** An error is reported on stderr and the exit code is non-zero, so `RESULT=$(heicode -p …)` never silently captures an error message as if it were the answer. With `--output-format json`, the error *is* on stdout, because the JSON result object is the protocol.
+- **A blank prompt is rejected.** An empty or whitespace-only prompt exits non-zero with an explanation rather than waiting for input. `echo "$VAR" | heicode` with an empty `VAR` therefore fails fast instead of hanging.
+
+## Updating
+
+```bash
+heicode update
+```
+
+<Callout type="warn">
+  **Upgrading from 1.0.1 or earlier requires a reinstall — `heicode update` will not work.**
+
+  Builds up to and including 1.0.1 misidentify themselves as development builds and refuse to update, reporting `Cannot update development build`. That defect is fixed in 1.0.2, but the fix lives in the new binary, so it cannot repair an already-installed older one.
+
+  Install 1.0.2 using the [Install](#install) instructions above. From 1.0.2 onward, `heicode update` works normally.
+</Callout>
+
+To check the health of an installation:
+
+```bash
+heicode doctor
+```
+
+## Other commands
+
+| Command | Purpose |
+| --- | --- |
+| `heicode mcp` | Configure and manage MCP servers |
+| `heicode agents` | List configured agents |
+| `heicode plugin` | Manage plugins |
+| `heicode install [target]` | Install a specific version (`stable`, `latest`, or an exact version) |
+| `heicode share` | Work with encrypted conversation shares |
+
+Run `heicode <command> --help` for the full options of any command.
+
+## Configuration location
+
+Configuration, sessions, and credentials live under `~/.heicode`. Set `HEICODE_CONFIG_DIR` to point elsewhere — useful for isolating a throwaway environment:
+
+```bash
+HEICODE_CONFIG_DIR=/tmp/heicode-test heicode whoami
+```
+
+Credentials are held in the operating system's credential store (DPAPI on Windows, Keychain on macOS), never in plain text in the configuration directory.
